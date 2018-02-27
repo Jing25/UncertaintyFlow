@@ -1,38 +1,71 @@
+// const DATA = {
+//   "name": "Eve",
+//   "children": [
+//     {
+//       "name": "Cain"
+//     },
+//     {
+//       "name": "Seth",
+//       "children": [
+//         {
+//           "name": "Enos"
+//         },
+//         {
+//           "name": "Noam"
+//         }
+//       ]
+//     },
+//     {
+//       "name": "Abel"
+//     },
+//     {
+//       "name": "Awan",
+//       "children": [
+//         {
+//           "name": "Enoch"
+//         }
+//       ]
+//     },
+//     {
+//       "name": "Azura"
+//     }
+//   ]
+// };
+
 const DATA = {
-  "name": "Eve",
+  "name": "Initial",
   "children": [
     {
-      "name": "Cain"
-    },
-    {
-      "name": "Seth",
+      "name": "400m Buffer",
       "children": [
+        {"name": "Model_01"},
         {
-          "name": "Enos"
-        },
-        {
-          "name": "Noam"
+          "name": "Brushing",
+          "children": [
+            {"name": "Model_01"},
+            {"name": "Classification"},
+            {
+              "name": "Brushing",
+              "children": [
+                {
+                  "name": "Classification",
+                  "children": [
+                    {"name": "Model_01"},
+                    {"name": "Model_02"}
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
-    },
-    {
-      "name": "Abel"
-    },
-    {
-      "name": "Awan",
-      "children": [
-        {
-          "name": "Enoch"
-        }
-      ]
-    },
-    {
-      "name": "Azura"
     }
   ]
-};
+}
 
-const WIDTH = $('#panel-vis-main').width() - 80;
+const radiusTree = [5, 20, 25, 15, 17, 22, 14, 8, 11, 9]
+
+const WIDTH = $('#panel-vis-main').width();
 const HEIGHT = $('#panel-vis-main').height() ;
 
 const svg = d3.select("#panel-vis-main").append("svg")
@@ -42,9 +75,11 @@ const svg = d3.select("#panel-vis-main").append("svg")
     .attr('transform', 'translate(40,0)');
 
 const root = d3.hierarchy(DATA);
-const tree = d3.tree().size([HEIGHT, WIDTH]);
+const tree = d3.tree().size([HEIGHT, WIDTH-120]);
+console.log(root.descendants())
 
 tree(root);
+
 
 var link = svg.selectAll(".link")
     .data(root.descendants().slice(1))
@@ -64,7 +99,8 @@ var node = svg.selectAll(".node")
     .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
 
 node.append("circle")
-    .attr("r", 2.5);
+    .data(radiusTree)
+    .attr("r", function(d) {return d});
 
 node.append("text")
     .attr("dy", 3)
