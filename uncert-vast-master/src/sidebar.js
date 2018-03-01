@@ -46,13 +46,13 @@ const width_sidebar = $('#parameters').width();
 const height_sidebar = 500;
 
 var circlePara = [{
-  radii: 50,
+  radii: 25,
   name: "Population"
 }, {
-  radii: 60,
+  radii: 30,
   name: "Percent_White"
 }, {
-  radii: 50,
+  radii: 25,
   name: "Hospital"
 }]
 
@@ -83,7 +83,7 @@ circles.attr("r", function(d) {
   })
   .style("fill", "rgb(94, 172, 228)")
   .style("stroke", "grey")
-texts.attr("x", width_sidebar / 2 - 200)
+texts.attr("x", width_sidebar / 2 - 120)
   .attr("y", function(d, i) {
     return (d.radii * 2 * i + 110)
   })

@@ -59,5 +59,11 @@ function drawMap() {
 
   function myclick(e) {
     // e.target.color = "grey"
-    e.target.setStyle({color: 'red'})
+    console.log(e.target.options.color)
+    if(e.target.options.color == "blue"){
+      e.target.setStyle({color: 'grey', fillColor: 'rgb(177, 174, 169)'})
+    }
+    else if (e.target.options.color == "grey") {
+      e.target.setStyle({color: 'blue', fillColor: 'blue'})
+    }
   }

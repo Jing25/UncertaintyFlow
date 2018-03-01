@@ -43,15 +43,20 @@ const DATA = {
           "name": "Brushing",
           "children": [
             {"name": "Model_01"},
-            {"name": "Classification"},
+            // {"name": "Classification"},
             {
-              "name": "Brushing",
+              "name": "Classification",
               "children": [
                 {
-                  "name": "Classification",
+                  "name": "Brushing",
                   "children": [
-                    {"name": "Model_01"},
-                    {"name": "Model_02"}
+                    {
+                      "name": "selection",
+                      "children": [
+                        {"name": "Model_01"},
+                        {"name": "Model_02"}
+                      ]
+                    }
                   ]
                 }
               ]
@@ -63,7 +68,7 @@ const DATA = {
   ]
 }
 
-const radiusTree = [5, 20, 25, 15, 17, 22, 14, 8, 11, 9]
+const radiusTree = [7, 20, 25, 15, 17, 21, 14, 8, 11, 9]
 
 const WIDTH = $('#panel-vis-main').width();
 const HEIGHT = $('#panel-vis-main').height() ;
@@ -100,7 +105,7 @@ var node = svg.selectAll(".node")
 
 node.append("circle")
     .data(radiusTree)
-    .attr("r", function(d) {return d});
+    .attr("r", function(d) {return d/2});
 
 node.append("text")
     .attr("dy", 3)
