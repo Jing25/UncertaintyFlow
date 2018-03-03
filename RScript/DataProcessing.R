@@ -1,5 +1,8 @@
 rm(list = ls())
-setwd("~/Desktop/UncertaintyFlow/RScript")
+#lab
+setwd("~/Desktop/UncertaintyFlow/UncertaintyFlow/RScript")
+#laptp
+#setwd("~/Desktop/UncertaintyFlow/RScript")
 
 
 loc <- read.table("../Data/Station_location.txt")
