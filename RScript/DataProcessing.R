@@ -58,9 +58,10 @@ new <- new[, !(names(new) %in% drops)]
 
 uncertainty400 <- scale(new[2:3]) + 2
 df_data$uncertain01 <- scale(new[2]) + scale(new[3]) + 2
+df_data$pop_uncer <- scale(data$Pop) - min(scale(data$Pop))
 
 
-write.csv(df_data, file = "../uncert-vast-master/Data/Mydata_01.csv", row.names = FALSE, col.names = FALSE)
+write.csv(df_data, file = "../uncert-vast-master/Data/Mydata_02.csv", row.names = FALSE, quote = FALSE)
 
 
 

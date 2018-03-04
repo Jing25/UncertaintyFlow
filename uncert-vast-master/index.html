@@ -60,16 +60,16 @@
             <p>Create a circle buffer for each bike station, then calculate the aggregation.</p>
             <p>Select circle radius: </p>
             <!-- Dropdown Button (circle radius) -->
-            <div class="ui selection dropdown">
+            <div class="ui selection dropdown" id="buffer">
               <input name="radius" type="hidden">
               <i class="dropdown icon"></i>
               <div class="default text">Radius</div>
               <div class="menu">
-                <div class="item" data-value="0">400-m</div>
+                <div class="item" data-value="400">400-m</div>
               </div>
             </div>
 
-            <div class="ui toggle icon button" id="eyebutton" data-tooltip="Show buffer" data-inverted="">
+            <div class="ui icon button" id="eyebutton" data-tooltip="Show buffer" data-inverted="" onclick="viewBuffer()">
               <i class="eye icon"></i>
             </div>
             <button class="ui button">Aggregation</button>
@@ -116,7 +116,7 @@
                 <div class="item" data-value="4">4</div>
               </div>
             </div>
-            <div id="range"></div>
+            <!-- <div id="range"></div> -->
 
           </div>
 
