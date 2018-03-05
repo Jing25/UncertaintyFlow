@@ -162,13 +162,13 @@
           <div class="content">
             <h4 class="ui sub header">Uncertainty</h4>
             <!-- open files -->
-            <div class="ui center aligned">
+            <div class="ui center aligned" id="openFile">
               <input type="file" id="fileupload" style="display:none" onchange="uploadFiles()" />
               <button class="circular massive ui icon button" id="OpenFileUpload"><i class="folder open icon"></i></button>
-              <p id="demo"></p>
+              <!-- <p id="demo"></p> -->
             </div>
-
-            <!-- <div id="parameters"></div> -->
+            <div id="parameters"></div>
+            <div id="charts"></div>
           </div>
           <div class="extra content">
             <button class="ui button">Join Project</button>
@@ -198,6 +198,8 @@
   <script src="src/semanticUI.js"></script>
   <script src="src/variableUncertainty.js"></script>
   <script src="src/uploadFiles.js"></script>
+  <script src="src/donutChart.js"></script>
+  <script src="src/donutUncertainty.js"></script>
 
 </body>
 

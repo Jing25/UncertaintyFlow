@@ -21,7 +21,10 @@ function viewBuffer() {
       var lat = data[i].lat;
       var lon = data[i].lon;
       // mapCircle(lat, lon, radii);
-      var marker = new L.circle([lat, lon], +bufferSize)
+      var marker = new L.circle([lat, lon], +bufferSize, {
+          color: 'blue',
+          weight: 1
+        })
         // .addTo(map);
       markers.push(marker)
     }

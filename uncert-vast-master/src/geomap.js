@@ -1,7 +1,11 @@
 var map = L.map('panel-map-main').setView([41.875, -87.65], 12);
 var mapIcon = L.icon({
-    iconUrl: 'image/map_pin_2.png',
-    iconSize:     [18, 18] // size of the icon
+  iconUrl: 'image/map_pin_red.png',
+  iconSize: [18, 18] // size of the icon
+});
+var mapIconUnselect = L.icon({
+  iconUrl: 'image/map_pin_blue.png',
+  iconSize: [18, 18] // size of the icon
 });
 
 drawMap();
@@ -11,14 +15,14 @@ drawMap();
 //   for (var i = 0; i < data.length; i++) {
 //     var radii = +(data[i].pop_uncer) + +(data[i].uncertain01);
 //     // console.log(radii)
-    // marker = new L.circle([data[i].lat, data[i].lon], {
-    //     color: 'blue',
-    //     fillColor: "blue",
-    //     fillOpacity: 1,
-    //     radius: radii * 10
-    //   })
-    //   .on("click", myclick)
-    //   .addTo(map);
+// marker = new L.circle([data[i].lat, data[i].lon], {
+//     color: 'blue',
+//     fillColor: "blue",
+//     fillOpacity: 1,
+//     radius: radii * 10
+//   })
+//   .on("click", myclick)
+//   .addTo(map);
 //   }
 
 function mapCircle(data) {
@@ -29,21 +33,26 @@ function mapCircle(data) {
     var radii = data[i].radii;
     // mapCircle(lat, lon, radii);
     var marker = new L.circle([lat, lon], {
-        color: 'blue',
-        // fillColor: "blue",
-        // fillOpacity: 1,
-        radius: radii * 10
-      })
-      // .on("click", myclick)
-      // .addTo(map);
+      color: 'blue',
+      weight: 1,
+      // fillColor: "blue",
+      // fillOpacity: 1,
+      radius: radii * 10
+    })
+    // .on("click", myclick)
+    // .addTo(map);
     markers.push(marker)
   }
   markerlayer = L.layerGroup(markers);
   map.addLayer(markerlayer);
 }
 
+
 function mapPoint(lat, lon) {
-  var marker = L.marker([lat, lon], {icon: mapIcon})
+  var marker = L.marker([lat, lon], {
+      icon: mapIcon
+    })
+    .on("click", myclick)
     .addTo(map);
 }
 
@@ -62,17 +71,16 @@ function drawMap() {
 
 
 function myclick(e) {
-  // e.target.color = "grey"
-  console.log(e.target.options.color)
-  if (e.target.options.color == "blue") {
-    e.target.setStyle({
-      color: 'grey',
-      fillColor: 'rgb(177, 174, 169)'
-    })
-  } else if (e.target.options.color == "grey") {
-    e.target.setStyle({
-      color: 'blue',
-      fillColor: 'blue'
-    })
+  var icon = e.target.options.icon.options
+  if (icon.iconUrl == "image/map_pin_red.png") {
+    e.target.setIcon(mapIconUnselect)
+    // e.target.setStyle({
+    //   color: 'grey',
+    //   fillColor: 'rgb(177, 174, 169)'
+    // })
+  } else if (icon.iconUrl == "image/map_pin_blue.png") {
+    e.target.setIcon(mapIcon)
   }
+
+
 }

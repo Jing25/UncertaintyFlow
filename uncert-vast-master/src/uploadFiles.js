@@ -4,6 +4,7 @@ function uploadFiles() {
   var x = document.getElementById("fileupload");
   console.log(x.files[0].name)
   filename = "Data/" + x.files[0].name;
+  $("#openFile").hide()
   d3.csv(filename, function(data) {
     myData = data;
     console.log(myData)
@@ -14,6 +15,7 @@ function uploadFiles() {
       // mapCircle(lat, lon, radii);
       mapPoint(lat, lon)
     }
+    // variableUncertainty()
 
   })
 }
