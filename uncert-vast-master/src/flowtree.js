@@ -1,3 +1,5 @@
+var treeNode;
+
 const DATA = {
   "name": "Initial",
   "children": [{
@@ -36,6 +38,7 @@ const DATA = {
 var obj = {
   "name": "Initial"
 }
+var radiusTree = [7]
 
 var radiusTree = [7, 20, 25, 15, 17, 21, 14, 8, 11, 9]
 
@@ -48,10 +51,10 @@ const svg = d3.select("#panel-vis-main").append("svg")
   .append('g')
   .attr('transform', 'translate(40,0)');
 
-
+// flowTree(DATA, radiusTree)
 
 function flowTree(data, radiusTree) {
-  root = d3.hierarchy(DATA);
+  root = d3.hierarchy(data);
   tree = d3.tree().size([HEIGHT, WIDTH - 120]);
   // console.log(root.descendants())
 
@@ -77,12 +80,13 @@ function flowTree(data, radiusTree) {
     })
     .attr("transform", function(d) {
       return "translate(" + d.y + "," + d.x + ")";
-    });
+    })
+    .on("click", nodeClick);
 
   node.append("circle")
-    .data(radiusTree)
-    .attr("r", function(d) {
-      return d / 2
+    // .data(radiusTree)
+    .attr("r", function(d, i) {
+      return radiusTree[i] / 2
     });
 
   node.append("text")
@@ -96,6 +100,14 @@ function flowTree(data, radiusTree) {
     .text(function(d) {
       return d.data.name;
     });
+}
+
+function nodeClick(d, i) {
+  // console.log(d)
+  // debugger;
+  if (d.children == undefined) {
+
+  }
 }
 
 // root = d3.hierarchy(DATA);
@@ -127,9 +139,9 @@ function flowTree(data, radiusTree) {
 //   });
 //
 // node.append("circle")
-//   .data(radiusTree)
-//   .attr("r", function(d) {
-//     return d / 2
+//   // .data(radiusTree)
+//   .attr("r", function(d, i) {
+//     return radiusTree[i] / 2
 //   });
 //
 // node.append("text")

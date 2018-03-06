@@ -9,7 +9,7 @@ var donut = donutChart()
     .variable('Probability')
     .category('Species');
 
-d3.tsv('Data/species.tsv', function(error, data) {
+d3.tsv('Data/species_2.tsv', function(error, data) {
     if (error) throw error;
     d3.select('#charts')
         .datum(data) // bind data to the div

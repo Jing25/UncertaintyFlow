@@ -14,6 +14,7 @@ function uploadFiles() {
       var lon = data[i].lon;
       // mapCircle(lat, lon, radii);
       mapPoint(lat, lon)
+      flowTree(DATA, radiusTree)
     }
     // variableUncertainty()
 

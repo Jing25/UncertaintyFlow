@@ -37,9 +37,15 @@ function viewBuffer() {
     map.removeLayer(markerlayer);
     eyebuttonClick = 1;
   }
-
-
 }
+
+// function bufferTreeAdd() {
+//   $("#400Buffer").onclick({
+//     if (obj) {
+//
+//     }
+//   })
+// }
 
 //Classification slider
 // var range = document.getElementById('range');

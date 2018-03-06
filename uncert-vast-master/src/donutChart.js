@@ -10,7 +10,7 @@ function donutChart() {
       bottom: 10,
       left: 10
     },
-    colour = d3.scaleOrdinal(d3.schemeCategory20c), // colour scheme
+    colour = d3.scaleOrdinal(["#fd8d3c", "#6baed6"]), // colour scheme
     variable, // value in data that will dictate proportions on chart
     category, // compare data by
     padAngle, // effectively dictates the gap between slices
@@ -24,7 +24,8 @@ function donutChart() {
 
       // ===========================================================================================
       // Set up constructors for making donut. See https://github.com/d3/d3-shape/blob/master/README.md
-      var radius = Math.min(width, height) / 2;
+      // var radius = Math.min(width, height) / 2;
+      var radius = 80;
 
       // creates a new pie generator
       var pie = d3.pie()
@@ -36,31 +37,33 @@ function donutChart() {
       // contructs and arc generator. This will be used for the donut. The difference between outer and inner
       // radius will dictate the thickness of the donut
       var arc = d3.arc()
-        .outerRadius(radius * 0.8)
-        .innerRadius(radius * 0.6)
+        .outerRadius(radius * 0.6)
+        .innerRadius(radius * 0.4)
         .cornerRadius(cornerRadius)
         .padAngle(padAngle);
 
       // this arc is used for aligning the text labels
-      var outerArc = d3.arc()
-        .outerRadius(radius * 0.9)
-        .innerRadius(radius * 0.9);
+      // var outerArc = d3.arc()
+      //   .outerRadius(radius * 0.9)
+      //   .innerRadius(radius * 0.9);
       // ===========================================================================================
 
       // ===========================================================================================
       // append the svg object to the selection
       var svg = selection.append('svg')
-        .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
+        // .attr('width', width + margin.left + margin.right)
+        // .attr('height', height + margin.top + margin.bottom)
+        .attr('width', radius * 2)
+        .attr('height', radius * 2)
         .append('g')
-        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+        .attr('transform', 'translate(' + radius + ',' + radius + ')');
       // ===========================================================================================
 
       // ===========================================================================================
       // g elements to keep elements within svg modular
       svg.append('g').attr('class', 'slices');
-      svg.append('g').attr('class', 'labelName');
-      svg.append('g').attr('class', 'lines');
+      // svg.append('g').attr('class', 'labelName');
+      // svg.append('g').attr('class', 'lines');
       // ===========================================================================================
 
       // ===========================================================================================
@@ -144,7 +147,7 @@ function donutChart() {
 
           svg.append('circle')
             .attr('class', 'toolCircle')
-            .attr('r', radius * 0.55) // radius of tooltip circle
+            .attr('r', radius * 0.4) // radius of tooltip circle
             .style('fill', colour(data.data[category])) // colour based on category mouse is over
             .style('fill-opacity', 0.35);
 
