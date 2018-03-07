@@ -25,24 +25,25 @@ drawMap();
 //   .addTo(map);
 //   }
 
-function mapCircle(data) {
+function mapCircle(data, radius) {
   var markers = [];
   for (var i = 0; i < data.length; i++) {
     var lat = data[i].lat;
     var lon = data[i].lon;
-    var radii = data[i].radii;
+    var radii = +data[i][radius];
     // mapCircle(lat, lon, radii);
     var marker = new L.circle([lat, lon], {
       color: 'blue',
       weight: 1,
       // fillColor: "blue",
       // fillOpacity: 1,
-      radius: radii * 10
+      radius: radii * 50
     })
     // .on("click", myclick)
     // .addTo(map);
     markers.push(marker)
   }
+  console.log("markers", markers)
   markerlayer = L.layerGroup(markers);
   map.addLayer(markerlayer);
 }

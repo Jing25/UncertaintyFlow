@@ -1,7 +1,7 @@
 // MIT License
 // Copyright (c) 2017 Michael Hall
 
-function donutChart() {
+function donutChart(data) {
   var width,
     height,
     margin = {
@@ -20,8 +20,20 @@ function donutChart() {
 
   function chart(selection) {
     selection.each(function(data) {
-      // generate chart
 
+      // debugger;
+      colour.domain(d3.keys(data[0]).filter(function(key) {
+        return key !== "Species";
+      }));
+      data.forEach(function(d) {
+        d.ages = colour.domain().map(function(name) {
+          return {
+            name: name,
+            Probability: +d[name]
+          };
+        });
+      });
+      // generate chart
       // ===========================================================================================
       // Set up constructors for making donut. See https://github.com/d3/d3-shape/blob/master/README.md
       // var radius = Math.min(width, height) / 2;
@@ -50,7 +62,18 @@ function donutChart() {
 
       // ===========================================================================================
       // append the svg object to the selection
-      var svg = selection.append('svg')
+      // var svg = selection.append('svg')
+      //   // .attr('width', width + margin.left + margin.right)
+      //   // .attr('height', height + margin.top + margin.bottom)
+      //   .attr('width', radius * 2)
+      //   .attr('height', radius * 2)
+      //   .append('g')
+      //   .attr('transform', 'translate(' + radius + ',' + radius + ')');
+
+      var svg = selection.selectAll(".pie")
+        .data(data)
+        .enter().append("svg")
+        .attr("class", "pie")
         // .attr('width', width + margin.left + margin.right)
         // .attr('height', height + margin.top + margin.bottom)
         .attr('width', radius * 2)
@@ -61,67 +84,77 @@ function donutChart() {
 
       // ===========================================================================================
       // g elements to keep elements within svg modular
-      svg.append('g').attr('class', 'slices');
+      console.log(data)
+      svg.append('g').attr('class', function(d) {
+        // console.log(d);
+        // debugger;
+        return ("slices " + d.Species)
+      });
       // svg.append('g').attr('class', 'labelName');
       // svg.append('g').attr('class', 'lines');
       // ===========================================================================================
 
       // ===========================================================================================
       // add and colour the donut slices
-      var path = svg.select('.slices')
-        .datum(data).selectAll('path')
-        .data(pie)
+      var path = svg.select( ".slices" ).selectAll('path')
+        .data( (d) => pie(d.ages) )
         .enter().append('path')
         .attr('fill', function(d) {
-          return colour(d.data[category]);
+          return colour(d.data.name);
         })
         .attr('d', arc);
       // ===========================================================================================
-
+      svg.append('circle')
+        .attr('class', 'textCircle')
+        .attr('r', radius * 0.35) // radius of tooltip circle
+        .style('fill', "rgb(100, 226, 139)") // colour based on category mouse is over
+        .style('fill-opacity', 0.35);
       // ===========================================================================================
       // add text labels
-      var label = svg.select('.labelName').selectAll('text')
-        .data(pie)
-        .enter().append('text')
-        .attr('dy', '.35em')
-        .html(function(d) {
-          // add "key: value" for given category. Number inside tspan is bolded in stylesheet.
-          return d.data[category] + ': <tspan>' + percentFormat(d.data[variable]) + '</tspan>';
-        })
-        .attr('transform', function(d) {
-
-          // effectively computes the centre of the slice.
-          // see https://github.com/d3/d3-shape/blob/master/README.md#arc_centroid
-          var pos = outerArc.centroid(d);
-
-          // changes the point to be on left or right depending on where label is.
-          pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
-          return 'translate(' + pos + ')';
-        })
-        .style('text-anchor', function(d) {
-          // if slice centre is on the left, anchor text to start, otherwise anchor to end
-          return (midAngle(d)) < Math.PI ? 'start' : 'end';
-        });
+      // var label = svg.select('.labelName').selectAll('text')
+      //   .data(pie)
+      //   .enter().append('text')
+      //   .attr('dy', '.35em')
+      //   .html(function(d) {
+      //     // add "key: value" for given category. Number inside tspan is bolded in stylesheet.
+      //     return d.data[category] + ': <tspan>' + percentFormat(d.data[variable]) + '</tspan>';
+      //   })
+      //   .attr('transform', function(d) {
+      //
+      //     // effectively computes the centre of the slice.
+      //     // see https://github.com/d3/d3-shape/blob/master/README.md#arc_centroid
+      //     var pos = outerArc.centroid(d);
+      //
+      //     // changes the point to be on left or right depending on where label is.
+      //     pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
+      //     return 'translate(' + pos + ')';
+      //   })
+      //   .style('text-anchor', function(d) {
+      //     // if slice centre is on the left, anchor text to start, otherwise anchor to end
+      //     return (midAngle(d)) < Math.PI ? 'start' : 'end';
+      //   });
       // ===========================================================================================
 
       // ===========================================================================================
       // add lines connecting labels to slice. A polyline creates straight lines connecting several points
-      var polyline = svg.select('.lines')
-        .selectAll('polyline')
-        .data(pie)
-        .enter().append('polyline')
-        .attr('points', function(d) {
-
-          // see label transform function for explanations of these three lines.
-          var pos = outerArc.centroid(d);
-          pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
-          return [arc.centroid(d), outerArc.centroid(d), pos]
-        });
+      // var polyline = svg.select('.lines')
+      //   .selectAll('polyline')
+      //   .data(pie)
+      //   .enter().append('polyline')
+      //   .attr('points', function(d) {
+      //
+      //     // see label transform function for explanations of these three lines.
+      //     var pos = outerArc.centroid(d);
+      //     pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
+      //     return [arc.centroid(d), outerArc.centroid(d), pos]
+      //   });
       // ===========================================================================================
 
       // ===========================================================================================
       // add tooltip to mouse events on slices and labels
-      d3.selectAll('.labelName text, .slices path').call(toolTip);
+      // d3.selectAll('.labelName text, .slices path').call(toolTip);
+      d3.select('.slices path').call(toolTip);
+      // d3.select( (d) => { ".slices " + d.Species + " path"}).call(toolTip);
       // ===========================================================================================
 
       // ===========================================================================================
@@ -135,10 +168,11 @@ function donutChart() {
       // function that creates and adds the tool tip to a selected element
       function toolTip(selection) {
 
+        // debugger;
         // add tooltip (svg circle element) when mouse enters label or slice
         selection.on('mouseenter', function(data) {
 
-          svg.append('text')
+          svg.select((d) => { ".slices " + d.Species}).append('text')
             .attr('class', 'toolCircle')
             .attr('dy', -15) // hard-coded. can adjust this to adjust text vertical alignment in tooltip
             .html(toolTipHTML(data)) // add text to the circle.
@@ -147,7 +181,7 @@ function donutChart() {
 
           svg.append('circle')
             .attr('class', 'toolCircle')
-            .attr('r', radius * 0.4) // radius of tooltip circle
+            .attr('r', radius * 0.35) // radius of tooltip circle
             .style('fill', colour(data.data[category])) // colour based on category mouse is over
             .style('fill-opacity', 0.35);
 
