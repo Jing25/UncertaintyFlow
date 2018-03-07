@@ -4,7 +4,7 @@ function DonutCharts() {
 
   var chart_m,
     chart_r,
-    color = d3.scaleOrdinal(d3.schemeCategory20);
+    color = d3.scaleOrdinal(["#fd8d3c", "#6baed6"]);
 
   var getCatNames = function(dataset) {
     var catNames = new Array();
@@ -69,44 +69,53 @@ function DonutCharts() {
 
     // The circle displaying total data.
     donuts.append("svg:circle")
-      .attr("r", chart_r * 0.6)
-      .style("fill", "#E7E7E7")
-      .on('mouseover', function(d, i) {
-        // console.log("i: ", i)
-        d3.select(this)
-          .transition()
-          .attr("r", chart_r * 0.65);
-      })
-      .on('mouseout', function(d, i) {
-        d3.select(this)
-          .transition()
-          .duration(500)
-          .ease(d3.easeBounce)
-          .attr("r", chart_r * 0.6);
-      })
-      .on('click', function(d, i) {
-        // var paths = charts.selectAll('.clicked');
-        // pathAnim(paths, 0);
-        // paths.classed('clicked', false);
-        // resetAllCenterText();
-        console.log(myData)
-        mapCircle(myData, "uncertain01")
-      });
+      .attr("r", chart_r * 0.55)
+      .style("fill", "#E7E7E7");
+    // .on('mouseover', function(d, i) {
+    //   // console.log("i: ", i)
+    //   d3.select(this)
+    //     .transition()
+    //     .attr("r", chart_r * 0.55);
+    // })
+    // .on('mouseout', function(d, i) {
+    //   d3.select(this)
+    //     .transition()
+    //     .duration(500)
+    //     .ease(d3.easeBounce)
+    //     .attr("r", chart_r * 0.5);
+    // })
+  }
 
+  function setCenter(donuts) {
+
+    donuts.on('click', function(d, i) {
+      // var paths = charts.selectAll('.clicked');
+      // pathAnim(paths, 0);
+      // paths.classed('clicked', false);
+      // resetAllCenterText();
+      console.log(d)
+      // mapCircle(myData, "uncertain01")
+    });
+
+    donuts.selectAll('text').remove()
     donuts.append('text')
       .attr('class', 'center-txt type')
-      .attr('y', chart_r * -0.16)
+      .attr('y', chart_r * -0.18)
       .attr('text-anchor', 'middle')
       .style('font-weight', 'bold')
+      .style('font-size', '0.8em')
       .text(function(d, i) {
+        // console.log("here", d)
         return d.type;
       });
     donuts.append('text')
       .attr('class', 'center-txt value')
+      .style('font-size', '0.8em')
       .attr('text-anchor', 'middle');
     donuts.append('text')
       .attr('class', 'center-txt percentage')
-      .attr('y', chart_r * 0.16)
+      .style('font-size', '0.8em')
+      .attr('y', chart_r * 0.18)
       .attr('text-anchor', 'middle')
       .style('fill', '#A2A2A2');
   }
@@ -118,8 +127,8 @@ function DonutCharts() {
 
     thisDonut.select('.value')
       .text(function(d) {
-        return (sum) ? sum.toFixed(1) + d.unit :
-          d.total.toFixed(1) + d.unit;
+        return (sum) ? sum.toFixed(1) :
+          d.total.toFixed(1);
       });
     thisDonut.select('.percentage')
       .text(function(d) {
@@ -131,7 +140,7 @@ function DonutCharts() {
   var resetAllCenterText = function() {
     charts.selectAll('.value')
       .text(function(d) {
-        return d.total.toFixed(1) + d.unit;
+        return d.total.toFixed(1);
       });
     charts.selectAll('.percentage')
       .text('');
@@ -144,17 +153,25 @@ function DonutCharts() {
           .duration(500)
           .ease(d3.easeBounce)
           .attr('d', d3.arc()
-            .innerRadius(chart_r * 0.7)
-            .outerRadius(chart_r)
-          );
+            .innerRadius(chart_r * 0.6)
+            .outerRadius(function() {
+              var d = d3.select(this.parentNode).select('.value').data()[0];
+              return chart_r * (d.total * radiusRatio + 0.6)
+            })
+            .cornerRadius(5)
+            .padAngle(0.015)
+          )
         break;
 
       case 1:
         path.transition()
           .attr('d', d3.arc()
-            .innerRadius(chart_r * 0.7)
+            .innerRadius(chart_r * 0.6)
             .outerRadius(chart_r * 1.08)
-          );
+            .cornerRadius(5)
+            .padAngle(0.015)
+          )
+
         break;
     }
   }
@@ -209,11 +226,17 @@ function DonutCharts() {
       });
 
     var arc = d3.arc()
-      .innerRadius(chart_r * 0.7)
+      .cornerRadius(5)
+      .padAngle(0.015)
+      .innerRadius(chart_r * 0.6)
       .outerRadius(function() {
+        // console.log("here", d)
+        var d = d3.select(this.parentNode).select('.value').data()[0];
+        // debugger;
         return (d3.select(this).classed('clicked')) ? chart_r * 1.08 :
-          chart_r;
-      });
+          chart_r * (d.total * radiusRatio + 0.6);
+      })
+
 
     // Start joining data with paths
     var paths = charts.selectAll('.donut')
@@ -241,7 +264,7 @@ function DonutCharts() {
         // console.log(d3.select(this.parentNode))
         var thisDonut = d3.select(this.parentNode);
         thisDonut.select('.value').text(function(donut_d) {
-          return d.data.val.toFixed(1) + donut_d.unit;
+          return d.data.val.toFixed(1);
         });
         thisDonut.select('.percentage').text(function(donut_d) {
           return (d.data.val / donut_d.total * 100).toFixed(2) + '%';
@@ -278,8 +301,16 @@ function DonutCharts() {
 
   this.create = function(dataset) {
     var $charts = $('#charts');
-    chart_m = $charts.innerWidth() / dataset.length / 2 * 0.14;
-    chart_r = $charts.innerWidth() / dataset.length / 2 * 0.85;
+    // chart_m = $charts.innerWidth() / dataset.length / 2 * 0.14;
+    // chart_r = $charts.innerWidth() / dataset.length / 2 * 0.85;
+    chart_m = 11;
+    chart_r = 69;
+
+    max_r = findMax(dataset, "total");
+    radiusRatio = 0.4 / max_r.total;
+    // debugger;
+    console.log("ratio: ", radiusRatio)
+    // console.log("chart_m", chart_m, "chart_r", chart_r)
 
     // charts.append('svg')
     //   .attr('class', 'legend')
@@ -300,7 +331,7 @@ function DonutCharts() {
 
     // createLegend(getCatNames(dataset));
     createCenter();
-
+    setCenter(donut);
     updateDonut();
   }
 
@@ -309,7 +340,14 @@ function DonutCharts() {
     var donut = charts.selectAll(".donut")
       .data(dataset);
 
+    console.log(dataset)
+    max_r = findMax(dataset, "total");
+    console.log(max_r)
+    radiusRatio = 0.4 / max_r.total;
+
+    setCenter(donut);
     updateDonut();
+
   }
 }
 

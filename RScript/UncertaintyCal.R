@@ -24,9 +24,11 @@ data_200 <- data_200_i[myVariable]
 
 ### get test data
 
-testA <- scale(data_400[8:15])
+testA <- scale(data_400[9:15])
 testData <- testA - min(testA)
 # testData["T_Trip"] <- 0
+testData <- cbind(data_200[c("Id", "Name", "T_Trip", "Capacity", "Transit", "Hospital", "Int_points", "Crash")], testData)
+testData[c("T_Trip", "Capacity", "Transit", "Hospital", "Int_points", "Crash")] <- 0
 
 
 ### station location
@@ -45,3 +47,8 @@ df_loc <- data.frame(station = as.numeric(station), lat = as.numeric(lat), lon =
 
 
 ### merge data with location
+df_data <- merge(testData, df_loc, by.x = "Id", by.y = "station")
+df_data <- cbind(df_data, uncert["uncertain01"])
+colnames(df_data)[18] <- "uncertainty"
+
+write.csv(df_data, file = "../uncert-vast-master/Data/myData_test01.csv", row.names = FALSE, quote = FALSE)

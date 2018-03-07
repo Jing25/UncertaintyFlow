@@ -50,3 +50,7 @@ html, body {
 .node {
  cursor: pointer;
 }
+
+.donut circle {
+  cursor: pointer;
+}

@@ -72,7 +72,7 @@
             <div class="ui icon button" id="eyebutton" data-tooltip="Show buffer" data-inverted="" onclick="viewBuffer()">
               <i class="eye icon"></i>
             </div>
-            <button class="ui button" id="400Buffer">Aggregation</button>
+            <button class="ui button" onclick="bufferUncert()">Aggregation</button>
           </div>
 
           <!-- Classification control panel-->
@@ -154,8 +154,8 @@
             </div>
             <div class="ui right floated icon buttons">
               <button class="ui button"><i class="filter icon"></i></button>
-              <button class="ui button"><i class="sort amount down icon"></i></button>
-              <button class="ui button"><i class="sort amount up icon"></i></button>
+              <button class="ui button" onclick="sortDown()"><i class="sort amount down icon"></i></button>
+              <button class="ui button" onclick="sortUp()"><i class="sort amount up icon"></i></button>
             </div>
 
           </div>
@@ -192,15 +192,15 @@
 
 
   <!-- Load other source codes  -->
+  <script src="src/globalVariables.js"></script>
+  <script src="src/usefulFunc.js"></script>
   <script src="src/geomap.js"></script>
+  <script src="src/interactiveDonut.js"></script>
   <script src="src/flowtree.js"></script>
   <script src="src/sidebar.js"></script>
   <script src="src/semanticUI.js"></script>
   <script src="src/variableUncertainty.js"></script>
   <script src="src/uploadFiles.js"></script>
-  <!-- <script src="src/donutChart.js"></script> -->
-
-  <script src="src/interactiveDonut.js"></script>
   <script src="src/donutUncertainty.js"></script>
 
 </body>

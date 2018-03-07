@@ -18,7 +18,7 @@ const height_sidebar = 500;
 //         .call(donut); // draw chart in div
 // });
 
-var donutData = genData();
-console.log("donut data: ", donutData)
-var donuts = new DonutCharts();
-donuts.create(donutData);
+// var donutData = genData();
+// console.log("donut data: ", donutData)
+// var donuts = new DonutCharts();
+// donuts.create(donutData);

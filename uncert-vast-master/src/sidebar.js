@@ -1,5 +1,3 @@
-var eyebuttonClick = 1;
-var markerlayer;
 // Upload File
 $('#OpenFileUpload').click(function() {
   $('#fileupload').trigger('click');
@@ -22,21 +20,67 @@ function viewBuffer() {
       var lon = data[i].lon;
       // mapCircle(lat, lon, radii);
       var marker = new L.circle([lat, lon], +bufferSize, {
-          color: 'blue',
-          weight: 1
-        })
-        // .addTo(map);
+        color: 'blue',
+        weight: 1
+      })
+      // .addTo(map);
       markers.push(marker)
     }
     markerlayer = L.layerGroup(markers);
     map.addLayer(markerlayer);
     eyebuttonClick = 0;
-  }
-  else {
+  } else {
     $(eyebutton).html("<i class=\"eye icon\"></i>");
     map.removeLayer(markerlayer);
     eyebuttonClick = 1;
   }
+}
+
+function bufferUncert() {
+  var data = myData;
+
+  variables.forEach(function(key) {
+    data.map((d) => {
+      d[key] = +d[key] + +d.uncertainty
+    })
+  })
+
+  var donutData = [];
+  variables.forEach(function(key) {
+    var maxV = findMax(myData, key)
+    // debugger;
+    donutData.push({
+      data: [{
+          cat: "randomness",
+          val: +maxV[key] - +maxV.uncertainty
+        },
+        {
+          cat: "fuzzyness",
+          val: +maxV.uncertainty
+        }
+      ],
+      type: key,
+      detailed: key,
+      total: +maxV[key]
+    })
+  })
+  donutData_G = donutData;
+  donuts.update(donutData);
+  // console.log(donutData)
+}
+
+function sortDown() {
+  var donutData = donutData_G;
+  donutData.sort((a, b) => b.total - a.total);
+  // console.log(donutData)
+  donuts.update(donutData);
+}
+
+function sortUp() {
+  var donutData = donutData_G;
+  donutData.sort((a, b) => a.total - b.total);
+  // console.log(donutData)
+  donuts.update(donutData);
 }
 
 // function bufferTreeAdd() {
