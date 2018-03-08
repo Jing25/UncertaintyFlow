@@ -48,32 +48,48 @@ const svg = d3.select("#panel-vis-main").append("svg")
 var treeData =
   {
     "name": "Top Level",
+    "r": 20,
     "children": [
       {
         "name": "Level 2: A",
+        "r": 10,
         "children": [
-          { "name": "Son of A" },
-          { "name": "Daughter of A" }
+          {
+              "name": "Son of A",
+              "r": 15,
+              "children": []
+          },
+          {
+              "name": "Daughter of A",
+              "r": 10,
+              "children": []
+          }
         ]
       },
-      { "name": "Level 2: B" }
+      {
+          "name": "Level 2: B",
+          "r": 20,
+          "children": []
+      }
     ]
   };
 
-  var i = 0,
-      duration = 750,
-      root;
+var selectedTreeNode = null;
+
+var i = 0,
+  duration = 750,
+  root;
 
 // function flowTree(data, radiusTree) {
-  root = d3.hierarchy(treeData, function(d) { return d.children; });
-  var treemap = d3.tree().size([HEIGHT, WIDTH]);
-  root.x0 = HEIGHT / 2;
-  root.y0 = 0;
-  // console.log(root.descendants())
+root = d3.hierarchy(treeData, function(d) { return d.children; });
+var treemap = d3.tree().size([HEIGHT, WIDTH]);
+root.x0 = HEIGHT / 2;
+root.y0 = 0;
+// console.log(root.descendants())
 
-  updateTree(root);
+updateTree(root);
 
-  function updateTree(source) {
+function updateTree(source) {
 
     // Assigns the x and y position for the nodes
     var treeData = treemap(root);
@@ -130,7 +146,9 @@ var treeData =
 
     // Update the node attributes and style
     nodeUpdate.select('circle.node')
-      .attr('r', 10 )
+      .attr('id', function(d) { return d.data.id; })
+      .attr('treepath', function(d) {return d.data.treepath; })
+      .attr('r', function(d) { return d.data.r; })
       .style("fill", function(d) {
           return d._children ? "lightsteelblue" : "#fff";
       })
@@ -206,7 +224,7 @@ var treeData =
       if (!d3.select(this).classed('clicked')) {
         d3.select(this.children[0]).style("fill", "rgb(100, 182, 235)");
         $(this).addClass("clicked")
-        treeNode = d;
+        selectedTreeNode = d;
         // nodeClick = 0;
       } else {
         d3.select(this.children[0]).style("fill", function() {
@@ -214,10 +232,10 @@ var treeData =
         });
         $(this).removeClass("clicked")
         // debugger;
-        treeNode = null;
+        selectedTreeNode = null;
         // nodeClick = 1;
       }
-  }
+    }
 }
 
     /////////////////////////////////

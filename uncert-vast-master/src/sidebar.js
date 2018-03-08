@@ -40,6 +40,35 @@ function viewBuffer() {
 }
 
 function bufferUncert() {
+  ///
+  /// here is for testing code to add node in tree
+  ///
+  console.log(selectedTreeNode);
+  var newNodeData = {
+      "name": "New Node",
+      "r": 13,
+      "children": []
+  };
+  // create newNode with d3.hierarchy
+  var newNode = d3.hierarchy(newNodeData);
+  newNode.depth = selectedTreeNode.depth + 1;
+  newNode.height = selectedTreeNode.height - 1;
+  newNode.parent = selectedTreeNode;
+
+  // push new node in selected tree node's children
+  // if no child array, create an empty array
+  if(!selectedTreeNode.children){
+    selectedTreeNode.children = [];
+    selectedTreeNode.data.children = [];
+  }
+  selectedTreeNode.children.push(newNode);
+  selectedTreeNode.data.children.push(newNode.data);
+
+  // Update tree
+  updateTree(selectedTreeNode);
+
+  ///// test code end ///////////
+  
   if (myData && donutData_G) {
 
     var data = JSON.parse(JSON.stringify(myData));
