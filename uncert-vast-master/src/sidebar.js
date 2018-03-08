@@ -43,7 +43,6 @@ function bufferUncert() {
   ///
   /// here is for testing code to add node in tree
   ///
-  console.log(selectedTreeNode);
   var newNodeData = {
       "name": "New Node",
       "r": 13,
@@ -68,7 +67,7 @@ function bufferUncert() {
   updateTree(selectedTreeNode);
 
   ///// test code end ///////////
-  
+
   if (myData && donutData_G) {
 
     var data = JSON.parse(JSON.stringify(myData));
