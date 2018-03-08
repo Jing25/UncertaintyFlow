@@ -9,9 +9,12 @@ $('#classifyButton').click(function() {
 });
 
 function viewBuffer() {
-  if (eyebuttonClick) {
+  var bufferSize = $("#buffer").dropdown('get value');
+  // console.log("bufferSize", bufferSize)
+
+  if (eyebuttonClick && bufferSize == 400 && myData) {
     $(eyebutton).html("<i class=\"eye slash icon\"></i>")
-    var bufferSize = $("#buffer").dropdown('get value');
+
     var data = myData;
     var markers = [];
     for (var i = 0; i < data.length; i++) {
@@ -29,7 +32,7 @@ function viewBuffer() {
     markerlayer = L.layerGroup(markers);
     map.addLayer(markerlayer);
     eyebuttonClick = 0;
-  } else {
+  } else if (bufferSize == 400 && myData) {
     $(eyebutton).html("<i class=\"eye icon\"></i>");
     map.removeLayer(markerlayer);
     eyebuttonClick = 1;
@@ -37,50 +40,74 @@ function viewBuffer() {
 }
 
 function bufferUncert() {
-  var data = myData;
+  if (myData && donutData_G) {
 
-  variables.forEach(function(key) {
-    data.map((d) => {
-      d[key] = +d[key] + +d.uncertainty
-    })
-  })
+    var data = JSON.parse(JSON.stringify(myData));
 
-  var donutData = [];
-  variables.forEach(function(key) {
-    var maxV = findMax(myData, key)
-    // debugger;
-    donutData.push({
-      data: [{
-          cat: "randomness",
-          val: +maxV[key] - +maxV.uncertainty
-        },
-        {
-          cat: "fuzzyness",
-          val: +maxV.uncertainty
-        }
-      ],
-      type: key,
-      detailed: key,
-      total: +maxV[key]
+    //Update donut charts
+    variables.forEach(function(key) {
+      data.map((d) => {
+        d[key] = +d[key] + +d.uncertainty
+      })
     })
-  })
-  donutData_G = donutData;
-  donuts.update(donutData);
+
+    var donutData = [];
+    variables.forEach(function(key) {
+      var maxV = findMax(data, key)
+      // debugger;
+      donutData.push({
+        data: [{
+            cat: "randomness",
+            val: +maxV[key] - +maxV.uncertainty
+          },
+          {
+            cat: "fuzzyness",
+            val: +maxV.uncertainty
+          }
+        ],
+        type: key,
+        detailed: key,
+        total: +maxV[key]
+      })
+    })
+    donutData_G = donutData;
+    donuts.update(donutData);
+
+
+    //Update flowTree
+    var newNode = [{"name": "400m Buffer"}]
+    var nodes = searchTreeAddNode(treeData, treeNode.data.name, newNode);
+    // var root = searchTree(treeData, treeNode);
+    // radiusTree.push(20)
+    var root = d3.hierarchy(nodes, function(d) { return d.children; });
+    root.x0 = treeNode.x0;
+    root.y0 = treeNode.y0;
+    debugger;
+    console.log("root", root)
+    // flowTree(objTree, radiusTree)
+    updateTree(root)
+  }
+
   // console.log(donutData)
 }
 
 function sortDown() {
-  var donutData = donutData_G;
-  donutData.sort((a, b) => b.total - a.total);
-  // console.log(donutData)
-  donuts.update(donutData);
+  if (donutData_G) {
+    var donutData = donutData_G;
+    donutData.sort((a, b) => b.total - a.total);
+    // console.log(donutData)
+    donuts.update(donutData);
+  }
 }
 
 function sortUp() {
-  var donutData = donutData_G;
-  donutData.sort((a, b) => a.total - b.total);
-  // console.log(donutData)
-  donuts.update(donutData);
+  if (donutData_G) {
+    var donutData = donutData_G;
+    donutData.sort((a, b) => a.total - b.total);
+    // console.log(donutData)
+    donuts.update(donutData);
+  }
+
 }
 
 // function bufferTreeAdd() {

@@ -1,12 +1,14 @@
 // initial data
 var donuts = new DonutCharts();
 
+//Initialization
 function uploadFiles() {
   var x = document.getElementById("fileupload");
   filename = "Data/" + x.files[0].name;
   $("#openFile").hide()
   d3.csv(filename, function(data) {
     myData = data;
+    historyData.push(myData);
     console.log(myData)
 
     // var maxV = findMax(myData, variables[10])
@@ -38,7 +40,7 @@ function uploadFiles() {
       var lon = data[i].lon;
       // mapCircle(lat, lon, radii);
       mapPoint(lat, lon)
-      flowTree(DATA, radiusTree)
+      // flowTree(objTree, radiusTree)
     }
     // variableUncertainty()
 
