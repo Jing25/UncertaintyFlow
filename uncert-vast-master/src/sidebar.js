@@ -44,7 +44,7 @@ function bufferUncert() {
   /// here is for testing code to add node in tree
   ///
   var newNodeData = {
-      "name": "New Node",
+      "name": "400m Buffer",
       "r": 13,
       "children": []
   };

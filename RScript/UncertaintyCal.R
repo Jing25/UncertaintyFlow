@@ -52,3 +52,9 @@ df_data <- cbind(df_data, uncert["uncertain01"])
 colnames(df_data)[18] <- "uncertainty"
 
 write.csv(df_data, file = "../uncert-vast-master/Data/myData_test01.csv", row.names = FALSE, quote = FALSE)
+
+df_diff <- merge(data_400, data_200, by="Name")
+
+S <- df_diff[,grepl("*\\.x$",names(df_diff))] - df_diff[,grepl("*\\.y$",names(df_diff))]
+
+r <- cbind(df_diff[,1,drop=FALSE],S)

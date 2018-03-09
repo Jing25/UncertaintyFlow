@@ -42,37 +42,43 @@ const svg = d3.select("#panel-vis-main").append("svg")
   .attr("width", WIDTH)
   .attr("height", HEIGHT)
   .append('g')
-  .attr('transform', 'translate(40,0)');
+  .attr('transform', 'translate(60,0)');
 
 // flowTree(DATA, radiusTree)
-var treeData =
-  {
-    "name": "Top Level",
-    "r": 20,
-    "children": [
-      {
-        "name": "Level 2: A",
-        "r": 10,
-        "children": [
-          {
-              "name": "Son of A",
-              "r": 15,
-              "children": []
-          },
-          {
-              "name": "Daughter of A",
-              "r": 10,
-              "children": []
-          }
-        ]
-      },
-      {
-          "name": "Level 2: B",
-          "r": 20,
-          "children": []
-      }
-    ]
-  };
+// var treeData =
+//   {
+//     "name": "Top Level",
+//     "r": 20,
+//     "children": [
+//       {
+//         "name": "Level 2: A",
+//         "r": 10,
+//         "children": [
+//           {
+//               "name": "Son of A",
+//               "r": 15,
+//               "children": []
+//           },
+//           {
+//               "name": "Daughter of A",
+//               "r": 10,
+//               "children": []
+//           }
+//         ]
+//       },
+//       {
+//           "name": "Level 2: B",
+//           "r": 20,
+//           "children": []
+//       }
+//     ]
+//   };
+
+var treeData = {
+  "name": "Initial",
+  "r": 5,
+  "children":[]
+}
 
 var selectedTreeNode = null;
 
