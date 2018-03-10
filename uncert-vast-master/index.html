@@ -79,43 +79,26 @@
           <div class="title">
             <button class="fluid blue ui button"><i class="dropdown icon"></i>Classification</button>
           </div>
+
           <div class="content">
             <p>Classify stations based on the parameters.</p>
-            <!-- set class number & name -->
-            <h5 class="ui horizontal divider header">Number and Name</h5>
-            <div class="ui middle aligned equal width grid">
-              <!-- class number setting -->
-              <div class="four wide column">
-                <div class="ui dropdown" id="classNum">
-                  <div class="text">Class Number</div>
-                  <i class="dropdown icon"></i>
-                  <div class="menu">
-                    <div class="item" data-value="2">2</div>
-                    <div class="item" data-value="3">3</div>
-                    <div class="item" data-value="4">4</div>
-                  </div>
-                </div>
-              </div>
-              <!-- class name setting -->
-              <div class="column">
-                <div class="ui labeled input">
-                  <div class="ui label">Class Name</div>
-                  <input placeholder="class A, class B, ..." id="className" type="text" data-content="Input class names, seperate by comma" data-variation="inverted">
-                </div>
-              </div>
-            </div>
+            <h5 class="ui horizontal divider header">Conditions</h5>
+            <div id="classification-controls"></div>
+            <h5 class="ui horizontal divider header"></h5>
 
-            <!-- classify condition setting -->
-            <h5 class="ui horizontal divider header">Condition</h5>
-            <div class="ui selection dropdown" id="var">
-              <div class="text">Class Number</div>
+
+
+
+            <h5 class="ui horizontal divider header">Classes</h5>
+            <!-- <div class="ui selection dropdown" id="var"> -->
+            <!-- <div class="text">Class Number</div>
               <i class="dropdown icon"></i>
               <div class="menu">
                 <div class="item" data-value="2">2</div>
                 <div class="item" data-value="3">3</div>
                 <div class="item" data-value="4">4</div>
               </div>
-            </div>
+            </div> -->
             <!-- <div id="range"></div> -->
 
           </div>
@@ -126,8 +109,20 @@
           </div>
           <div class="content">
             <p>Brush and filter the stations by uncertainty or classes</p>
-            <p>A pet shop may be the most convenient way to buy a dog. Buying a dog from a private owner allows you to assess the pedigree and upbringing of your dog before choosing to take it home. Lastly, finding your dog from a shelter, helps give a good
-              home to a dog who may not find one so readily.</p>
+            <p>Uncertainty Range: </p>
+            <div class="ui middle alligned grid">
+              <div class="eight wide column">
+                <div class="slider" id="slider"></div>
+              </div>
+              <div class="eight wide column">
+                <!-- <div id="slider-step-value"></div> -->
+                <div class="ui input">
+                  <input placeholder="value" type="text" id="slider-step-value">
+                </div>
+              </div>
+            </div>
+
+
           </div>
 
           <!-- Model -->
@@ -181,7 +176,6 @@
 
   <!-- Load JavasSript libs: Jquery, Bootstrap, D3, Vue, Leaflet  -->
   <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/11.0.3/nouislider.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -194,14 +188,13 @@
   <!-- Load other source codes  -->
   <script src="src/globalVariables.js"></script>
   <script src="src/usefulFunc.js"></script>
-  <script src="src/geomap.js"></script>
   <script src="src/interactiveDonut.js"></script>
+  <script src="src/uploadFiles.js"></script>
+  <script src="src/geomap.js"></script>
   <script src="src/flowtree.js"></script>
   <script src="src/sidebar.js"></script>
   <script src="src/semanticUI.js"></script>
-  <!-- <script src="src/variableUncertainty.js"></script> -->
-  <script src="src/uploadFiles.js"></script>
-  <script src="src/donutUncertainty.js"></script>
+  <!-- <script src="src/donutUncertainty.js"></script> -->
 
 </body>
 

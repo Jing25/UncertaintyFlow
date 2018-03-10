@@ -44,9 +44,10 @@ function bufferUncert() {
   /// here is for testing code to add node in tree
   ///
   var newNodeData = {
-      "name": "400m Buffer",
-      "r": 13,
-      "children": []
+    "name": "400m Buffer",
+    "r": 13,
+    "clicked": 0,
+    "children": []
   };
   // create newNode with d3.hierarchy
   var newNode = d3.hierarchy(newNodeData);
@@ -56,7 +57,7 @@ function bufferUncert() {
 
   // push new node in selected tree node's children
   // if no child array, create an empty array
-  if(!selectedTreeNode.children){
+  if (!selectedTreeNode.children) {
     selectedTreeNode.children = [];
     selectedTreeNode.data.children = [];
   }
@@ -68,53 +69,46 @@ function bufferUncert() {
 
   ///// test code end ///////////
 
-  if (myData && donutData_G) {
+  ///// Update donut chart
+  // if (myData && donutData_G) {
 
-    var data = JSON.parse(JSON.stringify(myData));
+  var data = JSON.parse(JSON.stringify(myData));
 
-    //Update donut charts
-    variables.forEach(function(key) {
-      data.map((d) => {
-        d[key] = +d[key] + +d.uncertainty
-      })
+  //Update donut charts
+  variables_uncert.forEach(function(key) {
+    data.map((d) => {
+      d[key] = +d[key] + +d.uncertainty
     })
+  })
 
-    var donutData = [];
-    variables.forEach(function(key) {
-      var maxV = findMax(data, key)
-      // debugger;
-      donutData.push({
-        data: [{
-            cat: "randomness",
-            val: +maxV[key] - +maxV.uncertainty
-          },
-          {
-            cat: "fuzzyness",
-            val: +maxV.uncertainty
-          }
-        ],
-        type: key,
-        detailed: key,
-        total: +maxV[key]
-      })
+  var donutData = [];
+  variables_uncert.forEach(function(key) {
+    var maxV = findMax(data, key)
+    var name = key.split("_")[0]
+    // debugger;
+    donutData.push({
+      data: [{
+          cat: "randomness",
+          val: +maxV[key] - +maxV.uncertainty
+        },
+        {
+          cat: "fuzzyness",
+          val: +maxV.uncertainty
+        }
+      ],
+      type: name,
+      detailed: name,
+      total: +maxV[key]
     })
-    donutData_G = donutData;
-    donuts.update(donutData);
+  })
+  // donutData_G = donutData;
+  historyDonutData.push(donutData);
+  donuts.update(donutData);
+  donutData_G = donutData;
 
-
-    //Update flowTree
-    var newNode = [{"name": "400m Buffer"}]
-    var nodes = searchTreeAddNode(treeData, treeNode.data.name, newNode);
-    // var root = searchTree(treeData, treeNode);
-    // radiusTree.push(20)
-    var root = d3.hierarchy(nodes, function(d) { return d.children; });
-    root.x0 = treeNode.x0;
-    root.y0 = treeNode.y0;
-    debugger;
-    console.log("root", root)
-    // flowTree(objTree, radiusTree)
-    updateTree(root)
-  }
+  historyData.push(data);
+  console.log("historyData: ", historyData)
+  // }
 
   // console.log(donutData)
 }
@@ -137,6 +131,81 @@ function sortUp() {
   }
 
 }
+
+
+
+
+
+var html = `
+<div class="ui middle alligned grid">
+  <div class="ten wide column">
+    <div class="ui selection dropdown classification">
+      <div class="text">Variables</div>
+      <i class="dropdown icon"></i>
+      <div class="menu">
+        <div class="item" data-value="2">2</div>
+        <div class="item" data-value="3">3</div>
+        <div class="item" data-value="4">4</div>
+      </div>
+    </div>
+  </div>
+  <div class="seven wide column">
+    <div class="slider" id="slider"></div>
+  </div>
+  <div class="nine wide column">
+    <div class="ui form">
+      <div class="inline fields">
+        <!-- <label>Left</label> -->
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input name="classes" checked="checked" type="radio">
+            <label>Left</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input name="classes" type="radio">
+            <label>Middel</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input name="classes" type="radio">
+            <label>Right</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`
+// $('#classification-controls').append(html);
+
+
+var handlesSlider = document.getElementById('slider');
+
+
+
+// noUiSlider.create(handlesSlider, {
+// 	start: [ 10 ],
+//   connect: [true, false],
+// 	// step: 1000,
+// 	range: {
+// 		'min': ,
+// 		'max': [ 10000 ]
+// 	}
+// });
+
+
+
+// var stepSliderValueElement = document.getElementById('slider-step-value');
+//
+// handlesSlider.noUiSlider.on('update', function( values, handle ) {
+// 	$("#slider-step-value").val("Value: " + values[handle]);
+//   // stepSliderValueElement.innerHTML = values[handle]
+// });
+
+
 
 // function bufferTreeAdd() {
 //   $("#400Buffer").onclick({

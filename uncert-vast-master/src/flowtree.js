@@ -77,6 +77,7 @@ const svg = d3.select("#panel-vis-main").append("svg")
 var treeData = {
   "name": "Initial",
   "r": 5,
+  "clicked": 0,
   "children":[]
 }
 
@@ -92,8 +93,6 @@ var treemap = d3.tree().size([HEIGHT, WIDTH]);
 root.x0 = HEIGHT / 2;
 root.y0 = 0;
 // console.log(root.descendants())
-
-updateTree(root);
 
 function updateTree(source) {
 
@@ -126,7 +125,7 @@ function updateTree(source) {
         .attr('class', 'node')
         .attr('r', 1e-6)
         .style("fill", function(d) {
-            return d._children ? "lightsteelblue" : "#fff";
+            return d.data.clicked ? "lightsteelblue" : "#fff";
         });
 
     // Add labels for the nodes
@@ -156,7 +155,7 @@ function updateTree(source) {
       .attr('treepath', function(d) {return d.data.treepath; })
       .attr('r', function(d) { return d.data.r; })
       .style("fill", function(d) {
-          return d._children ? "lightsteelblue" : "#fff";
+          return d.data.clicked ? "lightsteelblue" : "#fff";
       })
       .attr('cursor', 'pointer');
 
@@ -226,17 +225,24 @@ function updateTree(source) {
     }
 
     // Toggle children on click.
-    function click(d) {
-      if (!d3.select(this).classed('clicked')) {
-        d3.select(this.children[0]).style("fill", "rgb(100, 182, 235)");
-        $(this).addClass("clicked")
+    function click(d, i) {
+      // if (!d3.select(this).classed('clicked')) {
+      if (!d.data.clicked) {
+        d3.select(this.children[0]).style("fill", "lightsteelblue");
+        // debugger;
+        // $(this).addClass("clicked")
+        d.data.clicked = 1;
         selectedTreeNode = d;
-        // nodeClick = 0;
+        myData = JSON.parse(JSON.stringify(historyData[i]));
+        var donutData = JSON.parse(JSON.stringify(historyDonutData[i]));
+        donuts.update(donutData)
+        // console.log("myData: ", myData);
       } else {
+        d.data.clicked = 0;
         d3.select(this.children[0]).style("fill", function() {
-          d3.select(this).classed('.node--leaf') ? "#555" : "#999"
+          d.children ? "#fff" : "#999"
         });
-        $(this).removeClass("clicked")
+        // $(this).removeClass("clicked")
         // debugger;
         selectedTreeNode = null;
         // nodeClick = 1;

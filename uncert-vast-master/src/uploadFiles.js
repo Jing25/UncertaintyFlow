@@ -9,13 +9,12 @@ function uploadFiles() {
   d3.csv(filename, function(data) {
     myData = data;
     historyData.push(myData);
-    console.log(myData)
 
-    // var maxV = findMax(myData, variables[10])
-    // console.log(maxV[variables[10]])
+    // DonutCharts
     var donutData = [];
-    variables.forEach(function(key) {
+    variables_uncert.forEach(function(key) {
       var maxV = findMax(myData, key)
+      var name = key.split("_")[0]
       donutData.push({
         data: [{
             cat: "randomness",
@@ -26,14 +25,19 @@ function uploadFiles() {
             val: 0
           }
         ],
-        type: key,
-        detailed: key,
+        type: name,
+        detailed: name,
         total: +maxV[key]
       })
     })
     donutData_G = donutData;
+    historyDonutData.push(donutData);
     donuts.create(donutData);
 
+    //flowTree
+    updateTree(root);
+
+    // Map
     for (var i = 0; i < data.length; i++) {
       var radii = +(data[i].pop_uncer) + +(data[i].uncertain01);
       var lat = data[i].lat;
@@ -42,7 +46,23 @@ function uploadFiles() {
       mapPoint(lat, lon)
       // flowTree(objTree, radiusTree)
     }
-    // variableUncertainty()
 
+    // classification dropdown
+    $('.ui.dropdown')
+      .dropdown({
+        values: [{
+            name: 'Male',
+            value: 'male'
+          },
+          {
+            name: 'Female',
+            value: 'female',
+            selected: true
+          }
+        ]
+      });
+
+
+    // end load file
   })
 }

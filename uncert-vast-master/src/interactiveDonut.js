@@ -70,7 +70,10 @@ function DonutCharts() {
     // The circle displaying total data.
     donuts.append("svg:circle")
       .attr("r", chart_r * 0.55)
-      .style("fill", "#E7E7E7");
+      .style("fill", "#E7E7E7")
+      .on('click', function(d, i) {
+        console.log("d: ", d, "i", i)
+      })
     // .on('mouseover', function(d, i) {
     //   // console.log("i: ", i)
     //   d3.select(this)

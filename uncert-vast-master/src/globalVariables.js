@@ -1,10 +1,12 @@
 var myData;
 var donutData_G;
 var historyData = [];
+var historyDonutData = [];
 
-var variables = ["T_Trip", "Capacity", "Transit", "Hospital", "Int_points", "Crash",
-  "Pop", "Pec_Whi", "Med_age", "Pec_01_V", "Income", "T_work", "BN_des"
+var variables = ["TTrip", "Capacity", "Transit", "Hospital", "IntPoints", "Crash", "BNDes",
+  "Pop", "PecWhi", "MedAge", "PecV", "Income", "TWork"
 ]
+var variables_uncert = variables.map( (d)=> d + "_uncert" );
 
 var eyebuttonClick = 1;
 var markerlayer;
