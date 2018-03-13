@@ -27,10 +27,12 @@ drawMap();
 
 function mapCircle(data, radius) {
   var markers = [];
+  var radius = radius + "_uncert"
   for (var i = 0; i < data.length; i++) {
     var lat = data[i].lat;
     var lon = data[i].lon;
     var radii = +data[i][radius];
+    // console.log("radius", radii)
     // mapCircle(lat, lon, radii);
     var marker = new L.circle([lat, lon], {
       color: 'blue',
@@ -43,7 +45,7 @@ function mapCircle(data, radius) {
     // .addTo(map);
     markers.push(marker)
   }
-  console.log("markers", markers)
+  // console.log("markers", markers)
   markerlayer = L.layerGroup(markers);
   map.addLayer(markerlayer);
 }

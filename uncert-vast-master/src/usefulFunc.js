@@ -1,14 +1,14 @@
 // find the max object in an array
 function findMax(data, key) {
   return data.reduce(function(a, b) {
-    return (a[key] > b[key]) ? a : b;
+    return (+a[key] > +b[key]) ? a : b;
   })
 }
 
 // find the min object in an array
 function findMin(data, key) {
   return data.reduce(function(a, b) {
-    return (a[key] > b[key]) ? b : a;
+    return (+a[key] > +b[key]) ? b : a;
   })
 }
 
@@ -16,6 +16,10 @@ function findMin(data, key) {
 function getNode(data) {
   return data;
 }
+
+// function filterOut(data, type) {
+//   return
+// }
 
 
 //Search tree

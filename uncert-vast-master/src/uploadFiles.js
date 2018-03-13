@@ -7,7 +7,9 @@ function uploadFiles() {
   filename = "Data/" + x.files[0].name;
   $("#openFile").hide()
   d3.csv(filename, function(data) {
+    //get data
     myData = data;
+    myMapData = myData;
     historyData.push(myData);
 
     // DonutCharts
@@ -47,22 +49,40 @@ function uploadFiles() {
       // flowTree(objTree, radiusTree)
     }
 
-    // classification dropdown
-    $('.ui.dropdown')
+    //dropdown variables
+    var dropdown_names = [];
+    variables.forEach(function(v) {
+      dropdown_names.push({
+        name: v
+      })
+    })
+    $('#dropdown-var')
       .dropdown({
-        values: [{
-            name: 'Male',
-            value: 'male'
-          },
-          {
-            name: 'Female',
-            value: 'female',
-            selected: true
+        placeholder: 'NONE',
+        values: dropdown_names,
+        onChange: function(value, text, $selectedItem) {
+          if (text !== undefined) {
+            setVarSlider(myMapData, text)
           }
-        ]
-      });
 
+        }
+      });
 
     // end load file
   })
 }
+
+// classification dropdown
+// $('.ui.dropdown')
+//   .dropdown({
+//     values: [{
+//         name: 'Male',
+//         value: 'male'
+//       },
+//       {
+//         name: 'Female',
+//         value: 'female',
+//         selected: true
+//       }
+//     ]
+//   });

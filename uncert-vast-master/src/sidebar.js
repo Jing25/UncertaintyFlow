@@ -39,13 +39,64 @@ function viewBuffer() {
   }
 }
 
+function classifyButton() {
+
+  //////////// Adding node to the tree
+  var newNodeData = {
+    "name": "classification",
+    "r": 13,
+    "clicked": 0,
+    "children": []
+  };
+  // create newNode with d3.hierarchy
+  var newNode = d3.hierarchy(newNodeData);
+  newNode.depth = selectedTreeNode.depth + 1;
+  newNode.height = selectedTreeNode.height - 1;
+  newNode.parent = selectedTreeNode;
+
+  // push new node in selected tree node's children
+  // if no child array, create an empty array
+  if (!selectedTreeNode.children) {
+    selectedTreeNode.children = [];
+    selectedTreeNode.data.children = [];
+  }
+  selectedTreeNode.children.push(newNode);
+  selectedTreeNode.data.children.push(newNode.data);
+
+  // Update tree
+  updateTree(selectedTreeNode);
+
+  // console.log("here")
+  //dropdown classes
+  $('#dropdown-class')
+    .dropdown({
+      placeholder: 'CLASSES',
+      values: [{
+          name: "Adequately Served",
+          value: "Adequately served"
+        },
+        {
+          name: "Moderately Served",
+          value: "Moderately served"
+        },
+        {
+          name: "Under Served",
+          value: "Underserved"
+        }
+      ],
+      onChange: function(value, text, $selectedItem) {
+        // console.log("dropdown-class", value)
+      }
+    });
+}
+
 function bufferUncert() {
   ///
   /// here is for testing code to add node in tree
   ///
   var newNodeData = {
     "name": "400m Buffer",
-    "r": 13,
+    "r": 10,
     "clicked": 0,
     "children": []
   };
@@ -107,7 +158,9 @@ function bufferUncert() {
   donutData_G = donutData;
 
   historyData.push(data);
+  myMapData = data;
   console.log("historyData: ", historyData)
+  console.log("myMapData: ", myMapData)
   // }
 
   // console.log(donutData)
@@ -129,118 +182,93 @@ function sortUp() {
     // console.log(donutData)
     donuts.update(donutData);
   }
-
 }
 
+///
+////////////////////////// set uncertainty slider value
+///
+var uncertSlider = document.getElementById('slider-uncert');
+var uncertSliderValueElement = document.getElementById('slider-uncert-value');
 
+function setUncertSlider(data, varType) {
 
+  varType = varType + "_uncert"
+  var min = findMin(data, varType)[varType];
+  var max = findMax(data, varType)[varType];
+  // console.log("min", min, "max", max);
+  if (max == min) {
+    max = max + 1;
+  }
+  uncertSlider.noUiSlider.updateOptions({
+    start: [min],
+    range: {
+      'min': Math.floor(min),
+      'max': Math.ceil(max)
+    }
+  });
+}
 
+// uncertainty slider
+noUiSlider.create(uncertSlider, {
+  start: [1000],
+  connect: [false, true],
+  // step: 1000,
+  range: {
+    'min': [0],
+    'max': [10000]
+  }
+});
 
-var html = `
-<div class="ui middle alligned grid">
-  <div class="ten wide column">
-    <div class="ui selection dropdown classification">
-      <div class="text">Variables</div>
-      <i class="dropdown icon"></i>
-      <div class="menu">
-        <div class="item" data-value="2">2</div>
-        <div class="item" data-value="3">3</div>
-        <div class="item" data-value="4">4</div>
-      </div>
-    </div>
-  </div>
-  <div class="seven wide column">
-    <div class="slider" id="slider"></div>
-  </div>
-  <div class="nine wide column">
-    <div class="ui form">
-      <div class="inline fields">
-        <!-- <label>Left</label> -->
-        <div class="field">
-          <div class="ui radio checkbox">
-            <input name="classes" checked="checked" type="radio">
-            <label>Left</label>
-          </div>
-        </div>
-        <div class="field">
-          <div class="ui radio checkbox">
-            <input name="classes" type="radio">
-            <label>Middel</label>
-          </div>
-        </div>
-        <div class="field">
-          <div class="ui radio checkbox">
-            <input name="classes" type="radio">
-            <label>Right</label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`
-// $('#classification-controls').append(html);
+uncertSlider.noUiSlider.on('update', function(values, handle) {
+  $("#slider-uncert-value").val(values[handle]);
+  // stepSliderValueElement.innerHTML = values[handle]
+});
+uncertSliderValueElement.addEventListener('change', function() {
+  uncertSlider.noUiSlider.set(this.value);
+});
 
+///
+//////////////////// set variable slider value
+///
 
-var handlesSlider = document.getElementById('slider');
+var varSlider = document.getElementById('slider-var');
+var varSliderValueElement = [
+  document.getElementById('slider-var-left'),
+  document.getElementById('slider-var-right')
+];
 
+function setVarSlider(data, varType) {
 
+  // console.log("varType", varType)
+  var min = findMin(data, varType)[varType];
+  var max = findMax(data, varType)[varType];
+  console.log("min", min, "max", max);
+  if (max == min) {
+    max = max + 1;
+  }
+  varSlider.noUiSlider.updateOptions({
+    start: [min],
+    range: {
+      'min': Math.floor(min),
+      'max': Math.ceil(max)
+    }
+  });
+}
 
-// noUiSlider.create(handlesSlider, {
-// 	start: [ 10 ],
-//   connect: [true, false],
-// 	// step: 1000,
-// 	range: {
-// 		'min': ,
-// 		'max': [ 10000 ]
-// 	}
-// });
-
-
-
-// var stepSliderValueElement = document.getElementById('slider-step-value');
-//
-// handlesSlider.noUiSlider.on('update', function( values, handle ) {
-// 	$("#slider-step-value").val("Value: " + values[handle]);
-//   // stepSliderValueElement.innerHTML = values[handle]
-// });
-
-
-
-// function bufferTreeAdd() {
-//   $("#400Buffer").onclick({
-//     if (obj) {
-//
-//     }
-//   })
-// }
-
-//Classification slider
-// var range = document.getElementById('range');
-//
-// range.style.height = '400px';
-// range.style.margin = '0 auto 30px';
-//
-// noUiSlider.create(range, {
-// 	start: [ 1450, 2050, 2350, 3000 ], // 4 handles, starting at...
-// 	margin: 300, // Handles must be at least 300 apart
-// 	limit: 600, // ... but no more than 600
-// 	connect: true, // Display a colored bar between the handles
-// 	direction: 'rtl', // Put '0' at the bottom of the slider
-// 	orientation: 'vertical', // Orient the slider vertically
-// 	behaviour: 'tap-drag', // Move handle on tap, bar is draggable
-// 	step: 50,
-// 	tooltips: true,
-// 	// format: wNumb({
-// 	// 	decimals: 0
-// 	// }),
-// 	range: {
-// 		'min': 1300,
-// 		'max': 3250
-// 	},
-// 	pips: { // Show a scale with the slider
-// 		mode: 'steps',
-// 		stepped: true,
-// 		density: 4
-// 	}
-// });
+//variable silder
+noUiSlider.create(varSlider, {
+  start: [1000, 5000],
+  connect: [false, true, false],
+  // step: 1000,
+  range: {
+    'min': [100],
+    'max': [10000]
+  }
+});
+varSlider.noUiSlider.on('update', function(values, handle) {
+  varSliderValueElement[handle].val(values[handle]);
+  // stepSliderValueElement.innerHTML = values[handle]
+});
+varSliderValueElement.addEventListener('change', function() {
+  varSlider.noUiSlider.set(this.value);
+});

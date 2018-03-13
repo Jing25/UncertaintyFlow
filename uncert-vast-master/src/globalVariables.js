@@ -1,4 +1,5 @@
 var myData;
+var myMapData;
 var donutData_G;
 var historyData = [];
 var historyDonutData = [];

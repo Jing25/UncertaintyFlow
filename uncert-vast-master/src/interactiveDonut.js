@@ -16,77 +16,15 @@ function DonutCharts() {
     return catNames;
   }
 
-  // var createLegend = function(catNames) {
-  //   var legends = charts.select('.legend')
-  //     .selectAll('g')
-  //     .data(catNames)
-  //     .enter().append('g')
-  //     .attr('transform', function(d, i) {
-  //       return 'translate(' + (i * 150 + 50) + ', 10)';
-  //     });
-  //
-  //   legends.append('circle')
-  //     .attr('class', 'legend-icon')
-  //     .attr('r', 6)
-  //     .style('fill', function(d, i) {
-  //       return color(i);
-  //     });
-  //
-  //   legends.append('text')
-  //     .attr('dx', '1em')
-  //     .attr('dy', '.3em')
-  //     .text(function(d) {
-  //       return d;
-  //     });
-  // }
 
   var createCenter = function(pie) {
-
-    // var eventObj = {
-    //   'mouseover': function(d, i) {
-    //     d3.select(this)
-    //       .transition()
-    //       .attr("r", chart_r * 0.65);
-    //   },
-    //
-    //   'mouseout': function(d, i) {
-    //     d3.select(this)
-    //       .transition()
-    //       .duration(500)
-    //       .ease('bounce')
-    //       .attr("r", chart_r * 0.6);
-    //   },
-    //
-    //   'click': function(d, i) {
-    //     var paths = charts.selectAll('.clicked');
-    //     pathAnim(paths, 0);
-    //     paths.classed('clicked', false);
-    //     resetAllCenterText();
-    //   }
-    // }
 
     var donuts = d3.selectAll('.donut');
 
     // The circle displaying total data.
     donuts.append("svg:circle")
       .attr("r", chart_r * 0.55)
-      .style("fill", "#E7E7E7")
-      .on('click', function(d, i) {
-        console.log("d: ", d, "i", i)
-      })
-    // .on('mouseover', function(d, i) {
-    //   // console.log("i: ", i)
-    //   d3.select(this)
-    //     .transition()
-    //     .attr("r", chart_r * 0.55);
-    // })
-    // .on('mouseout', function(d, i) {
-    //   d3.select(this)
-    //     .transition()
-    //     .duration(500)
-    //     .ease(d3.easeBounce)
-    //     .attr("r", chart_r * 0.5);
-    // })
+      .style("fill", "#E7E7E7");
   }
 
   function setCenter(donuts) {
@@ -96,8 +34,15 @@ function DonutCharts() {
       // pathAnim(paths, 0);
       // paths.classed('clicked', false);
       // resetAllCenterText();
-      console.log(d)
-      // mapCircle(myData, "uncertain01")
+      // console.log(d)
+      if (markerlayer) {
+        map.removeLayer(markerlayer);
+      }
+       mapCircle(myMapData, d.type)
+       setUncertSlider(myMapData, d.type);
+       console.log("type", d.type)
+      // console.log("d: ", d, "i", i)
+      // console.log(myMapData)
     });
 
     donuts.selectAll('text').remove()

@@ -234,6 +234,7 @@ function updateTree(source) {
         d.data.clicked = 1;
         selectedTreeNode = d;
         myData = JSON.parse(JSON.stringify(historyData[i]));
+        myMapData = JSON.parse(JSON.stringify(myData));
         var donutData = JSON.parse(JSON.stringify(historyDonutData[i]));
         donuts.update(donutData)
         // console.log("myData: ", myData);
