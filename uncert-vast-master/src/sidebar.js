@@ -228,7 +228,9 @@ uncertSlider.noUiSlider.on('update', function(values, handle) {
     myData.forEach(function(element) {
       if (element.uncertainty <= values[handle]) {
         element.visible = false;
-      }
+    } else {
+        element.visible = true;
+    }
     });
 
     // remove mappoints
