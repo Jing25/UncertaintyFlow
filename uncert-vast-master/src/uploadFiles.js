@@ -58,19 +58,18 @@ function uploadFiles() {
     }
 
     //dropdown variables
-    var dropdown_names = [];
     variables.forEach(function(v) {
       dropdown_names.push({
         name: v
       })
     })
-    $('#dropdown-var')
+    $('#dropdown-var1')
       .dropdown({
         placeholder: 'NONE',
         values: dropdown_names,
         onChange: function(value, text, $selectedItem) {
           if (text !== undefined) {
-            setVarSlider(myMapData, text)
+            setVarSlider(1, myMapData, text)
           }
 
         }

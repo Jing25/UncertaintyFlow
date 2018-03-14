@@ -251,7 +251,7 @@ uncertSlider.noUiSlider.on('update', function(values, handle) {
     myMapData.forEach(function(element) {
       var variable = g_var + "_uncert"
       // debugger;
-      if (element[variable] < values[handle]-0.1) {
+      if (element[variable] < values[handle] - 0.01) {
         element.visible = false;
       } else {
         element.visible = true;
@@ -288,13 +288,41 @@ uncertSliderValueElement.addEventListener('change', function() {
 ///
 //////////////////// set variable slider value
 ///
+var slider = [];
+var sliderValueElements = [];
 
-var varSlider = document.getElementById('slider-var1');
-var varSliderValueElement = [
+slider.push(document.getElementById('slider-var1'));
+sliderValueElements.push([
   document.getElementById('slider-var-left1'),
   document.getElementById('slider-var-right1')
-];
-// var varSliderValueElement = document.getElementById('slider-var-left')
+])
+
+// prepare slider
+// var slider[0] = document.getElementById('slider-var' + index);
+// var sliderValueElements[0] = [
+//   document.getElementById('slider-var-left' + index),
+//   document.getElementById('slider-var-right' + index)
+// ];
+
+// setup slider
+noUiSlider.create(slider[0], {
+  start: [1000, 5000],
+  connect: [false, true, false],
+  // step: 1000,
+  range: {
+    'min': [100],
+    'max': [10000]
+  }
+});
+
+
+slider[0].noUiSlider.on('update', function(values, handle) {
+  sliderValueElements[0][handle].value = values[handle];
+  // stepSliderValueElement.innerHTML = values[handle]
+});
+sliderValueElements[0][0].addEventListener('change', function() {
+  slider[0].noUiSlider.set(this.value);
+});
 
 var numVarSliders = 1;
 
@@ -309,7 +337,7 @@ function addVarSlider() {
   node.appendChild(divSlider);
   // use template literal (i.e., ``) for writing html as it is
   divSlider.innerHTML =
-  `<div class="ui middle alligned grid">
+    `<div class="ui middle alligned grid">
     <div class="sixteen wide column">
       <div class="ui selection dropdown" id="dropdown-var` + index + `">
         <div class="text">Variables</div>
@@ -329,19 +357,32 @@ function addVarSlider() {
           Value:
         </div>
         <input style="width:30%" placeholder="value" type="text" id="slider-var-left` + index + `">
-        <input style="width:30%" placeholder="value" type="text" id="slider-var-right` + index + `">
+        <input class="ui disabled input" style="width:30%" placeholder="value" type="text" id="slider-var-right` + index + `">
       </div>
     </div>
   </div>`;
 
+  $('#dropdown-var' + index)
+    .dropdown({
+      placeholder: 'NONE',
+      values: dropdown_names,
+      onChange: function(value, text, $selectedItem) {
+        if (text !== undefined) {
+          setVarSlider(index, myMapData, text)
+        }
+
+      }
+    });
+
   // prepare slider
-  var slider[] = document.getElementById('slider-var' + index);
-  var sliderValueElements = [
+  slider.push(document.getElementById('slider-var' + index));
+  sliderValueElements.push([
     document.getElementById('slider-var-left' + index),
     document.getElementById('slider-var-right' + index)
-  ];
+  ])
+
   // setup slider
-  noUiSlider.create(slider, {
+  noUiSlider.create(slider[index - 1], {
     start: [1000, 5000],
     connect: [false, true, false],
     // step: 1000,
@@ -350,39 +391,61 @@ function addVarSlider() {
       'max': [10000]
     }
   });
-  slider.noUiSlider.on('update', function(values, handle) {
-    sliderValueElements[handle].value = values[handle];
+
+
+  slider[index - 1].noUiSlider.on('update', function(values, handle) {
+    sliderValueElements[index-1][handle].value = values[handle];
+    if (myMapData) {
+      // update visible attr in myData
+      console.log("here")
+      myMapData.forEach(function(element) {
+        var variable = g_var
+        // debugger;
+        if (element[variable] > values[1] && element[variable] < values[0]) {
+          element.visible = false;
+        } else {
+          element.visible = true;
+        }
+      });
+      // debugger;
+
+      // remove mappoints
+      var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
+      while (divMapPoint.firstChild) {
+        divMapPoint.removeChild(divMapPoint.firstChild);
+      }
+      map.removeLayer(markerlayer)
+
+      // add mappoints
+      var markers = [];
+      myMapData.forEach(function(element) {
+        if (element.visible) {
+          mapPoint(element.lat, element.lon)
+          markers.push(mapCircleIndiv(element, g_var))
+        }
+      });
+      // debugger;
+      markerlayer = L.layerGroup(markers);
+      map.addLayer(markerlayer);
+    }
     // stepSliderValueElement.innerHTML = values[handle]
   });
-  sliderValueElements[0].addEventListener('change', function() {
-    slider.noUiSlider.set(this.value);
+  sliderValueElements[index - 1][0].addEventListener('change', function() {
+    slider[index-1].noUiSlider.set(this.value);
   });
 }
 
 function removeVarSlider() {
-    var node = document.getElementById("var-slider" + numVarSliders);
-    node.remove();
-    numVarSliders--;
+  var node = document.getElementById("var-slider" + numVarSliders);
+  node.remove();
+  numVarSliders--;
+  var index = numVarSliders;
+  // slider[index].noUiSlider.destroy()
+  slider.pop();
+  sliderValueElements.pop();
 }
 
-function setVarSlider(data, varType) {
-  // console.log("varType", varType)
-  var min = findMin(data, varType)[varType];
-  var max = findMax(data, varType)[varType];
-  console.log("min", min, "max", max);
-  if (max == min) {
-    max = max + 1;
-  }
-  varSlider.noUiSlider.updateOptions({
-    start: [min, max],
-    range: {
-      'min': Math.floor(min),
-      'max': Math.ceil(max)
-    }
-  });
-}
-
-function setVarSlider(data, varType) {
+function setVarSlider(index, data, varType) {
 
   // console.log("varType", varType)
   var min = findMin(data, varType)[varType];
@@ -391,7 +454,7 @@ function setVarSlider(data, varType) {
   if (max == min) {
     max = max + 1;
   }
-  varSlider.noUiSlider.updateOptions({
+  slider[index-1].noUiSlider.updateOptions({
     start: [min, max],
     range: {
       'min': Math.floor(min),
@@ -401,22 +464,22 @@ function setVarSlider(data, varType) {
 }
 
 //variable silder
-noUiSlider.create(varSlider, {
-  start: [1000, 5000],
-  connect: [false, true, false],
-  // step: 1000,
-  range: {
-    'min': [100],
-    'max': [10000]
-  }
-});
-varSlider.noUiSlider.on('update', function(values, handle) {
-  varSliderValueElement[handle].value = values[handle];
-  // stepSliderValueElement.innerHTML = values[handle]
-});
-varSliderValueElement[0].addEventListener('change', function() {
-  varSlider.noUiSlider.set(this.value);
-});
+// noUiSlider.create(varSlider, {
+//   start: [1000, 5000],
+//   connect: [false, true, false],
+//   // step: 1000,
+//   range: {
+//     'min': [100],
+//     'max': [10000]
+//   }
+// });
+// varSlider.noUiSlider.on('update', function(values, handle) {
+//   varSliderValueElement[handle].value = values[handle];
+//   // stepSliderValueElement.innerHTML = values[handle]
+// });
+// varSliderValueElement[0].addEventListener('change', function() {
+//   varSlider.noUiSlider.set(this.value);
+// });
 // varSliderValueElement[1].addEventListener('change', function() {
 //   varSlider.noUiSlider.set(this.value);
 // });

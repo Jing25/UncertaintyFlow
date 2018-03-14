@@ -4,6 +4,7 @@ var donutData_G;
 var g_var;
 var historyData = [];
 var historyDonutData = [];
+var dropdown_names = [];
 
 var variables = ["TTrip", "Capacity", "Transit", "Hospital", "IntPoints", "Crash", "BNDes",
   "Pop", "PecWhi", "MedAge", "PecV", "Income", "TWork"
