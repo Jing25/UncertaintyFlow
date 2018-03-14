@@ -59,6 +59,23 @@ function mapPoint(lat, lon) {
     .addTo(map);
 }
 
+function mapCircleIndiv(data, radius) {
+  var radius = radius + "_uncert"
+  var lat = data.lat;
+  var lon = data.lon;
+  var radii = +data[radius];
+  // debugger;
+
+  var marker = new L.circle([lat, lon], {
+    color: 'blue',
+    weight: 1,
+    // fillColor: "blue",
+    // fillOpacity: 1,
+    radius: radii * 50
+  })
+  return marker;
+}
+
 
 
 function drawMap() {

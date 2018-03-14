@@ -249,12 +249,15 @@ uncertSlider.noUiSlider.on('update', function(values, handle) {
   if (myMapData) {
     // update visible attr in myData
     myMapData.forEach(function(element) {
-      if (element.uncertainty <= values[handle]) {
+      var variable = g_var + "_uncert"
+      // debugger;
+      if (element[variable] < values[handle]-0.1) {
         element.visible = false;
       } else {
         element.visible = true;
       }
     });
+    // debugger;
 
     // remove mappoints
     var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
@@ -264,12 +267,16 @@ uncertSlider.noUiSlider.on('update', function(values, handle) {
     map.removeLayer(markerlayer)
 
     // add mappoints
+    var markers = [];
     myMapData.forEach(function(element) {
       if (element.visible) {
         mapPoint(element.lat, element.lon)
-        mapCircle(element, g_var)
+        markers.push(mapCircleIndiv(element, g_var))
       }
     });
+    // debugger;
+    markerlayer = L.layerGroup(markers);
+    map.addLayer(markerlayer);
   }
   // stepSliderValueElement.innerHTML = values[handle]
 });
@@ -281,6 +288,7 @@ uncertSliderValueElement.addEventListener('change', function() {
 ///
 //////////////////// set variable slider value
 ///
+
 var varSlider = document.getElementById('slider-var1');
 var varSliderValueElement = [
   document.getElementById('slider-var-left1'),
@@ -327,7 +335,7 @@ function addVarSlider() {
   </div>`;
 
   // prepare slider
-  var slider = document.getElementById('slider-var' + index);
+  var slider[] = document.getElementById('slider-var' + index);
   var sliderValueElements = [
     document.getElementById('slider-var-left' + index),
     document.getElementById('slider-var-right' + index)
@@ -358,6 +366,24 @@ function removeVarSlider() {
 }
 
 function setVarSlider(data, varType) {
+  // console.log("varType", varType)
+  var min = findMin(data, varType)[varType];
+  var max = findMax(data, varType)[varType];
+  console.log("min", min, "max", max);
+  if (max == min) {
+    max = max + 1;
+  }
+  varSlider.noUiSlider.updateOptions({
+    start: [min, max],
+    range: {
+      'min': Math.floor(min),
+      'max': Math.ceil(max)
+    }
+  });
+}
+
+function setVarSlider(data, varType) {
+
   // console.log("varType", varType)
   var min = findMin(data, varType)[varType];
   var max = findMax(data, varType)[varType];

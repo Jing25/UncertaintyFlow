@@ -38,10 +38,10 @@ function DonutCharts() {
       if (markerlayer) {
         map.removeLayer(markerlayer);
       }
+      g_var = d.type
 
       mapCircle(myMapData, d.type)
       setUncertSlider(myMapData, d.type)
-      g_var = d.type
       //  console.log("type", d.type)
       // console.log("d: ", d, "i", i)
       // console.log(myMapData)
