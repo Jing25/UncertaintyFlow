@@ -281,16 +281,83 @@ uncertSliderValueElement.addEventListener('change', function() {
 ///
 //////////////////// set variable slider value
 ///
-
-var varSlider = document.getElementById('slider-var');
+var varSlider = document.getElementById('slider-var1');
 var varSliderValueElement = [
-  document.getElementById('slider-var-left'),
-  document.getElementById('slider-var-right')
+  document.getElementById('slider-var-left1'),
+  document.getElementById('slider-var-right1')
 ];
 // var varSliderValueElement = document.getElementById('slider-var-left')
 
-function setVarSlider(data, varType) {
+var numVarSliders = 1;
 
+// add html in "var-sliders" div node
+function addVarSlider() {
+  numVarSliders++;
+  var index = numVarSliders;
+  var divSlider = document.createElement('div');
+  divSlider.id = "var-slider" + index;
+
+  var node = document.getElementById("var-sliders");
+  node.appendChild(divSlider);
+  // use template literal (i.e., ``) for writing html as it is
+  divSlider.innerHTML =
+  `<div class="ui middle alligned grid">
+    <div class="sixteen wide column">
+      <div class="ui selection dropdown" id="dropdown-var` + index + `">
+        <div class="text">Variables</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <div class="item" data-value="0">NONE</div>
+        </div>
+      </div>
+    </div>
+    <div class="seven wide column">
+      <div class="slider" id="slider-var` + index + `"></div>
+    </div>
+    <div class="nine wide column">
+        <!-- <div id="slider-step-value"></div> -->
+      <div class="ui small labeled input">
+        <div class="ui label">
+          Value:
+        </div>
+        <input style="width:30%" placeholder="value" type="text" id="slider-var-left` + index + `">
+        <input style="width:30%" placeholder="value" type="text" id="slider-var-right` + index + `">
+      </div>
+    </div>
+  </div>`;
+
+  // prepare slider
+  var slider = document.getElementById('slider-var' + index);
+  var sliderValueElements = [
+    document.getElementById('slider-var-left' + index),
+    document.getElementById('slider-var-right' + index)
+  ];
+  // setup slider
+  noUiSlider.create(slider, {
+    start: [1000, 5000],
+    connect: [false, true, false],
+    // step: 1000,
+    range: {
+      'min': [100],
+      'max': [10000]
+    }
+  });
+  slider.noUiSlider.on('update', function(values, handle) {
+    sliderValueElements[handle].value = values[handle];
+    // stepSliderValueElement.innerHTML = values[handle]
+  });
+  sliderValueElements[0].addEventListener('change', function() {
+    slider.noUiSlider.set(this.value);
+  });
+}
+
+function removeVarSlider() {
+    var node = document.getElementById("var-slider" + numVarSliders);
+    node.remove();
+    numVarSliders--;
+}
+
+function setVarSlider(data, varType) {
   // console.log("varType", varType)
   var min = findMin(data, varType)[varType];
   var max = findMax(data, varType)[varType];
