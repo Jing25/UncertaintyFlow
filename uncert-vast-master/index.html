@@ -108,37 +108,44 @@
               </div>
             </div>
             <h5 class="ui horizontal divider header">Variable Range</h5>
-            <div class="ui middle alligned grid">
-              <div class="sixteen wide column">
-                <div class="ui selection dropdown" id="dropdown-var">
-                  <div class="text">Variables</div>
-                  <i class="dropdown icon"></i>
-                  <div class="menu">
-                    <div class="item" data-value="0">NONE</div>
+            <div id="var-sliders">
+              <div id="var-slider1">
+                <div class="ui middle alligned grid">
+                  <div class="sixteen wide column">
+                    <div class="ui selection dropdown" id="dropdown-var1">
+                      <div class="text">Variables</div>
+                      <i class="dropdown icon"></i>
+                      <div class="menu">
+                        <div class="item" data-value="0">NONE</div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="seven wide column">
-                <div class="slider" id="slider-var"></div>
-              </div>
-              <div class="nine wide column">
-                <!-- <div id="slider-step-value"></div> -->
-                <div class="ui small labeled input">
-                  <div class="ui label">
-                    Value:
+                  <div class="seven wide column">
+                    <div class="slider" id="slider-var1"></div>
                   </div>
-                  <input style="width:30%" placeholder="value" type="text" id="slider-var-left">
-                  <input style="width:30%" placeholder="value" type="text" id="slider-var-right">
-                </div>
-
-              </div>
-              <div class="sixteen wide column">
-                <div class="ui right floated icon buttons">
-                  <button class="ui button"><i class="plus icon"></i></button>
-                  <button class="ui button"><i class="minus icon"></i></button>
+                  <div class="nine wide column">
+                    <!-- <div id="slider-step-value"></div> -->
+                    <div class="ui small labeled input">
+                      <div class="ui label">
+                        Value:
+                      </div>
+                      <input style="width:30%" placeholder="value" type="text" id="slider-var-left1">
+                      <input style="width:30%" placeholder="value" type="text" id="slider-var-right1">
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+
+            <div class="ui middle alligned grid">
+              <div class="sixteen wide column">
+                <div class="ui right floated icon buttons">
+                  <button class="ui button" onclick="addVarSlider();"><i class="plus icon"></i></button>
+                  <button class="ui button" onclick="removeVarSlider();"><i class="minus icon"></i></button>
+                </div>
+              </div>
+            </div>
+
             <h5 class="ui horizontal divider header">Controls</h5>
             <div class="ui grid">
               <div class="six wide column">
