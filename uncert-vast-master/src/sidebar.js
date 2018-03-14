@@ -210,19 +210,43 @@ function setUncertSlider(data, varType) {
 
 // uncertainty slider
 noUiSlider.create(uncertSlider, {
-  start: [1000],
+  start: [0.0],
   connect: [false, true],
   // step: 1000,
   range: {
-    'min': [0],
-    'max': [10000]
+    'min': [0.0],
+    'max': [5.0]
   }
 });
 
 uncertSlider.noUiSlider.on('update', function(values, handle) {
   $("#slider-uncert-value").val(values[handle]);
+
+  // update filtered result
+  if (myData) {
+    // update visible attr in myData
+    myData.forEach(function(element) {
+      if (element.uncertainty <= values[handle]) {
+        element.visible = false;
+      }
+    });
+
+    // remove mappoints
+    var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
+    while (divMapPoint.firstChild) {
+      divMapPoint.removeChild(divMapPoint.firstChild);
+    }
+
+    // add mappoints
+    myData.forEach(function(element) {
+      if (element.visible) {
+        mapPoint(element.lat, element.lon)
+      }
+    });
+  }
   // stepSliderValueElement.innerHTML = values[handle]
 });
+
 uncertSliderValueElement.addEventListener('change', function() {
   uncertSlider.noUiSlider.set(this.value);
 });

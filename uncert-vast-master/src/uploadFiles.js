@@ -12,6 +12,11 @@ function uploadFiles() {
     myMapData = myData;
     historyData.push(myData);
 
+    // add visibility attribute
+    myData.forEach(function(element) {
+      element["visible"] = true;
+    });
+
     // DonutCharts
     var donutData = [];
     variables_uncert.forEach(function(key) {
