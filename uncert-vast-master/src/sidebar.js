@@ -200,9 +200,9 @@ function setUncertSlider(data, varType) {
     max = max + 1;
   }
   uncertSlider.noUiSlider.updateOptions({
-    start: [min],
+    start: [0.0],
     range: {
-      'min': Math.floor(min),
+      'min': [0.0],
       'max': Math.ceil(max)
     }
   });
@@ -223,9 +223,32 @@ uncertSlider.noUiSlider.on('update', function(values, handle) {
   $("#slider-uncert-value").val(values[handle]);
 
   // update filtered result
-  if (myData) {
+  // if (myData) {
+  //   // update visible attr in myData
+  //   myData.forEach(function(element) {
+  //     if (element.uncertainty <= values[handle]) {
+  //       element.visible = false;
+  //     } else {
+  //       element.visible = true;
+  //     }
+  //   });
+  //
+  //   // remove mappoints
+  //   var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
+  //   while (divMapPoint.firstChild) {
+  //     divMapPoint.removeChild(divMapPoint.firstChild);
+  //   }
+  //
+  //   // add mappoints
+  //   myData.forEach(function(element) {
+  //     if (element.visible) {
+  //       mapPoint(element.lat, element.lon)
+  //     }
+  //   });
+  // }
+  if (myMapData) {
     // update visible attr in myData
-    myData.forEach(function(element) {
+    myMapData.forEach(function(element) {
       if (element.uncertainty <= values[handle]) {
         element.visible = false;
       } else {
@@ -238,11 +261,13 @@ uncertSlider.noUiSlider.on('update', function(values, handle) {
     while (divMapPoint.firstChild) {
       divMapPoint.removeChild(divMapPoint.firstChild);
     }
+    map.removeLayer(markerlayer)
 
     // add mappoints
-    myData.forEach(function(element) {
+    myMapData.forEach(function(element) {
       if (element.visible) {
         mapPoint(element.lat, element.lon)
+        mapCircle(element, g_var)
       }
     });
   }

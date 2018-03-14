@@ -16,6 +16,9 @@ function uploadFiles() {
     myData.forEach(function(element) {
       element["visible"] = true;
     });
+    myMapData.forEach(function(element) {
+      element["visible"] = true;
+    });
 
     // DonutCharts
     var donutData = [];

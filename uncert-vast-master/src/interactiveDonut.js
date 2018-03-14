@@ -38,9 +38,11 @@ function DonutCharts() {
       if (markerlayer) {
         map.removeLayer(markerlayer);
       }
-       mapCircle(myMapData, d.type)
-       setUncertSlider(myMapData, d.type);
-       console.log("type", d.type)
+
+      mapCircle(myMapData, d.type)
+      setUncertSlider(myMapData, d.type)
+      g_var = d.type
+      //  console.log("type", d.type)
       // console.log("d: ", d, "i", i)
       // console.log(myMapData)
     });
@@ -257,7 +259,7 @@ function DonutCharts() {
     max_r = findMax(dataset, "total");
     radiusRatio = 0.4 / max_r.total;
     // debugger;
-    console.log("ratio: ", radiusRatio)
+    // console.log("ratio: ", radiusRatio)
     // console.log("chart_m", chart_m, "chart_r", chart_r)
 
     // charts.append('svg')
@@ -288,9 +290,9 @@ function DonutCharts() {
     var donut = charts.selectAll(".donut")
       .data(dataset);
 
-    console.log(dataset)
+    // console.log(dataset)
     max_r = findMax(dataset, "total");
-    console.log(max_r)
+    // console.log(max_r)
     radiusRatio = 0.4 / max_r.total;
 
     setCenter(donut);
