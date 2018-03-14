@@ -236,6 +236,7 @@ var varSliderValueElement = [
   document.getElementById('slider-var-left'),
   document.getElementById('slider-var-right')
 ];
+// var varSliderValueElement = document.getElementById('slider-var-left')
 
 function setVarSlider(data, varType) {
 
@@ -247,7 +248,7 @@ function setVarSlider(data, varType) {
     max = max + 1;
   }
   varSlider.noUiSlider.updateOptions({
-    start: [min],
+    start: [min, max],
     range: {
       'min': Math.floor(min),
       'max': Math.ceil(max)
@@ -266,9 +267,12 @@ noUiSlider.create(varSlider, {
   }
 });
 varSlider.noUiSlider.on('update', function(values, handle) {
-  varSliderValueElement[handle].val(values[handle]);
+  varSliderValueElement[handle].value = values[handle];
   // stepSliderValueElement.innerHTML = values[handle]
 });
-varSliderValueElement.addEventListener('change', function() {
+varSliderValueElement[0].addEventListener('change', function() {
   varSlider.noUiSlider.set(this.value);
 });
+// varSliderValueElement[1].addEventListener('change', function() {
+//   varSlider.noUiSlider.set(this.value);
+// });
