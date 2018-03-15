@@ -191,17 +191,32 @@ function sortUp() {
 ///
 var uncertSlider = document.getElementById('slider-uncert');
 var uncertSliderValueElement = document.getElementById('slider-uncert-value');
+// variableName.push("uncertainty")
+// minAll.push(0)
+// maxAll.push(0)
+
+// uncertainty slider
+noUiSlider.create(uncertSlider, {
+  start: [0.0],
+  connect: [false, true],
+  // step: 1000,
+  range: {
+    'min': [-2.0],
+    'max': [5.0]
+  }
+});
 
 function setUncertSlider(data, varType) {
 
-  varType = varType.map( (d)=> d + "_uncert")
+  varType = varType.map((d) => d + "_uncert")
   // debugger;
   data.forEach(function(d) {
     d.uncertainty = 0;
-    varType.forEach( function(v){
+    varType.forEach(function(v) {
       d.uncertainty = d.uncertainty + +d[v]
     })
   })
+
   var min = findMin(data, "uncertainty")["uncertainty"];
   var max = findMax(data, "uncertainty")["uncertainty"];
   console.log("min", min, "max", max);
@@ -217,35 +232,34 @@ function setUncertSlider(data, varType) {
   });
 }
 
-// uncertainty slider
-noUiSlider.create(uncertSlider, {
-  start: [0.0],
-  connect: [false, true],
-  // step: 1000,
-  range: {
-    'min': [-2.0],
-    'max': [5.0]
-  }
-});
-
 uncertSlider.noUiSlider.on('update', function(values, handle) {
   $("#slider-uncert-value").val(values[handle]);
 
   if (myMapData && g_var.length) {
     // update visible attr in myData
-    var var_name = g_var.map( (d)=> d + "_uncert")
+    var var_name = g_var.map((d) => d + "_uncert")
 
     myMapData.forEach(function(element) {
-      var uncertainty = 0
-      var_name.forEach( function(r) {
+      var uncertainty = 0;
+      var visible = true;
+      var_name.forEach(function(r) {
         uncertainty = uncertainty + +element[r]
       })
-      // debugger;
-      if (uncertainty < values[handle] - 0.01) {
-        element.visible = false;
-      } else {
-        element.visible = true;
+
+      for (var i = 0; i < variableName.length; i++) {
+        if (+element[variableName[i]] > +maxAll[i] || +element[variableName[i]] < +minAll[i] ||
+          uncertainty < values[handle] - 0.01) {
+          visible = false;
+        }
       }
+      element.visible = visible;
+
+      // debugger;
+      // if (uncertainty < values[handle] - 0.01) {
+      //   element.visible = false;
+      // } else {
+      //   element.visible = true;
+      // }
     });
     // debugger;
 
@@ -275,7 +289,6 @@ uncertSlider.noUiSlider.on('update', function(values, handle) {
     }
   }
 
-  // stepSliderValueElement.innerHTML = values[handle]
 });
 
 uncertSliderValueElement.addEventListener('change', function() {
@@ -286,7 +299,6 @@ uncertSliderValueElement.addEventListener('change', function() {
 //////////////////// set variable slider value
 ///
 var slider = [];
-var slider_var = [];
 var sliderValueElements = [];
 
 slider.push(document.getElementById('slider-var1'));
@@ -294,14 +306,9 @@ sliderValueElements.push([
   document.getElementById('slider-var-left1'),
   document.getElementById('slider-var-right1')
 ])
-slider_var.push("NONE")
-
-// prepare slider
-// var slider[0] = document.getElementById('slider-var' + index);
-// var sliderValueElements[0] = [
-//   document.getElementById('slider-var-left' + index),
-//   document.getElementById('slider-var-right' + index)
-// ];
+variableName.push("NONE")
+minAll.push(0);
+maxAll.push(0);
 
 // setup slider
 noUiSlider.create(slider[0], {
@@ -317,46 +324,11 @@ noUiSlider.create(slider[0], {
 
 slider[0].noUiSlider.on('update', function(values, handle) {
   sliderValueElements[0][handle].value = values[handle];
-  // stepSliderValueElement.innerHTML = values[handle]
+
   if (myMapData) {
-    // update visible attr in myData
-    var variable = slider_var[0]
-    myMapData.forEach(function(element) {
-      // debugger;
-      if (+element[variable] > +values[1] || +element[variable] < +values[0]) {
-        element.visible = false;
-      } else {
-        element.visible = true;
-      }
-    });
-    // debugger;
-
-    // remove mappoints
-    var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
-    while (divMapPoint.firstChild) {
-      divMapPoint.removeChild(divMapPoint.firstChild);
-    }
-    if (markerlayer) {
-      map.removeLayer(markerlayer)
-    }
-
-
-    // add mappoints
-    var markers = [];
-    myMapData.forEach(function(element) {
-      if (element.visible) {
-        mapPoint(element.lat, element.lon)
-        if (g_var) {
-          markers.push(mapCircleIndiv(element, g_var))
-        }
-      }
-    });
-    // debugger;
-    if (markers.length) {
-      markerlayer = L.layerGroup(markers);
-      map.addLayer(markerlayer);
-    }
-
+    minAll[0] = values[0];
+    maxAll[0] = values[1];
+    updateParameter();
   }
 });
 
@@ -420,7 +392,9 @@ function addVarSlider() {
     document.getElementById('slider-var-left' + index),
     document.getElementById('slider-var-right' + index)
   ])
-  slider_var.push("NONE")
+  variableName.push("NONE")
+  minAll.push(0);
+  maxAll.push(0);
 
   // setup slider
   noUiSlider.create(slider[index - 1], {
@@ -437,44 +411,9 @@ function addVarSlider() {
   slider[index - 1].noUiSlider.on('update', function(values, handle) {
     sliderValueElements[index - 1][handle].value = values[handle];
     if (myMapData) {
-      // update visible attr in myData
-      var variable = slider_var[index-1]
-      myMapData.forEach(function(element) {
-        // debugger;
-        if (+element[variable] > values[1] || +element[variable] < values[0] - 0.01) {
-          element.visible = false;
-        } else {
-          element.visible = true;
-        }
-      });
-      // debugger;
-
-      // remove mappoints
-      var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
-      while (divMapPoint.firstChild) {
-        divMapPoint.removeChild(divMapPoint.firstChild);
-      }
-      if (markerlayer) {
-        map.removeLayer(markerlayer)
-      }
-
-
-      // add mappoints
-      var markers = [];
-      myMapData.forEach(function(element) {
-        if (element.visible) {
-          mapPoint(element.lat, element.lon)
-          if (g_var) {
-            markers.push(mapCircleIndiv(element, g_var))
-          }
-
-        }
-      });
-      if (markers.length) {
-        markerlayer = L.layerGroup(markers);
-        map.addLayer(markerlayer);
-      }
-
+      minAll[index - 1] = values[0];
+      maxAll[index - 1] = values[1];
+      updateParameter();
     }
     // stepSliderValueElement.innerHTML = values[handle]
   });
@@ -491,12 +430,16 @@ function removeVarSlider() {
   // slider[index].noUiSlider.destroy()
   slider.pop();
   sliderValueElements.pop();
+  minAll.pop();
+  maxAll.pop();
+  variableName.pop();
+
+  updateParameter()
 }
 
 function setVarSlider(index, data, varType) {
 
-  // console.log("varType", varType)
-  slider_var[index-1] = varType;
+  variableName[index - 1] = varType;
   var min = findMin(data, varType)[varType];
   var max = findMax(data, varType)[varType];
   console.log("min", min, "max", max);
@@ -512,25 +455,40 @@ function setVarSlider(index, data, varType) {
   });
 }
 
+function updateParameter() {
 
+  myMapData.forEach(function(element) {
+    var visible = true;
+    for (var i = 0; i < variableName.length; i++) {
+      if (+element[variableName[i]] > +maxAll[i] || +element[variableName[i]] < +minAll[i]) {
+        visible = false;
+      }
+    }
+    element.visible = visible;
+  });
 
-//variable silder
-// noUiSlider.create(varSlider, {
-//   start: [1000, 5000],
-//   connect: [false, true, false],
-//   // step: 1000,
-//   range: {
-//     'min': [100],
-//     'max': [10000]
-//   }
-// });
-// varSlider.noUiSlider.on('update', function(values, handle) {
-//   varSliderValueElement[handle].value = values[handle];
-//   // stepSliderValueElement.innerHTML = values[handle]
-// });
-// varSliderValueElement[0].addEventListener('change', function() {
-//   varSlider.noUiSlider.set(this.value);
-// });
-// varSliderValueElement[1].addEventListener('change', function() {
-//   varSlider.noUiSlider.set(this.value);
-// });
+  // remove mappoints
+  var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
+  while (divMapPoint.firstChild) {
+    divMapPoint.removeChild(divMapPoint.firstChild);
+  }
+  if (markerlayer) {
+    map.removeLayer(markerlayer)
+  }
+
+  // add mappoints
+  var markers = [];
+  myMapData.forEach(function(element) {
+    if (element.visible) {
+      mapPoint(element.lat, element.lon)
+      if (g_var) {
+        markers.push(mapCircleIndiv(element, g_var))
+      }
+    }
+  });
+  // debugger;
+  if (markers.length) {
+    markerlayer = L.layerGroup(markers);
+    map.addLayer(markerlayer);
+  }
+}

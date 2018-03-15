@@ -21,3 +21,8 @@ var objTree = {
 var radiusTree = [7]
 var treeNode;
 var nodeClick = 1;
+
+//sliders
+var variableName = [];
+var minAll = [];
+var maxAll = [];
