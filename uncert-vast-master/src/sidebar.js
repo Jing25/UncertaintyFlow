@@ -288,6 +288,11 @@ uncertSlider.noUiSlider.on('update', function(values, handle) {
       map.addLayer(markerlayer);
     }
   }
+  else {
+    if (markerlayer) {
+      map.removeLayer(markerlayer)
+    }
+  }
 
 });
 

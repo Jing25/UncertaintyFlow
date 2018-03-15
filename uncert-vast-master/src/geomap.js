@@ -43,10 +43,12 @@ function mapCircle(data, radius) {
       weight: 1,
       // fillColor: "blue",
       // fillOpacity: 1,
-      radius: radii * 50
+      radius: radii * 50,
+      myCustomId: i
     })
     // .on("click", myclick)
     // .addTo(map);
+    // marker.setAtrribute("myId", i)
     markers.push(marker)
   }
   // console.log("markers", markers)
@@ -80,6 +82,7 @@ function mapCircleIndiv(data, radius) {
     // fillOpacity: 1,
     radius: radii * 50
   })
+
   return marker;
 }
 
@@ -99,6 +102,7 @@ function drawMap() {
 
 function myclick(e) {
   var icon = e.target.options.icon.options
+  debugger;
   if (icon.iconUrl == "image/map_pin_red.png") {
     e.target.setIcon(mapIconUnselect)
     // debugger;
