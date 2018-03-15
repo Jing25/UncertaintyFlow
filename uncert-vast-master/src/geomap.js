@@ -94,10 +94,7 @@ function myclick(e) {
   var icon = e.target.options.icon.options
   if (icon.iconUrl == "image/map_pin_red.png") {
     e.target.setIcon(mapIconUnselect)
-    // e.target.setStyle({
-    //   color: 'grey',
-    //   fillColor: 'rgb(177, 174, 169)'
-    // })
+    // debugger;
   } else if (icon.iconUrl == "image/map_pin_blue.png") {
     e.target.setIcon(mapIcon)
   }

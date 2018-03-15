@@ -56,3 +56,45 @@ function searchTreeAddNode(element, matchingTitle, data){
      }
      return null;
 }
+
+function filterByClass(value){
+  if (myMapData && value) {
+    // update visible attr in myData
+    var variable = "UndSer_Lvl"
+    myMapData.forEach(function(element) {
+      // debugger;
+      if (element[variable] == value) {
+        element.visible = true;
+      } else {
+        element.visible = false;
+      }
+    });
+    // debugger;
+
+    // remove mappoints
+    var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
+    while (divMapPoint.firstChild) {
+      divMapPoint.removeChild(divMapPoint.firstChild);
+    }
+    map.removeLayer(markerlayer)
+
+    // add mappoints
+    var markers = [];
+    myMapData.forEach(function(element) {
+      if (element.visible) {
+        mapPoint(element.lat, element.lon)
+        markers.push(mapCircleIndiv(element, g_var))
+      }
+    });
+    // debugger;
+    markerlayer = L.layerGroup(markers);
+    map.addLayer(markerlayer);
+  }
+}
+
+
+function selectAllStations() {
+  if (myMapData.visible) {
+
+  }
+}

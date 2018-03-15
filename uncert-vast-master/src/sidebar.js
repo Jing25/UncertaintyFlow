@@ -86,6 +86,7 @@ function classifyButton() {
       ],
       onChange: function(value, text, $selectedItem) {
         // console.log("dropdown-class", value)
+        filterByClass(value)
       }
     });
 }
@@ -251,7 +252,7 @@ uncertSlider.noUiSlider.on('update', function(values, handle) {
     myMapData.forEach(function(element) {
       var variable = g_var + "_uncert"
       // debugger;
-      if (element[variable] < values[handle] - 0.01) {
+      if (+element[variable] < values[handle] - 0.01) {
         element.visible = false;
       } else {
         element.visible = true;
@@ -278,6 +279,7 @@ uncertSlider.noUiSlider.on('update', function(values, handle) {
     markerlayer = L.layerGroup(markers);
     map.addLayer(markerlayer);
   }
+
   // stepSliderValueElement.innerHTML = values[handle]
 });
 
@@ -289,6 +291,7 @@ uncertSliderValueElement.addEventListener('change', function() {
 //////////////////// set variable slider value
 ///
 var slider = [];
+var slider_var = [];
 var sliderValueElements = [];
 
 slider.push(document.getElementById('slider-var1'));
@@ -296,6 +299,7 @@ sliderValueElements.push([
   document.getElementById('slider-var-left1'),
   document.getElementById('slider-var-right1')
 ])
+slider_var.push("NONE")
 
 // prepare slider
 // var slider[0] = document.getElementById('slider-var' + index);
@@ -319,7 +323,40 @@ noUiSlider.create(slider[0], {
 slider[0].noUiSlider.on('update', function(values, handle) {
   sliderValueElements[0][handle].value = values[handle];
   // stepSliderValueElement.innerHTML = values[handle]
+  if (myMapData) {
+    // update visible attr in myData
+    var variable = slider_var[0]
+    myMapData.forEach(function(element) {
+      // debugger;
+      if (+element[variable] > +values[1] || +element[variable] < +values[0]) {
+        element.visible = false;
+      } else {
+        element.visible = true;
+      }
+    });
+    // debugger;
+
+    // remove mappoints
+    var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
+    while (divMapPoint.firstChild) {
+      divMapPoint.removeChild(divMapPoint.firstChild);
+    }
+    map.removeLayer(markerlayer)
+
+    // add mappoints
+    var markers = [];
+    myMapData.forEach(function(element) {
+      if (element.visible) {
+        mapPoint(element.lat, element.lon)
+        markers.push(mapCircleIndiv(element, g_var))
+      }
+    });
+    // debugger;
+    markerlayer = L.layerGroup(markers);
+    map.addLayer(markerlayer);
+  }
 });
+
 sliderValueElements[0][0].addEventListener('change', function() {
   slider[0].noUiSlider.set(this.value);
 });
@@ -380,6 +417,7 @@ function addVarSlider() {
     document.getElementById('slider-var-left' + index),
     document.getElementById('slider-var-right' + index)
   ])
+  slider_var.push("NONE")
 
   // setup slider
   noUiSlider.create(slider[index - 1], {
@@ -394,14 +432,14 @@ function addVarSlider() {
 
 
   slider[index - 1].noUiSlider.on('update', function(values, handle) {
-    sliderValueElements[index-1][handle].value = values[handle];
+    sliderValueElements[index - 1][handle].value = values[handle];
     if (myMapData) {
       // update visible attr in myData
-      console.log("here")
+      // console.log("here")
+      var variable = slider_var[index-1]
       myMapData.forEach(function(element) {
-        var variable = g_var
         // debugger;
-        if (element[variable] > values[1] && element[variable] < values[0]) {
+        if (+element[variable] > values[1] || +element[variable] < values[0] - 0.01) {
           element.visible = false;
         } else {
           element.visible = true;
@@ -431,7 +469,7 @@ function addVarSlider() {
     // stepSliderValueElement.innerHTML = values[handle]
   });
   sliderValueElements[index - 1][0].addEventListener('change', function() {
-    slider[index-1].noUiSlider.set(this.value);
+    slider[index - 1].noUiSlider.set(this.value);
   });
 }
 
@@ -448,20 +486,23 @@ function removeVarSlider() {
 function setVarSlider(index, data, varType) {
 
   // console.log("varType", varType)
+  slider_var[index-1] = varType;
   var min = findMin(data, varType)[varType];
   var max = findMax(data, varType)[varType];
   console.log("min", min, "max", max);
   if (max == min) {
     max = max + 1;
   }
-  slider[index-1].noUiSlider.updateOptions({
-    start: [min, max],
+  slider[index - 1].noUiSlider.updateOptions({
+    start: [min - 0.1, max],
     range: {
-      'min': Math.floor(min),
+      'min': Math.floor(min) - 0.1,
       'max': Math.ceil(max)
     }
   });
 }
+
+
 
 //variable silder
 // noUiSlider.create(varSlider, {
