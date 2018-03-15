@@ -37,7 +37,8 @@ function uploadFiles() {
         ],
         type: name,
         detailed: name,
-        total: +maxV[key]
+        total: +maxV[key],
+        clicked: 0
       })
     })
     donutData_G = donutData;
@@ -74,6 +75,8 @@ function uploadFiles() {
 
         }
       });
+
+    addVarButton()
 
     // end load file
   })

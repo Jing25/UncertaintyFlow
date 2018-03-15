@@ -30,21 +30,28 @@ function DonutCharts() {
   function setCenter(donuts) {
 
     donuts.on('click', function(d, i) {
-      // var paths = charts.selectAll('.clicked');
-      // pathAnim(paths, 0);
-      // paths.classed('clicked', false);
-      // resetAllCenterText();
-      // console.log(d)
-      if (markerlayer) {
-        map.removeLayer(markerlayer);
-      }
-      g_var = d.type
+      if (!(d.clicked)) {
+        d.clicked = 1;
+        d3.select(this).style("fill", "red")
+        if (markerlayer) {
+          map.removeLayer(markerlayer);
+        }
+        g_var.push(d.type)
 
-      mapCircle(myMapData, d.type)
-      setUncertSlider(myMapData, d.type)
-      //  console.log("type", d.type)
-      // console.log("d: ", d, "i", i)
-      // console.log(myMapData)
+        mapCircle(myMapData, g_var)
+        setUncertSlider(myMapData, g_var)
+      }
+      else {
+        d3.select(this).style("fill", "black");
+        d.clicked = 0
+        if (markerlayer) {
+          map.removeLayer(markerlayer);
+        }
+        removeItemInArray(g_var, d.type);
+        mapCircle(myMapData, g_var);
+        setUncertSlider(myMapData, g_var)
+      }
+
     });
 
     donuts.selectAll('text').remove()

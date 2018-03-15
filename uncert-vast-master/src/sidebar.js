@@ -150,7 +150,8 @@ function bufferUncert() {
       ],
       type: name,
       detailed: name,
-      total: +maxV[key]
+      total: +maxV[key],
+      clicked: 0
     })
   })
   // donutData_G = donutData;
@@ -193,17 +194,24 @@ var uncertSliderValueElement = document.getElementById('slider-uncert-value');
 
 function setUncertSlider(data, varType) {
 
-  varType = varType + "_uncert"
-  var min = findMin(data, varType)[varType];
-  var max = findMax(data, varType)[varType];
-  // console.log("min", min, "max", max);
+  varType = varType.map( (d)=> d + "_uncert")
+  // debugger;
+  data.forEach(function(d) {
+    d.uncertainty = 0;
+    varType.forEach( function(v){
+      d.uncertainty = d.uncertainty + +d[v]
+    })
+  })
+  var min = findMin(data, "uncertainty")["uncertainty"];
+  var max = findMax(data, "uncertainty")["uncertainty"];
+  console.log("min", min, "max", max);
   if (max == min) {
     max = max + 1;
   }
   uncertSlider.noUiSlider.updateOptions({
     start: [0.0],
     range: {
-      'min': [0.0],
+      'min': [-2.0],
       'max': Math.ceil(max)
     }
   });
@@ -215,7 +223,7 @@ noUiSlider.create(uncertSlider, {
   connect: [false, true],
   // step: 1000,
   range: {
-    'min': [0.0],
+    'min': [-2.0],
     'max': [5.0]
   }
 });
@@ -223,36 +231,17 @@ noUiSlider.create(uncertSlider, {
 uncertSlider.noUiSlider.on('update', function(values, handle) {
   $("#slider-uncert-value").val(values[handle]);
 
-  // update filtered result
-  // if (myData) {
-  //   // update visible attr in myData
-  //   myData.forEach(function(element) {
-  //     if (element.uncertainty <= values[handle]) {
-  //       element.visible = false;
-  //     } else {
-  //       element.visible = true;
-  //     }
-  //   });
-  //
-  //   // remove mappoints
-  //   var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
-  //   while (divMapPoint.firstChild) {
-  //     divMapPoint.removeChild(divMapPoint.firstChild);
-  //   }
-  //
-  //   // add mappoints
-  //   myData.forEach(function(element) {
-  //     if (element.visible) {
-  //       mapPoint(element.lat, element.lon)
-  //     }
-  //   });
-  // }
-  if (myMapData) {
+  if (myMapData && g_var.length) {
     // update visible attr in myData
+    var var_name = g_var.map( (d)=> d + "_uncert")
+
     myMapData.forEach(function(element) {
-      var variable = g_var + "_uncert"
+      var uncertainty = 0
+      var_name.forEach( function(r) {
+        uncertainty = uncertainty + +element[r]
+      })
       // debugger;
-      if (+element[variable] < values[handle] - 0.01) {
+      if (uncertainty < values[handle] - 0.01) {
         element.visible = false;
       } else {
         element.visible = true;
@@ -265,19 +254,25 @@ uncertSlider.noUiSlider.on('update', function(values, handle) {
     while (divMapPoint.firstChild) {
       divMapPoint.removeChild(divMapPoint.firstChild);
     }
-    map.removeLayer(markerlayer)
+    if (markerlayer) {
+      map.removeLayer(markerlayer)
+    }
+
 
     // add mappoints
     var markers = [];
     myMapData.forEach(function(element) {
       if (element.visible) {
         mapPoint(element.lat, element.lon)
-        markers.push(mapCircleIndiv(element, g_var))
+        if (g_var.length) {
+          markers.push(mapCircleIndiv(element, g_var))
+        }
       }
     });
-    // debugger;
-    markerlayer = L.layerGroup(markers);
-    map.addLayer(markerlayer);
+    if (markers.length) {
+      markerlayer = L.layerGroup(markers);
+      map.addLayer(markerlayer);
+    }
   }
 
   // stepSliderValueElement.innerHTML = values[handle]
@@ -341,19 +336,27 @@ slider[0].noUiSlider.on('update', function(values, handle) {
     while (divMapPoint.firstChild) {
       divMapPoint.removeChild(divMapPoint.firstChild);
     }
-    map.removeLayer(markerlayer)
+    if (markerlayer) {
+      map.removeLayer(markerlayer)
+    }
+
 
     // add mappoints
     var markers = [];
     myMapData.forEach(function(element) {
       if (element.visible) {
         mapPoint(element.lat, element.lon)
-        markers.push(mapCircleIndiv(element, g_var))
+        if (g_var) {
+          markers.push(mapCircleIndiv(element, g_var))
+        }
       }
     });
     // debugger;
-    markerlayer = L.layerGroup(markers);
-    map.addLayer(markerlayer);
+    if (markers.length) {
+      markerlayer = L.layerGroup(markers);
+      map.addLayer(markerlayer);
+    }
+
   }
 });
 
@@ -435,7 +438,6 @@ function addVarSlider() {
     sliderValueElements[index - 1][handle].value = values[handle];
     if (myMapData) {
       // update visible attr in myData
-      // console.log("here")
       var variable = slider_var[index-1]
       myMapData.forEach(function(element) {
         // debugger;
@@ -452,19 +454,27 @@ function addVarSlider() {
       while (divMapPoint.firstChild) {
         divMapPoint.removeChild(divMapPoint.firstChild);
       }
-      map.removeLayer(markerlayer)
+      if (markerlayer) {
+        map.removeLayer(markerlayer)
+      }
+
 
       // add mappoints
       var markers = [];
       myMapData.forEach(function(element) {
         if (element.visible) {
           mapPoint(element.lat, element.lon)
-          markers.push(mapCircleIndiv(element, g_var))
+          if (g_var) {
+            markers.push(mapCircleIndiv(element, g_var))
+          }
+
         }
       });
-      // debugger;
-      markerlayer = L.layerGroup(markers);
-      map.addLayer(markerlayer);
+      if (markers.length) {
+        markerlayer = L.layerGroup(markers);
+        map.addLayer(markerlayer);
+      }
+
     }
     // stepSliderValueElement.innerHTML = values[handle]
   });

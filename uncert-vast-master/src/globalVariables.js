@@ -1,7 +1,7 @@
 var myData;
 var myMapData;
 var donutData_G;
-var g_var;
+var g_var = [];
 var historyData = [];
 var historyDonutData = [];
 var dropdown_names = [];

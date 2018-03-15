@@ -12,52 +12,50 @@ function findMin(data, key) {
   })
 }
 
-//get new tree node
-function getNode(data) {
-  return data;
-}
-
-// function filterOut(data, type) {
-//   return
-// }
-
 
 //Search tree
-function searchTree(element, matchingTitle){
-     if(element.name == matchingTitle){
-          return element;
-     }else if (element.children != null){
-          var i;
-          var result = null;
-          for(i=0; result == null && i < element.children.length; i++){
-               result = searchTree(element.children[i], matchingTitle);
-          }
-          return result;
-     }
-     return null;
+function searchTree(element, matchingTitle) {
+  if (element.name == matchingTitle) {
+    return element;
+  } else if (element.children != null) {
+    var i;
+    var result = null;
+    for (i = 0; result == null && i < element.children.length; i++) {
+      result = searchTree(element.children[i], matchingTitle);
+    }
+    return result;
+  }
+  return null;
 }
 
-function searchTreeAddNode(element, matchingTitle, data){
-     if(element.name == matchingTitle){
-       debugger;
-          if (element.children == undefined) {
+function searchTreeAddNode(element, matchingTitle, data) {
+  if (element.name == matchingTitle) {
+    debugger;
+    if (element.children == undefined) {
 
-            element.children = []
-          }
-          element.children.push({"name": "400m Buffer"})
-          return element
-     }else if (element.children != null){
-          var i;
-          var result = null;
-          for(i=0; result == null && i < element.children.length; i++){
-               result = searchTreeAddNode(element.children[i], matchingTitle);
-          }
-          return result;
-     }
-     return null;
+      element.children = []
+    }
+    element.children.push({
+      "name": "400m Buffer"
+    })
+    return element
+  } else if (element.children != null) {
+    var i;
+    var result = null;
+    for (i = 0; result == null && i < element.children.length; i++) {
+      result = searchTreeAddNode(element.children[i], matchingTitle);
+    }
+    return result;
+  }
+  return null;
 }
 
-function filterByClass(value){
+function removeItemInArray(arr, item) {
+  var index = arr.indexOf(item)
+  if (index !== -1) arr.splice(index, 1);
+}
+
+function filterByClass(value) {
   if (myMapData && value) {
     // update visible attr in myData
     var variable = "UndSer_Lvl"
@@ -92,9 +90,53 @@ function filterByClass(value){
   }
 }
 
+var numVarBtns = 1;
+var btnActNum = 0;
 
-function selectAllStations() {
-  if (myMapData.visible) {
+function addVarButton() {
 
+  numVarBtn = variables.length;
+
+  var node = document.getElementById("var-buttons");
+
+  for (var i = 0; i < numVarBtn; i++) {
+    var btndiv = document.createElement('div');
+    btndiv.classList.add("column")
+    // var btndiv;
+    btndiv.innerHTML =
+      `
+      <button class="ui button var-button" style="width:100%" onclick="varChoosing(` + i + `)" id="button` + i + `"></button>
+      <div class="ui center aligned segment" id="text` + i + `"></div>
+    `
+    node.appendChild(btndiv)
+    $('#button' + i).text(variables[i]);
   }
+}
+
+function varChoosing(index) {
+  var btn = $("#button" + index);
+  var tex = $("#text" + index);
+  var parameters = getModelParameters();
+
+  if (btn.hasClass("active")) {
+    btn.removeClass("active")
+    tex.text('')
+    btnActNum = btnActNum - 1;
+  }
+  else {
+    btnActNum = btnActNum + 1;
+    btn.addClass("active")
+    tex.text("x" + btnActNum)
+  }
+  if ( btnActNum == parameters.length ) {
+    $('#model').removeClass("disabled")
+  }
+  else {
+    $('#model').addClass('disabled')
+  }
+}
+
+function getModelParameters() {
+  var parameters = $('#parameters').val().split(',').map( (d) => parseFloat(d) )
+  return parameters;
 }

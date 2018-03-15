@@ -27,11 +27,15 @@ drawMap();
 
 function mapCircle(data, radius) {
   var markers = [];
-  var radius = radius + "_uncert"
+  var radius = radius.map( (d)=> d + "_uncert")
   for (var i = 0; i < data.length; i++) {
     var lat = data[i].lat;
     var lon = data[i].lon;
-    var radii = +data[i][radius];
+    var radii = 0;
+    radius.forEach( function(r) {
+      radii = radii + +data[i][r]
+    })
+    // var radii = +data[i][radius];
     // console.log("radius", radii)
     // mapCircle(lat, lon, radii);
     var marker = new L.circle([lat, lon], {
@@ -60,10 +64,13 @@ function mapPoint(lat, lon) {
 }
 
 function mapCircleIndiv(data, radius) {
-  var radius = radius + "_uncert"
+  var radius = radius.map( (d)=> d + "_uncert")
   var lat = data.lat;
   var lon = data.lon;
-  var radii = +data[radius];
+  var radii = 0;
+  radius.forEach( function(r) {
+    radii = radii + +data[r]
+  })
   // debugger;
 
   var marker = new L.circle([lat, lon], {

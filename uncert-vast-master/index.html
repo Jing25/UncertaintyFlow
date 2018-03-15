@@ -82,7 +82,7 @@
 
           <div class="content">
             <p>Classify stations based on the parameters.</p>
-            <button class="ui button" onclick="classifyButton()"></i>Classification</button>
+            <button class="ui fluid button" onclick="classifyButton()"></i>Classification</button>
           </div>
 
           <!-- Brushing/Filtering -->
@@ -171,8 +171,6 @@
 
             </div>
 
-
-
           </div>
 
           <!-- Model -->
@@ -180,10 +178,27 @@
             <button class="fluid blue ui button"><i class="dropdown icon"></i>Model</button>
           </div>
           <div class="content">
-            <button class="ui button">Model 1</button>
-            <button class="ui button">Model 2</button>
+            <h5 class="ui horizontal divider header">Parameter Inputing</h5>
+            <div class="ui grid">
+              <div class="seven wide column">
+                <p>Input Parameters (Seperate by Comma):</p>
+              </div>
+              <div class="nine wide column">
+                <div class="ui input" style="width:100%">
+                  <input placeholder="a, b, c, ..." type="text" id="parameters">
+                </div>
+              </div>
+            </div>
+            <!-- <div class="ui container segment" id="var-buttons"> -->
+            <h5 class="ui horizontal divider header">Variable Choosing</h5>
+            <p>Choosing Variables in Order: </p>
+
+            <div class="ui five column doubling grid container" id="var-buttons"></div>
+            <h5 class="ui horizontal divider header">Parameter Inputing</h5>
+            <button class="fluid ui disabled button" id="model">Model</button>
           </div>
         </div>
+        <!-- </div> -->
 
 
         <!-- Variables Uncertainty Visualization-->
