@@ -13,6 +13,7 @@ var variables_uncert = variables.map( (d)=> d + "_uncert" );
 
 var eyebuttonClick = 1;
 var markerlayer;
+var markerPointsLayer;
 
 
 var objTree = {

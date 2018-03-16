@@ -49,14 +49,15 @@ function uploadFiles() {
     updateTree(root);
 
     // Map
+    var markers = [];
     for (var i = 0; i < data.length; i++) {
       var radii = +(data[i].pop_uncer) + +(data[i].uncertain01);
       var lat = data[i].lat;
       var lon = data[i].lon;
-      // mapCircle(lat, lon, radii);
-      mapPoint(lat, lon)
-      // flowTree(objTree, radiusTree)
+      markers.push(mapPoint(lat, lon))
     }
+    markerPointsLayer = L.layerGroup(markers);
+    map.addLayer(markerPointsLayer);
 
     //dropdown variables
     variables.forEach(function(v) {

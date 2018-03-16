@@ -57,12 +57,14 @@ function mapCircle(data, radius) {
 }
 
 
-function mapPoint(lat, lon) {
+function mapPoint(lat, lon, index) {
   var marker = L.marker([lat, lon], {
-      icon: mapIcon
+      icon: mapIcon,
+      myCustomId: index
     })
     .on("click", myclick)
-    .addTo(map);
+    // .addTo(map);
+    return marker
 }
 
 function mapCircleIndiv(data, radius) {
@@ -102,10 +104,10 @@ function drawMap() {
 
 function myclick(e) {
   var icon = e.target.options.icon.options
-  debugger;
+  // debugger;
   if (icon.iconUrl == "image/map_pin_red.png") {
     e.target.setIcon(mapIconUnselect)
-    // debugger;
+    this.options.myCustomId
   } else if (icon.iconUrl == "image/map_pin_blue.png") {
     e.target.setIcon(mapIcon)
   }

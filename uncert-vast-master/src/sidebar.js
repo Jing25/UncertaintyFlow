@@ -264,31 +264,57 @@ uncertSlider.noUiSlider.on('update', function(values, handle) {
     // debugger;
 
     // remove mappoints
-    var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
-    while (divMapPoint.firstChild) {
-      divMapPoint.removeChild(divMapPoint.firstChild);
+    // var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
+    // while (divMapPoint.firstChild) {
+    //   divMapPoint.removeChild(divMapPoint.firstChild);
+    // }
+    // if (markerlayer) {
+    //   map.removeLayer(markerlayer)
+    // }
+    //
+    //
+    // // add mappoints
+    // var markers = [];
+    // myMapData.forEach(function(element, i) {
+    //   if (element.visible) {
+    //     mapPoint(element.lat, element.lon, i)
+    //     if (g_var.length) {
+    //       markers.push(mapCircleIndiv(element, g_var))
+    //     }
+    //   }
+    // });
+    // if (markers.length) {
+    //   markerlayer = L.layerGroup(markers);
+    //   map.addLayer(markerlayer);
+    // }
+    if (markerPointsLayer) {
+      map.removeLayer(markerPointsLayer)
     }
     if (markerlayer) {
       map.removeLayer(markerlayer)
     }
 
-
     // add mappoints
     var markers = [];
-    myMapData.forEach(function(element) {
+    var circles = [];
+    myMapData.forEach(function(element, i) {
       if (element.visible) {
-        mapPoint(element.lat, element.lon)
-        if (g_var.length) {
-          markers.push(mapCircleIndiv(element, g_var))
+        markers.push(mapPoint(element.lat, element.lon, i))
+        if (g_var) {
+          circles.push(mapCircleIndiv(element, g_var))
         }
       }
     });
+    // debugger;
     if (markers.length) {
-      markerlayer = L.layerGroup(markers);
+      markerlayer = L.layerGroup(circles);
       map.addLayer(markerlayer);
     }
-  }
-  else {
+    if (circles.length) {
+      markerPointsLayer = L.layerGroup(markers);
+      map.addLayer(markerPointsLayer);
+    }
+  } else {
     if (markerlayer) {
       map.removeLayer(markerlayer)
     }
@@ -473,9 +499,12 @@ function updateParameter() {
   });
 
   // remove mappoints
-  var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
-  while (divMapPoint.firstChild) {
-    divMapPoint.removeChild(divMapPoint.firstChild);
+  // var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
+  // while (divMapPoint.firstChild) {
+  //   divMapPoint.removeChild(divMapPoint.firstChild);
+  // }
+  if (markerPointsLayer) {
+    map.removeLayer(markerPointsLayer)
   }
   if (markerlayer) {
     map.removeLayer(markerlayer)
@@ -483,17 +512,33 @@ function updateParameter() {
 
   // add mappoints
   var markers = [];
-  myMapData.forEach(function(element) {
+  var circles = [];
+  myMapData.forEach(function(element, i) {
     if (element.visible) {
-      mapPoint(element.lat, element.lon)
+      markers.push(mapPoint(element.lat, element.lon, i))
       if (g_var) {
-        markers.push(mapCircleIndiv(element, g_var))
+        circles.push(mapCircleIndiv(element, g_var))
       }
     }
   });
   // debugger;
   if (markers.length) {
-    markerlayer = L.layerGroup(markers);
+    markerlayer = L.layerGroup(circles);
     map.addLayer(markerlayer);
+  }
+  if (circles.length) {
+    markerPointsLayer = L.layerGroup(markers);
+    map.addLayer(markerPointsLayer);
+  }
+}
+
+function selectAll() {
+  selectIndexes = []
+  for (key in markerPointsLayer._layers) {
+    var icon = markerPointsLayer._layers[key].options.icon.options
+    if (icon.iconUrl == "image/map_pin_red.png") {
+      markerPointsLayer._layers[key].setIcon(mapIconUnselect)
+    }
+    indexes.push(markerPointsLayer._layers[key].options.myCustomId)
   }
 }
