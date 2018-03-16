@@ -131,6 +131,7 @@ function classifyButton() {
       ],
       onChange: function(value, text, $selectedItem) {
         // filterByClass(value)
+        updateParameter();
       }
     });
   //***** end dropdown class filtering ***
@@ -495,6 +496,7 @@ function updateParameter() {
     var visible = true;
     var uncertainty = 0;
 
+
     for (var i = 1; i < variableName.length; i++) {
       if (+element[variableName[i]] > +maxAll[i] || +element[variableName[i]] < +minAll[i]) {
         visible = false;
@@ -506,6 +508,13 @@ function updateParameter() {
         uncertainty = uncertainty + +element[r]
       })
       if (uncertainty < +minAll[0] - 0.01) {
+        visible = false;
+      }
+    }
+
+    if ($('#dropdown-class').dropdown("get value")) {
+      if (element[classVar] !== $('#dropdown-class').dropdown("get value")) {
+        console.log("here")
         visible = false;
       }
     }

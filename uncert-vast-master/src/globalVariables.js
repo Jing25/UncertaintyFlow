@@ -6,6 +6,8 @@ var historyData = [];
 var historyDonutData = [];
 var dropdown_names = [];
 
+var classVar = "UndSer_Lvl"
+
 var variables = ["TTrip", "Capacity", "Transit", "Hospital", "IntPoints", "Crash", "BNDes",
   "Pop", "PecWhi", "MedAge", "PecV", "Income", "TWork"
 ]
