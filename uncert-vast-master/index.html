@@ -164,9 +164,12 @@
               </div>
               <div class="sixteen wide column">
                 <button class="ui button" onclick="selectAll()">Select All</button>
-                <button class="ui button">Delete</button>
-                <button class="ui button">Reset</button>
-                <button class="ui right floated button">Calculate Uncertainty</button>
+                <button class="ui button" onclick="deleteAll()">Delete</button>
+                <button class="ui button" onclick="redoDelete()">Undo</button>
+                <button class="ui right floated button" onclick="resetSlider()">Reset Sliders</button>
+              </div>
+              <div class="sixteen wide column">
+                <button class="ui fluid button" onclick="brushingFiltering()"></i>Calculate Uncertainty</button>
               </div>
 
             </div>
@@ -195,7 +198,7 @@
 
             <div class="ui five column doubling grid container" id="var-buttons"></div>
             <h5 class="ui horizontal divider header">Parameter Inputing</h5>
-            <button class="fluid ui disabled button" id="model">Model</button>
+            <button class="fluid ui disabled button" id="model" onclick="modelUncertainty()">Model</button>
           </div>
         </div>
         <!-- </div> -->
@@ -218,16 +221,20 @@
             </div>
 
           </div>
-          <div class="content">
+
+          <div class="content" id="dountCharts">
             <h4 class="ui sub header">Uncertainty</h4>
             <!-- open files -->
             <div class="ui center aligned" id="openFile">
               <input type="file" id="fileupload" style="display:none" onchange="uploadFiles()" />
               <button class="circular massive ui icon button" id="OpenFileUpload"><i class="folder open icon"></i></button>
-              <!-- <p id="demo"></p> -->
             </div>
-            <div id="parameters"></div>
+            <!-- <div id="parameters"></div> -->
             <div id="charts"></div>
+          </div>
+          <div class="content" style="display:none" id="barCharts">
+            <h4 class="ui sub header">Model comparison</h4>
+            <div id="barCharts-js"></div>
           </div>
           <div class="extra content">
             <button class="ui button">Join Project</button>
@@ -240,6 +247,7 @@
 
   <!-- Load JavasSript libs: Jquery, Bootstrap, D3, Vue, Leaflet  -->
   <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/11.0.3/nouislider.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -258,7 +266,7 @@
   <script src="src/flowtree.js"></script>
   <script src="src/sidebar.js"></script>
   <script src="src/semanticUI.js"></script>
-  <!-- <script src="src/donutUncertainty.js"></script> -->
+  <script src="src/barCharts.js"></script>
 
 </body>
 

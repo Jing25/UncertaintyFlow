@@ -8,97 +8,14 @@ $('#classifyButton').click(function() {
   $("#classifyDialog").dialog();
 });
 
-function viewBuffer() {
-  var bufferSize = $("#buffer").dropdown('get value');
-  // console.log("bufferSize", bufferSize)
-
-  if (eyebuttonClick && bufferSize == 400 && myData) {
-    $(eyebutton).html("<i class=\"eye slash icon\"></i>")
-
-    var data = myData;
-    var markers = [];
-    for (var i = 0; i < data.length; i++) {
-      var radii = +(data[i].pop_uncer) + +(data[i].uncertain01);
-      var lat = data[i].lat;
-      var lon = data[i].lon;
-      // mapCircle(lat, lon, radii);
-      var marker = new L.circle([lat, lon], +bufferSize, {
-        color: 'blue',
-        weight: 1
-      })
-      // .addTo(map);
-      markers.push(marker)
-    }
-    markerlayer = L.layerGroup(markers);
-    map.addLayer(markerlayer);
-    eyebuttonClick = 0;
-  } else if (bufferSize == 400 && myData) {
-    $(eyebutton).html("<i class=\"eye icon\"></i>");
-    map.removeLayer(markerlayer);
-    eyebuttonClick = 1;
-  }
-}
-
-function classifyButton() {
-
-  //////////// Adding node to the tree
-  var newNodeData = {
-    "name": "classification",
-    "r": 13,
-    "clicked": 0,
-    "children": []
-  };
-  // create newNode with d3.hierarchy
-  var newNode = d3.hierarchy(newNodeData);
-  newNode.depth = selectedTreeNode.depth + 1;
-  newNode.height = selectedTreeNode.height - 1;
-  newNode.parent = selectedTreeNode;
-
-  // push new node in selected tree node's children
-  // if no child array, create an empty array
-  if (!selectedTreeNode.children) {
-    selectedTreeNode.children = [];
-    selectedTreeNode.data.children = [];
-  }
-  selectedTreeNode.children.push(newNode);
-  selectedTreeNode.data.children.push(newNode.data);
-
-  // Update tree
-  updateTree(selectedTreeNode);
-
-  // console.log("here")
-  //dropdown classes
-  $('#dropdown-class')
-    .dropdown({
-      placeholder: 'CLASSES',
-      values: [{
-          name: "Adequately Served",
-          value: "Adequately served"
-        },
-        {
-          name: "Moderately Served",
-          value: "Moderately served"
-        },
-        {
-          name: "Under Served",
-          value: "Underserved"
-        }
-      ],
-      onChange: function(value, text, $selectedItem) {
-        // console.log("dropdown-class", value)
-        filterByClass(value)
-      }
-    });
-}
-
+//************ uncertainty for 400m buffer *******************************
 function bufferUncert() {
-  ///
-  /// here is for testing code to add node in tree
-  ///
+  ///**************** Add node in tree *****
   var newNodeData = {
     "name": "400m Buffer",
     "r": 10,
     "clicked": 0,
+    "type": "normal",
     "children": []
   };
   // create newNode with d3.hierarchy
@@ -119,11 +36,9 @@ function bufferUncert() {
   // Update tree
   updateTree(selectedTreeNode);
 
-  ///// test code end ///////////
+  //***************** test code end ****************//
 
-  ///// Update donut chart
-  // if (myData && donutData_G) {
-
+  //*************** Update donut chart
   var data = JSON.parse(JSON.stringify(myData));
 
   //Update donut charts
@@ -161,11 +76,171 @@ function bufferUncert() {
 
   historyData.push(data);
   myMapData = data;
-  console.log("historyData: ", historyData)
-  console.log("myMapData: ", myMapData)
-  // }
+}
 
-  // console.log(donutData)
+//************ uncertainty for classification *******************************
+function classifyButton() {
+  //********* Adding node to the tree ********
+  var newNodeData = {
+    "name": "classification",
+    "r": 13,
+    "clicked": 0,
+    "type": "normal",
+    "children": []
+  };
+  // create newNode with d3.hierarchy
+  var newNode = d3.hierarchy(newNodeData);
+  newNode.depth = selectedTreeNode.depth + 1;
+  newNode.height = selectedTreeNode.height - 1;
+  newNode.parent = selectedTreeNode;
+
+  // push new node in selected tree node's children
+  // if no child array, create an empty array
+  if (!selectedTreeNode.children) {
+    selectedTreeNode.children = [];
+    selectedTreeNode.data.children = [];
+  }
+  selectedTreeNode.children.push(newNode);
+  selectedTreeNode.data.children.push(newNode.data);
+
+  // Update tree
+  updateTree(selectedTreeNode);
+
+  //************ End adding node to the tree *********
+
+  //*** dropdown button for classes filtering ****
+  $('#dropdown-class')
+    .dropdown({
+      placeholder: 'CLASSES',
+      values: [{
+          name: "NONE",
+          value: ""
+        },
+        {
+          name: "Adequately Served",
+          value: "Adequately served"
+        },
+        {
+          name: "Moderately Served",
+          value: "Moderately served"
+        },
+        {
+          name: "Under Served",
+          value: "Underserved"
+        }
+      ],
+      onChange: function(value, text, $selectedItem) {
+        // filterByClass(value)
+      }
+    });
+  //***** end dropdown class filtering ***
+} // end classification uncertainty calculation
+
+//************ uncertainty for brushing and filtering *******************************
+function brushingFiltering() {
+
+  //*********** Adding node to the tree ************
+  var newNodeData;
+  if ($('#dropdown-class').dropdown("get value")) {
+    newNodeData = {
+      "name": "Filtering",
+      "r": 13,
+      "clicked": 0,
+      "type": "normal",
+      "children": []
+    };
+  } else {
+    newNodeData = {
+      "name": "Brushing",
+      "r": 13,
+      "clicked": 0,
+      "type": "normal",
+      "children": []
+    };
+  }
+  // create newNode with d3.hierarchy
+  var newNode = d3.hierarchy(newNodeData);
+  newNode.depth = selectedTreeNode.depth + 1;
+  newNode.height = selectedTreeNode.height - 1;
+  newNode.parent = selectedTreeNode;
+
+  // push new node in selected tree node's children
+  // if no child array, create an empty array
+  if (!selectedTreeNode.children) {
+    selectedTreeNode.children = [];
+    selectedTreeNode.data.children = [];
+  }
+  selectedTreeNode.children.push(newNode);
+  selectedTreeNode.data.children.push(newNode.data);
+
+  // Update tree
+  updateTree(selectedTreeNode);
+  //********** End adding node to the tree **********
+}
+
+//************ uncertainty for models *******************************
+function modelUncertainty() {
+  numModel++;
+  //*********** Adding node to the tree ************
+  var newNodeData = {
+    "name": "Model" + numModel,
+    "r": 13,
+    "clicked": 0,
+    "mean": 2 + numModel,
+    "max": 5 + numModel,
+    "min": 8 + numModel,
+    "type": "model",
+    "children": []
+  };
+  // create newNode with d3.hierarchy
+  var newNode = d3.hierarchy(newNodeData);
+  newNode.depth = selectedTreeNode.depth + 1;
+  newNode.height = selectedTreeNode.height - 1;
+  newNode.parent = selectedTreeNode;
+
+  // push new node in selected tree node's children
+  // if no child array, create an empty array
+  if (!selectedTreeNode.children) {
+    selectedTreeNode.children = [];
+    selectedTreeNode.data.children = [];
+  }
+  selectedTreeNode.children.push(newNode);
+  selectedTreeNode.data.children.push(newNode.data);
+
+  // Update tree
+  updateTree(selectedTreeNode);
+  //********** End adding node to the tree **********
+}
+
+function viewBuffer() {
+  var bufferSize = $("#buffer").dropdown('get value');
+  // console.log("bufferSize", bufferSize)
+
+  if (eyebuttonClick && bufferSize == 400 && myData) {
+    $(eyebutton).html("<i class=\"eye slash icon\"></i>")
+
+    var data = myData;
+    var markers = [];
+    for (var i = 0; i < data.length; i++) {
+      var radii = +(data[i].pop_uncer) + +(data[i].uncertain01);
+      var lat = data[i].lat;
+      var lon = data[i].lon;
+      // mapCircle(lat, lon, radii);
+      var marker = new L.circle([lat, lon], +bufferSize, {
+        color: 'blue',
+        weight: 1
+      })
+      // .addTo(map);
+      markers.push(marker)
+    }
+    markerlayer = L.layerGroup(markers);
+    map.addLayer(markerlayer);
+    eyebuttonClick = 0;
+  } else if (bufferSize == 400 && myData) {
+    $(eyebutton).html("<i class=\"eye icon\"></i>");
+    map.removeLayer(markerlayer);
+    eyebuttonClick = 1;
+  }
 }
 
 function sortDown() {
@@ -191,9 +266,9 @@ function sortUp() {
 ///
 var uncertSlider = document.getElementById('slider-uncert');
 var uncertSliderValueElement = document.getElementById('slider-uncert-value');
-// variableName.push("uncertainty")
-// minAll.push(0)
-// maxAll.push(0)
+variableName.push("uncertainty")
+minAll.push(0)
+maxAll.push(0)
 
 // uncertainty slider
 noUiSlider.create(uncertSlider, {
@@ -235,85 +310,10 @@ function setUncertSlider(data, varType) {
 uncertSlider.noUiSlider.on('update', function(values, handle) {
   $("#slider-uncert-value").val(values[handle]);
 
+
   if (myMapData && g_var.length) {
-    // update visible attr in myData
-    var var_name = g_var.map((d) => d + "_uncert")
-
-    myMapData.forEach(function(element) {
-      var uncertainty = 0;
-      var visible = true;
-      var_name.forEach(function(r) {
-        uncertainty = uncertainty + +element[r]
-      })
-
-      for (var i = 0; i < variableName.length; i++) {
-        if (+element[variableName[i]] > +maxAll[i] || +element[variableName[i]] < +minAll[i] ||
-          uncertainty < values[handle] - 0.01) {
-          visible = false;
-        }
-      }
-      element.visible = visible;
-
-      // debugger;
-      // if (uncertainty < values[handle] - 0.01) {
-      //   element.visible = false;
-      // } else {
-      //   element.visible = true;
-      // }
-    });
-    // debugger;
-
-    // remove mappoints
-    // var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
-    // while (divMapPoint.firstChild) {
-    //   divMapPoint.removeChild(divMapPoint.firstChild);
-    // }
-    // if (markerlayer) {
-    //   map.removeLayer(markerlayer)
-    // }
-    //
-    //
-    // // add mappoints
-    // var markers = [];
-    // myMapData.forEach(function(element, i) {
-    //   if (element.visible) {
-    //     mapPoint(element.lat, element.lon, i)
-    //     if (g_var.length) {
-    //       markers.push(mapCircleIndiv(element, g_var))
-    //     }
-    //   }
-    // });
-    // if (markers.length) {
-    //   markerlayer = L.layerGroup(markers);
-    //   map.addLayer(markerlayer);
-    // }
-    if (markerPointsLayer) {
-      map.removeLayer(markerPointsLayer)
-    }
-    if (markerlayer) {
-      map.removeLayer(markerlayer)
-    }
-
-    // add mappoints
-    var markers = [];
-    var circles = [];
-    myMapData.forEach(function(element, i) {
-      if (element.visible) {
-        markers.push(mapPoint(element.lat, element.lon, i))
-        if (g_var) {
-          circles.push(mapCircleIndiv(element, g_var))
-        }
-      }
-    });
-    // debugger;
-    if (markers.length) {
-      markerlayer = L.layerGroup(circles);
-      map.addLayer(markerlayer);
-    }
-    if (circles.length) {
-      markerPointsLayer = L.layerGroup(markers);
-      map.addLayer(markerPointsLayer);
-    }
+    minAll[0] = values[handle];
+    updateParameter();
   } else {
     if (markerlayer) {
       map.removeLayer(markerlayer)
@@ -357,8 +357,8 @@ slider[0].noUiSlider.on('update', function(values, handle) {
   sliderValueElements[0][handle].value = values[handle];
 
   if (myMapData) {
-    minAll[0] = values[0];
-    maxAll[0] = values[1];
+    minAll[1] = values[0];
+    maxAll[1] = values[1];
     updateParameter();
   }
 });
@@ -442,8 +442,8 @@ function addVarSlider() {
   slider[index - 1].noUiSlider.on('update', function(values, handle) {
     sliderValueElements[index - 1][handle].value = values[handle];
     if (myMapData) {
-      minAll[index - 1] = values[0];
-      maxAll[index - 1] = values[1];
+      minAll[index] = values[0];
+      maxAll[index] = values[1];
       updateParameter();
     }
     // stepSliderValueElement.innerHTML = values[handle]
@@ -470,10 +470,10 @@ function removeVarSlider() {
 
 function setVarSlider(index, data, varType) {
 
-  variableName[index - 1] = varType;
+  variableName[index] = varType;
   var min = findMin(data, varType)[varType];
   var max = findMax(data, varType)[varType];
-  console.log("min", min, "max", max);
+  // console.log("min", min, "max", max);
   if (max == min) {
     max = max + 1;
   }
@@ -487,22 +487,33 @@ function setVarSlider(index, data, varType) {
 }
 
 function updateParameter() {
+  if (g_var.length) {
+    var var_name = g_var.map((d) => d + "_uncert")
+  }
 
   myMapData.forEach(function(element) {
     var visible = true;
-    for (var i = 0; i < variableName.length; i++) {
+    var uncertainty = 0;
+
+    for (var i = 1; i < variableName.length; i++) {
       if (+element[variableName[i]] > +maxAll[i] || +element[variableName[i]] < +minAll[i]) {
         visible = false;
       }
     }
+
+    if (g_var.length) {
+      var_name.forEach(function(r) {
+        uncertainty = uncertainty + +element[r]
+      })
+      if (uncertainty < +minAll[0] - 0.01) {
+        visible = false;
+      }
+    }
+
     element.visible = visible;
   });
 
-  // remove mappoints
-  // var divMapPoint = document.getElementsByClassName("leaflet-pane leaflet-marker-pane")[0];
-  // while (divMapPoint.firstChild) {
-  //   divMapPoint.removeChild(divMapPoint.firstChild);
-  // }
+
   if (markerPointsLayer) {
     map.removeLayer(markerPointsLayer)
   }
@@ -539,6 +550,41 @@ function selectAll() {
     if (icon.iconUrl == "image/map_pin_red.png") {
       markerPointsLayer._layers[key].setIcon(mapIconUnselect)
     }
-    indexes.push(markerPointsLayer._layers[key].options.myCustomId)
+    selectIndexes.push(markerPointsLayer._layers[key].options.myCustomId)
   }
+}
+
+var restoreData = [];
+
+function deleteAll() {
+  if (selectIndexes.length) {
+    restoreData.push(JSON.parse(JSON.stringify(myMapData)));
+    // restoreData.push(myMapData)
+
+    for (var i = selectIndexes.length - 1; i >= 0; i--) {
+      myMapData.splice(selectIndexes[i], 1);
+    }
+    updateParameter();
+    selectIndexes = [];
+  }
+}
+
+function redoDelete() {
+  if (restoreData.length) {
+    myMapData = JSON.parse(JSON.stringify(restoreData[restoreData.length - 1]));
+    // resetSlider();
+    updateParameter();
+    restoreData.pop();
+
+  }
+}
+
+function resetSlider() {
+  variableName.forEach(function(v, i) {
+    if (i === 0 && g_var.length) {
+      setUncertSlider(myMapData, g_var)
+    } else if (i > 0) {
+      setVarSlider(i, myMapData, v)
+    }
+  })
 }

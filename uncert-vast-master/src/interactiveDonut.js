@@ -135,47 +135,6 @@ function DonutCharts() {
 
   var updateDonut = function() {
 
-    // var eventObj = {
-    //
-    //   'mouseover': function(d, i, j) {
-    //
-    //     pathAnim(d3.select(this), 1);
-    //
-    //
-    //     var thisDonut = charts.select('.type' + j);
-    //     thisDonut.select('.value').text(function(donut_d) {
-    //       return d.data.val.toFixed(1) + donut_d.unit;
-    //     });
-    //     thisDonut.select('.percentage').text(function(donut_d) {
-    //       return (d.data.val / donut_d.total * 100).toFixed(2) + '%';
-    //     });
-    //   },
-    //
-    //   'mouseout': function(d, i, j) {
-    //     var thisPath = d3.select(this);
-    //     if (!thisPath.classed('clicked')) {
-    //       pathAnim(thisPath, 0);
-    //     }
-    //     var thisDonut = charts.select('.type' + j);
-    //     setCenterText(thisDonut);
-    //   },
-    //
-    //   'click': function(d, i, j) {
-    //     var thisDonut = charts.select('.type' + j);
-    //
-    //     if (0 === thisDonut.selectAll('.clicked')[0].length) {
-    //       thisDonut.select('circle').on('click')();
-    //     }
-    //
-    //     var thisPath = d3.select(this);
-    //     var clicked = thisPath.classed('clicked');
-    //     pathAnim(thisPath, ~~(!clicked));
-    //     thisPath.classed('clicked', !clicked);
-    //
-    //     setCenterText(thisDonut);
-    //   }
-    // };
-
     var pie = d3.pie()
       .sort(null)
       .value(function(d) {
@@ -306,38 +265,4 @@ function DonutCharts() {
     updateDonut();
 
   }
-}
-
-
-/*
- * Returns a json-like object.
- */
-function genData() {
-  var type = ['Users', 'Avg Upload', 'Avg Files Shared'];
-  var unit = ['M', 'GB', ''];
-  var cat = ['Google Drive', 'Dropbox', 'iCloud', 'OneDrive', 'Box'];
-
-  var dataset = new Array();
-
-  for (var i = 0; i < type.length; i++) {
-    var data = new Array();
-    var total = 0;
-
-    for (var j = 0; j < cat.length; j++) {
-      var value = Math.random() * 10 * (3 - i);
-      total += value;
-      data.push({
-        "cat": cat[j],
-        "val": value
-      });
-    }
-
-    dataset.push({
-      "type": type[i],
-      "unit": unit[i],
-      "data": data,
-      "total": total
-    });
-  }
-  return dataset;
 }

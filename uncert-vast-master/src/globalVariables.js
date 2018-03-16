@@ -21,9 +21,16 @@ var objTree = {
 }
 var radiusTree = [7]
 var treeNode;
-var nodeClick = 1;
+var numModel = 0;
 
 //sliders
 var variableName = [];
 var minAll = [];
 var maxAll = [];
+
+//barCharts
+var barChartData = [];
+// var meanM = [];
+// var maxM = [];
+// var minM = [];
+// var nameM = [];

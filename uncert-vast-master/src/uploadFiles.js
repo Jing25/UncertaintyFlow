@@ -9,8 +9,8 @@ function uploadFiles() {
   d3.csv(filename, function(data) {
     //get data
     myData = data;
-    myMapData = myData;
-    historyData.push(myData);
+    myMapData = JSON.parse(JSON.stringify(myData));
+    historyData.push(JSON.parse(JSON.stringify(myData)));
 
     // add visibility attribute
     myData.forEach(function(element) {

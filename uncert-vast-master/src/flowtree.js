@@ -1,39 +1,3 @@
-// const DATA = {
-//   "name": "Initial",
-//   "children": [{
-//     "name": "400m Buffer",
-//     "children": [{
-//         "name": "Model_01"
-//       },
-//       {
-//         "name": "Brushing",
-//         "children": [{
-//             "name": "Model_01"
-//           },
-//           // {"name": "Classification"},
-//           {
-//             "name": "Classification",
-//             "children": [{
-//               "name": "Brushing",
-//               "children": [{
-//                 "name": "selection",
-//                 "children": [{
-//                     "name": "Model_01"
-//                   },
-//                   {
-//                     "name": "Model_02"
-//                   }
-//                 ]
-//               }]
-//             }]
-//           }
-//         ]
-//       }
-//     ]
-//   }]
-// }
-//
-// var radiusTree = [7, 20, 25, 15, 17, 21, 14, 8, 11, 9]
 
 const WIDTH = $('#panel-vis-main').width();
 const HEIGHT = $('#panel-vis-main').height();
@@ -44,40 +8,12 @@ const svg = d3.select("#panel-vis-main").append("svg")
   .append('g')
   .attr('transform', 'translate(60,0)');
 
-// flowTree(DATA, radiusTree)
-// var treeData =
-//   {
-//     "name": "Top Level",
-//     "r": 20,
-//     "children": [
-//       {
-//         "name": "Level 2: A",
-//         "r": 10,
-//         "children": [
-//           {
-//               "name": "Son of A",
-//               "r": 15,
-//               "children": []
-//           },
-//           {
-//               "name": "Daughter of A",
-//               "r": 10,
-//               "children": []
-//           }
-//         ]
-//       },
-//       {
-//           "name": "Level 2: B",
-//           "r": 20,
-//           "children": []
-//       }
-//     ]
-//   };
 
 var treeData = {
   "name": "Initial",
   "r": 5,
   "clicked": 0,
+  "type": "normal",
   "children":[]
 }
 
@@ -104,7 +40,7 @@ function updateTree(source) {
         links = treeData.descendants().slice(1);
 
     // Normalize for fixed-depth.
-    nodes.forEach(function(d){ d.y = d.depth * 180});
+    nodes.forEach(function(d){ d.y = d.depth * 120});
 
     // ****************** Nodes section ***************************
 
@@ -125,7 +61,9 @@ function updateTree(source) {
         .attr('class', 'node')
         .attr('r', 1e-6)
         .style("fill", function(d) {
+          // debugger;
             return d.data.clicked ? "lightsteelblue" : "#fff";
+            // return d.data.clicked ? "lightsteelblue" : ( d.data.type === "model" ? "lightslategrey" : "#fff");
         });
 
     // Add labels for the nodes
@@ -156,6 +94,7 @@ function updateTree(source) {
       .attr('r', function(d) { return d.data.r; })
       .style("fill", function(d) {
           return d.data.clicked ? "lightsteelblue" : "#fff";
+          // d.data.clicked ? "lightsteelblue" : ( d.data.type === "model" ? "lightslategrey" : "#fff");
       })
       .attr('cursor', 'pointer');
 
@@ -228,23 +167,51 @@ function updateTree(source) {
     function click(d, i) {
       // if (!d3.select(this).classed('clicked')) {
       if (!d.data.clicked) {
-        d3.select(this.children[0]).style("fill", "lightsteelblue");
-        // debugger;
-        // $(this).addClass("clicked")
         d.data.clicked = 1;
-        selectedTreeNode = d;
-        myData = JSON.parse(JSON.stringify(historyData[i]));
-        myMapData = JSON.parse(JSON.stringify(myData));
-        var donutData = JSON.parse(JSON.stringify(historyDonutData[i]));
-        donuts.update(donutData)
-        // console.log("myData: ", myData);
+        if (selectedTreeNode) {
+          selectedTreeNode.data.clicked = 0;
+        }
+        updateTree(d)
+        d3.select(this.children[0]).style("fill", "lightsteelblue");
+
+
+        if (d.data.type == "model") {
+          $("#dountCharts").hide()
+          $("#barCharts").show()
+          // nameM.push(d.data.name)
+          // maxM.push(d.data.max)
+          // minM.push(d.data.min)
+          // meanM.push(d.data.mean)
+          barChart(d.data);
+        }
+        else {
+          // meanM = [];
+          // maxM = [];
+          // minM = [];
+          // nameM = [];
+          barChartData = [];
+          $("#dountCharts").show()
+          $("#barCharts").hide()
+          selectedTreeNode = d;
+          myData = JSON.parse(JSON.stringify(historyData[i]));
+          myMapData = JSON.parse(JSON.stringify(myData));
+          var donutData = JSON.parse(JSON.stringify(historyDonutData[i]));
+          donuts.update(donutData)
+        }
+
       } else {
         d.data.clicked = 0;
         d3.select(this.children[0]).style("fill", function() {
           d.children ? "#fff" : "#999"
         });
-        // $(this).removeClass("clicked")
-        // debugger;
+        if (d.data.type == "model" && barChartData.length) {
+          var name = barChartData.map( (d) => d.name)
+          var index = name.indexOf(d.data.name)
+          if (index !== -1) barChartData.splice(index, 1);
+          // debugger;
+          barChart("none")
+        }
+
         selectedTreeNode = null;
         // nodeClick = 1;
       }

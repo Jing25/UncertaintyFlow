@@ -55,6 +55,8 @@ function removeItemInArray(arr, item) {
   if (index !== -1) arr.splice(index, 1);
 }
 
+
+
 function filterByClass(value) {
   if (myMapData && value) {
     // update visible attr in myData
@@ -140,3 +142,5 @@ function getModelParameters() {
   var parameters = $('#parameters').val().split(',').map( (d) => parseFloat(d) )
   return parameters;
 }
+
+// function sele
