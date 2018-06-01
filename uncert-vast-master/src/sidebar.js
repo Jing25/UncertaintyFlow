@@ -71,11 +71,14 @@ function bufferUncert() {
   })
   // donutData_G = donutData;
   historyDonutData.push(donutData);
-  donuts.update(donutData);
+  window.UV.views.donuts.update(donutData);
   donutData_G = donutData;
 
   historyData.push(data);
   myMapData = data;
+  historyOperation.push("400m buffer")
+  window.UV.views.mtxdata.addOperation(historyOperation, historyData)
+  window.UV.views.matrix.update(matrixData, "Pop_uncert");
 }
 
 //************ uncertainty for classification *******************************
@@ -223,7 +226,7 @@ function viewBuffer() {
     var data = myData;
     var markers = [];
     for (var i = 0; i < data.length; i++) {
-      var radii = +(data[i].pop_uncer) + +(data[i].uncertain01);
+      //var radii = +(data[i].pop_uncer) + +(data[i].uncertain01);
       var lat = data[i].lat;
       var lon = data[i].lon;
       // mapCircle(lat, lon, radii);
@@ -249,7 +252,7 @@ function sortDown() {
     var donutData = donutData_G;
     donutData.sort((a, b) => b.total - a.total);
     // console.log(donutData)
-    donuts.update(donutData);
+    window.UV.views.donuts.update(donutData);
   }
 }
 
@@ -258,12 +261,12 @@ function sortUp() {
     var donutData = donutData_G;
     donutData.sort((a, b) => a.total - b.total);
     // console.log(donutData)
-    donuts.update(donutData);
+    window.UV.views.donuts.update(donutData);
   }
 }
 
 ///
-////////////////////////// set uncertainty slider value
+////////////////////////// set uncertainty slider value ////////
 ///
 var uncertSlider = document.getElementById('slider-uncert');
 var uncertSliderValueElement = document.getElementById('slider-uncert-value');
@@ -295,7 +298,7 @@ function setUncertSlider(data, varType) {
 
   var min = findMin(data, "uncertainty")["uncertainty"];
   var max = findMax(data, "uncertainty")["uncertainty"];
-  console.log("min", min, "max", max);
+  //console.log("min", min, "max", max);
   if (max == min) {
     max = max + 1;
   }
@@ -328,7 +331,7 @@ uncertSliderValueElement.addEventListener('change', function() {
 });
 
 ///
-//////////////////// set variable slider value
+//////////////////// set variable slider value ////////
 ///
 var slider = [];
 var sliderValueElements = [];
@@ -531,6 +534,7 @@ function updateParameter() {
   }
 
   // add mappoints
+  var heat;
   var markers = [];
   var circles = [];
   myMapData.forEach(function(element, i) {
@@ -541,12 +545,20 @@ function updateParameter() {
       }
     }
   });
+
+  heat = L.heatLayer(circles, {
+    radius: 20,
+    blur: 15,
+    maxZoom: 17
+    // myCustomId: i
+  });
+
   // debugger;
-  if (markers.length) {
-    markerlayer = L.layerGroup(circles);
+  if (circles.length) {
+    markerlayer = heat; //L.layerGroup(circles);
     map.addLayer(markerlayer);
   }
-  if (circles.length) {
+  if (markers.length) {
     markerPointsLayer = L.layerGroup(markers);
     map.addLayer(markerPointsLayer);
   }
@@ -571,6 +583,7 @@ function deleteAll() {
     // restoreData.push(myMapData)
 
     for (var i = selectIndexes.length - 1; i >= 0; i--) {
+      console.log(selectIndexes[i])
       myMapData.splice(selectIndexes[i], 1);
     }
     updateParameter();

@@ -196,7 +196,7 @@ function updateTree(source) {
           myData = JSON.parse(JSON.stringify(historyData[i]));
           myMapData = JSON.parse(JSON.stringify(myData));
           var donutData = JSON.parse(JSON.stringify(historyDonutData[i]));
-          donuts.update(donutData)
+          window.UV.views.donuts.update(donutData)
         }
 
       } else {

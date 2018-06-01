@@ -124,23 +124,60 @@ function varChoosing(index) {
     btn.removeClass("active")
     tex.text('')
     btnActNum = btnActNum - 1;
-  }
-  else {
+  } else {
     btnActNum = btnActNum + 1;
     btn.addClass("active")
     tex.text("x" + btnActNum)
   }
-  if ( btnActNum == parameters.length ) {
+  if (btnActNum == parameters.length) {
     $('#model').removeClass("disabled")
-  }
-  else {
+  } else {
     $('#model').addClass('disabled')
   }
 }
 
 function getModelParameters() {
-  var parameters = $('#parameters').val().split(',').map( (d) => parseFloat(d) )
+  var parameters = $('#parameters').val().split(',').map((d) => parseFloat(d))
   return parameters;
 }
 
-// function sele
+// Matrix data class
+function MatrixData() {
+  //matrix data manipulate
+
+  //get data
+  this.getMatrixData = function(opts, data) {
+    var matrixData = {};
+    variables_uncert.forEach(function(v) {
+      var obj = {};
+      obj["Id"] = data[0].map(d => d["Id"]);
+      if (opts.length == data.length) {
+        opts.forEach(function(opt, i) {
+          obj[opt] = data[i].map(d => d[v])
+          //optData.push(obj)
+        })
+        matrixData[v] = obj
+        //matrixData.push(obj)
+      } else {
+        console.log("The length of history data and operation are DIFFERENT!")
+      }
+    })
+    return matrixData
+  }
+
+  // add new operation data
+  this.addOperation = function(opts, data) {
+    // opt: operation name i.e. historyOperation
+    // data: 475 x num(v) x num(opts) i.e. historyData
+
+    if (opts.length == data.length) {
+      var len = opts.length - 1
+      var opt = opts[len]
+      var dt = data[len]
+      Object.keys(matrixData).forEach(function(v) {
+        matrixData[v][opt] = dt.map(dd => dd[v])
+      })
+    }
+
+  }
+}

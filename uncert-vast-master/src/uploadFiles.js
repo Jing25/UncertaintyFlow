@@ -1,5 +1,3 @@
-// initial data
-var donuts = new DonutCharts();
 
 //Initialization
 function uploadFiles() {
@@ -41,9 +39,17 @@ function uploadFiles() {
         clicked: 0
       })
     })
+
+    // Matrix data
+    historyOperation.push("Initial");
+
+    //var matrixData = [];
+    matrixData = window.UV.views.mtxdata.getMatrixData(historyOperation, historyData);
+    //console.log(mtxdata.matrixData)
+
     donutData_G = donutData;
     historyDonutData.push(donutData);
-    donuts.create(donutData);
+    window.UV.views.donuts.create(donutData);
 
     //flowTree
     updateTree(root);
@@ -77,23 +83,35 @@ function uploadFiles() {
         }
       });
 
+    // matrix.create(matrixData, "Pop_uncert")
+    // $('.menu .item')
+    //   .tab({onFirstLoad: function(tp) {
+    //     if (tp == "second") {
+    //       window.UV.views.matrix.create(matrixData, "Pop_uncert")
+    //     }
+    //   }});
+    window.UV.views.matrix.setData(matrixData)
+    window.UV.views.matrix.create("Pop_uncert");
+
+
+    $('#dropdown-var-matrix')
+      .dropdown({
+        placeholder: 'NONE',
+        values: dropdown_names,
+        onChange: function(value, text, $selectedItem) {
+          if (text !== undefined) {
+            //setVarSlider(1, myMapData, text)
+            var v = text + "_uncert"
+          }
+
+        }
+      });
+    $('#dropdown-var-matrix').dropdown('set selected', "Pop")
+
+
+
     addVarButton()
 
     // end load file
   })
 }
-
-// classification dropdown
-// $('.ui.dropdown')
-//   .dropdown({
-//     values: [{
-//         name: 'Male',
-//         value: 'male'
-//       },
-//       {
-//         name: 'Female',
-//         value: 'female',
-//         selected: true
-//       }
-//     ]
-//   });

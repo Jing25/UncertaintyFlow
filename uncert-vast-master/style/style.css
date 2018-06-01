@@ -23,6 +23,11 @@ html, body {
 #panel-sidebar {
     height: 100%;
 }
+#matrix-chart {
+  height: 600px;
+  width: 100%;
+  overflow: scroll;
+}
 
 
 .node circle {

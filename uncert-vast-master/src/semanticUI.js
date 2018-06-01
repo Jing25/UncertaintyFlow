@@ -4,19 +4,15 @@ $('.ui.accordion')
 $('.ui.dropdown')
   .dropdown();
 
-// $('#classNum')
-//   .dropdown({
-//     values: [{
-//         name: '2',
-//       },
-//       {
-//         name: '3'
-//       },
-//       {
-//         name: '4',
-//       }
-//     ]
-//   });
+$('.menu .item')
+  .tab({
+    onFirstLoad: function(tp) {
+      if (tp == "second") {
+        window.UV.views.matrix.setView();
+        window.UV.views.matrix.create("Pop_uncert");
+      }
+    }
+  });
 
 $('.activating.element')
   .popup();

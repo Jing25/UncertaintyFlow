@@ -1,10 +1,24 @@
+window.UV = {}
+
+window.UV.views = {
+  matrix: new UncertaintyMatrix(),
+  donuts: new DonutCharts(),
+  mtxdata: new MatrixData()
+}
+
 var myData;
 var myMapData;
 var donutData_G;
-var g_var = [];
+var g_var = [];   // types of variables that is chosen
 var historyData = [];
 var historyDonutData = [];
+var historyOperation = [];
+var matrixData;
 var dropdown_names = [];
+
+window.UV.data = {
+
+}
 
 var classVar = "UndSer_Lvl"
 
