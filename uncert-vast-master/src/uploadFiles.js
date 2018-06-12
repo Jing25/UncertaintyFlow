@@ -90,6 +90,7 @@ function uploadFiles() {
     //       window.UV.views.matrix.create(matrixData, "Pop_uncert")
     //     }
     //   }});
+    window.UV.views.matrix.setView();
     window.UV.views.matrix.setData(matrixData)
     window.UV.views.matrix.create("Pop_uncert");
 

@@ -3,7 +3,7 @@ html, body {
 }
 
 .full-height {
-    height: calc(100% - 40px);
+    height: calc(100% - 20px);
 }
 
 .sidebar {
@@ -12,20 +12,24 @@ html, body {
 }
 
 #panel-map {
-    height: 58%;
+    height: 60%;
 }
 
 #panel-vis {
     margin-top: 2%;
-    height: 40%;
+    height: 38%;
 }
 
 #panel-sidebar {
     height: 100%;
 }
 #matrix-chart {
-  height: 600px;
+  /* height: 600px; */
   width: 100%;
+  overflow: auto;
+}
+#dountCharts {
+  height: 400px;
   overflow: scroll;
 }
 

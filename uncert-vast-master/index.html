@@ -29,27 +29,12 @@
 
   <div class="container-fluid full-height">
     <div class="row full-height">
-      <main role="main" class="col-md-7 ml-sm-auto col-lg-7 pt-2 px-2">
-        <div class="card box-shadow" id="panel-map">
-          <div id="panel-map-main" class="card-body full-height">
-            <!-- Geolocation Map -->
-          </div>
-        </div>
-
-        <div class="card box-shadow" id="panel-vis">
-          <div id="panel-vis-main" class="card-body">
-            <!-- Uncertainty visualizations: tree, sankey, alluival diagrams ...-->
-          </div>
-        </div>
-      </main>
-
-      <nav class="col-md-5 d-none d-md-block sidebar pt-2 px-2">
+      <nav class="col-md-3 d-none d-md-block sidebar pt-2 px-2">
 
         <!-- Sidebar / Controls / Forms -->
         <h4 class="ui horizontal divider header">Operations</h4>
 
         <!-- accordion Operation control buttons -->
-
         <div class="ui fluid styled accordion">
 
           <!-- Circle buffer -->
@@ -217,9 +202,9 @@
           <div class="ui fluid card">
             <div class="content">
               <!-- <div class="header">Project Timeline</div> -->
-              <div class="ui input focus">
+              <!-- <div class="ui input focus">
                 <input placeholder="Search..." type="text">
-              </div>
+              </div> -->
               <div class="ui right floated icon buttons">
                 <button class="ui button"><i class="filter icon"></i></button>
                 <button class="ui button" onclick="sortDown()"><i class="sort amount down icon"></i></button>
@@ -248,18 +233,45 @@
           </div>
         </div>
         <div class="ui bottom attached tab segment" data-tab="second">
-          <div class="ui selection dropdown" id="dropdown-var-matrix">
-            <div class="text">Variables</div>
-            <i class="dropdown icon"></i>
-            <div class="menu">
-              <div class="item" data-value="0">NONE</div>
-            </div>
-          </div>
-          <div id="matrix-chart">
-          </div>
         </div>
+
         <div class="ui bottom attached tab segment" data-tab="third">
           Third
+        </div>
+
+
+      </nav>
+
+      <main role="main" class="col-md-6 ml-sm-auto col-lg-6 pt-2 px-2">
+        <div class="card box-shadow" id="panel-map">
+          <div id="panel-map-main" class="card-body full-height">
+            <!-- Geolocation Map -->
+          </div>
+        </div>
+
+        <div class="card box-shadow" id="panel-vis">
+          <div id="panel-vis-main" class="card-body">
+            <!-- Uncertainty visualizations: tree, sankey, alluival diagrams ...-->
+          </div>
+        </div>
+      </main>
+
+      <nav class="col-md-3 d-none d-md-block sidebar pt-2 px-2">
+
+        <!-- Uncertainty Matrix -->
+        <div class="ui selection dropdown" id="dropdown-var-matrix">
+          <div class="text">Variables</div>
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <div class="item" data-value="0">NONE</div>
+          </div>
+        </div>
+
+        <button class="ui right floated icon button" id="highlight_P"><i class="bullseye icon"></i></button>
+
+        <div class="ui fluid card">
+          <div id="matrix-chart">
+          </div>
         </div>
 
       </nav>

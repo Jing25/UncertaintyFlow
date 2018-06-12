@@ -78,7 +78,7 @@ function bufferUncert() {
   myMapData = data;
   historyOperation.push("400m buffer")
   window.UV.views.mtxdata.addOperation(historyOperation, historyData)
-  window.UV.views.matrix.update(matrixData, "Pop_uncert");
+  window.UV.views.matrix.addColumn(matrixData, "Pop_uncert");
 }
 
 //************ uncertainty for classification *******************************
