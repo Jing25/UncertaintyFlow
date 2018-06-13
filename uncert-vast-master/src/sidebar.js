@@ -78,6 +78,7 @@ function bufferUncert() {
   myMapData = data;
   historyOperation.push("400m buffer")
   window.UV.views.mtxdata.addOperation(historyOperation, historyData)
+  console.log(matrixData)
   window.UV.views.matrix.addColumn(matrixData, "Pop_uncert");
 }
 

@@ -22,7 +22,7 @@ function UncertaintyMatrix() {
                   .data(data.value);
     cards.enter().append("rect")
     .attr("x", (d) => numOpts * gridSize)
-    .attr("y", (d, i) => i * (gridSize + space))
+    .attr("y", (d, i) => (i+3) * (gridSize + space))
     .attr("rx", 4)
     .attr("ry", 4)
     .attr("class", "hour bordered")
@@ -33,6 +33,29 @@ function UncertaintyMatrix() {
   //   .transition()
   //   .duration(1000)
   //   .style("fill", (d) => color(d.value));
+  }
+
+  function addButton(numOpts) {
+    var data = ["v", "p"]
+    var buttons = svg_matrix.selectAll(".colBtns")
+                  .data(data);
+    .enter().append("g")
+    .attr("x", (d) => numOpts * gridSize)
+    .attr("y", (d, i) => i * gridSize)
+    .attr("rx", 4)
+    .attr("ry", 4)
+    .attr("class", (d) => numOpts + ".btn")
+    .attr("width", gridSize)
+    .attr("height", gridSize)
+    .style("stroke", "black")
+    .style("fill", "transparent");
+
+    buttons.append("text")
+    .attr("x", (d) => numOpts * gridSize)
+    .attr("y", (d, i) => i * gridSize)
+    .attr("dy", ".35em")
+    .text((d) => d)
+    // .style("fill", "transparent");
   }
 
   this.setData = function(d) {
@@ -85,7 +108,7 @@ function UncertaintyMatrix() {
       })
       .attr("x", 0)
       .attr("y", function(d, i) {
-        return i * (gridSize + space);
+        return (i+3) * (gridSize + space);
       })
       .style("text-anchor", "end")
       .attr("transform", "translate(-6," + gridSize / 1.5 + ")");
@@ -128,6 +151,7 @@ function UncertaintyMatrix() {
 
       // console.log(colorScale)
 
+      addButton(numOpts)
       setColumn(colData, colorScale, numOpts)
     })
 
@@ -152,14 +176,16 @@ function UncertaintyMatrix() {
     // debugger
 
     optsLabels = svg_matrix.selectAll(".optsLabel")
-      .data(opts)
+      .data(numOpts)
       .enter().append("g")
+      //.append("g")
       .attr("class", "optsLabel")
       .attr("y", 0)
       .style("text-anchor", "middle")
       .attr("transform", "translate(" + gridSize / 2 + ", -6)")
       .append("text")
-      .text(function(d) {
+      .text(function(d, i) {
+        console.log(d)
         return d;
       })
       .attr("x", numOpts * gridSize)
@@ -178,6 +204,7 @@ function UncertaintyMatrix() {
 
       // console.log(colorScale)
 
+      addButton(numOpts)
       setColumn(colData, colorScale, numOpts)
 
   }

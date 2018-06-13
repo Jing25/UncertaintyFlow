@@ -2,6 +2,9 @@ $(document).ready(function(){
     // $(window).resize(function(){
       $("#matrix-chart").height($(".sidebar").height()-45);
     // })
+    $(window).resize(function(){
+      $("#matrix-chart").height($(".sidebar").height()-45);
+    })
 });
 
 $('.ui.accordion')
