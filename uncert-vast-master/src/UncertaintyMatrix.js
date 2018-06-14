@@ -22,7 +22,10 @@ function UncertaintyMatrix() {
       .attr("class", "col" + numOpts)
       .attr("transform", "translate(" + numOpts * gridSize + ", 0)");
 
-    var tex = column.selectAll(".col" + numOpts)
+    var col = column.selectAll("col" + numOpts);
+
+    //var tex = column.selectAll(".col" + numOpts)
+    var tex = col
       .data([data.name])
       .enter().append("g");
 
@@ -35,12 +38,12 @@ function UncertaintyMatrix() {
       .text((d) => d)
 
     tex.selectAll("text")
-      // .attr("transform", "translate(" + gridSize/2 + ", -2)")
-      // .attr("transform", function(d, i) { return "translate(0, " + 20 +") rotate(-40)"})
       .attr("transform", "rotate(-40)")
 
-    var btnData = ["v", "p"]
-    var buttons = column.selectAll(".col" + numOpts)
+    //**** sort buttons ***** //
+    var btnData = ["\uf15e", "G"]
+    //var buttons = column.selectAll(".col" + numOpts)
+    var buttons = col
       .data(btnData)
       .enter()
     // .attr("class", "colbtns");
@@ -60,13 +63,28 @@ function UncertaintyMatrix() {
     buttons.append("text")
       .attr("x", 0)
       .attr("y", (d, i) => i * gridSize)
+      .attr('font-family', 'FontAwesome')
       .attr("class", "buttonicon")
+      .attr('font-size', '0.85em')
       .text((d) => d)
       .style("text-anchor", "end")
-      .attr("transform", "translate(13, 17)")
+      .attr("transform", "translate(15, 18)")
       .style("fill", "white")
 
-    column.selectAll(".col" + numOpts)
+    //***** moving button ****//
+    col
+      .data([1])
+      .enter().append("rect")
+      .attr("x", 0)
+      .attr("y", (d, i) => (i + 2) * gridSize)
+      .attr("class", "mvbtns")
+      .attr("width", gridSize)
+      .attr("height", gridSize / 2)
+      .style("fill", "rgb(25, 130, 207)")
+
+
+    //***** cards *****//
+    col
       .data(data.value)
       .enter()
       .append("rect")
