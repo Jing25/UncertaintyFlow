@@ -75,12 +75,15 @@ function UncertaintyMatrix() {
     col
       .data([1])
       .enter().append("rect")
-      .attr("x", 0)
+      .attr("x", -1)
       .attr("y", (d, i) => (i + 2) * gridSize)
+      .attr("rx", 3)
+      .attr("ry", 3)
       .attr("class", "mvbtns")
-      .attr("width", gridSize)
-      .attr("height", gridSize / 2)
-      .style("fill", "rgb(25, 130, 207)")
+      .attr("width", gridSize+2)
+      .attr("height", gridSize / 2.5)
+      .attr("transform", "translate(0, 10)")
+      .style("fill", "rgb(55, 152, 222)")
 
 
     //***** cards *****//
