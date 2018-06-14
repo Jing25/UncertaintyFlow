@@ -16,46 +16,70 @@ function UncertaintyMatrix() {
   var legendElementWidth = gridSize * 2;
 
   function setColumn(data, color, numOpts) {
-    console.log("data; ", data)
+    // console.log("data; ", data)
 
-    var cards = svg_matrix.selectAll(".colCards")
-                  .data(data.value);
-    cards.enter().append("rect")
-    .attr("x", (d) => numOpts * gridSize)
-    .attr("y", (d, i) => (i+3) * (gridSize + space))
-    .attr("rx", 4)
-    .attr("ry", 4)
-    .attr("class", "hour bordered")
-    .attr("width", gridSize)
-    .attr("height", gridSize)
-    .style("fill", (d) => color(d));
-  // .merge(cards)
-  //   .transition()
-  //   .duration(1000)
-  //   .style("fill", (d) => color(d.value));
-  }
+    var column = svg_matrix.selectAll(".matrix").append("g")
+      .attr("class", "col" + numOpts)
+      .attr("transform", "translate(" + numOpts * gridSize + ", 0)");
 
-  function addButton(numOpts) {
-    var data = ["v", "p"]
-    var buttons = svg_matrix.selectAll(".colBtns")
-                  .data(data);
-    .enter().append("g")
-    .attr("x", (d) => numOpts * gridSize)
-    .attr("y", (d, i) => i * gridSize)
-    .attr("rx", 4)
-    .attr("ry", 4)
-    .attr("class", (d) => numOpts + ".btn")
-    .attr("width", gridSize)
-    .attr("height", gridSize)
-    .style("stroke", "black")
-    .style("fill", "transparent");
+    var tex = column.selectAll(".col" + numOpts)
+      .data([data.name])
+      .enter().append("g");
+
+    tex.append("text")
+      .attr("class", "optsLabel")
+      // .style("text-anchor", "end")
+      // .attr("y", 2)
+      // .attr("x", numOpts * gridSize + 4)
+      // .style("text-anchor", "middle")
+      .text((d) => d)
+
+    tex.selectAll("text")
+      // .attr("transform", "translate(" + gridSize/2 + ", -2)")
+      // .attr("transform", function(d, i) { return "translate(0, " + 20 +") rotate(-40)"})
+      .attr("transform", "rotate(-40)")
+
+    var btnData = ["v", "p"]
+    var buttons = column.selectAll(".col" + numOpts)
+      .data(btnData)
+      .enter()
+    // .attr("class", "colbtns");
+
+    buttons.append("rect")
+      .attr("x", 0)
+      .attr("y", (d, i) => i * gridSize)
+      .attr("rx", 4)
+      .attr("ry", 4)
+      .attr("class", (d) => "btn" + numOpts)
+      .attr("width", gridSize)
+      .attr("height", gridSize)
+      .attr("transform", "translate(0, 4)")
+      .style("stroke", "grey")
+      .style("fill", "grey");
 
     buttons.append("text")
-    .attr("x", (d) => numOpts * gridSize)
-    .attr("y", (d, i) => i * gridSize)
-    .attr("dy", ".35em")
-    .text((d) => d)
-    // .style("fill", "transparent");
+      .attr("x", 0)
+      .attr("y", (d, i) => i * gridSize)
+      .attr("class", "buttonicon")
+      .text((d) => d)
+      .style("text-anchor", "end")
+      .attr("transform", "translate(13, 17)")
+      .style("fill", "white")
+
+    column.selectAll(".col" + numOpts)
+      .data(data.value)
+      .enter()
+      .append("rect")
+      // .attr("x", (d) => numOpts * gridSize)
+      .attr("y", (d, i) => (i + 3) * (gridSize + space))
+      .attr("rx", 4)
+      .attr("ry", 4)
+      .attr("class", "cards")
+      .attr("width", gridSize)
+      .attr("height", gridSize)
+      .style("fill", (d) => color(d));
+
+
   }
 
   this.setData = function(d) {
@@ -78,13 +102,13 @@ function UncertaintyMatrix() {
     var items = data["Id"]
     var numItems = items.length
     var opts = Object.keys(data)
-        opts.shift()
+    opts.shift()
     var numOpts = opts.length
 
-    h = (gridSize + space) * (numItems+5);
+    h = (gridSize + space) * (numItems + 6);
 
     var margin = {
-        top: 50,
+        top: 100,
         right: 10,
         bottom: 100,
         left: 50
@@ -94,11 +118,17 @@ function UncertaintyMatrix() {
 
     svg_matrix = d3.select("#matrix-chart").append("svg")
       .attr("width", w)
-      .attr("height", h)
-      .append("g")
+      .attr("height", h);
+
+    svg_matrix.append("g")
+      .attr("class", "matrix")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var itemLabels = svg_matrix.selectAll(".itemLabel")
+    var stations = svg_matrix.selectAll(".matrix").append("g")
+      .attr("class", "stationlabel");
+
+
+    stations.selectAll(".stationlabel")
       .data(items)
       .enter().append("text")
       .attr("class", "itemLabel")
@@ -108,26 +138,25 @@ function UncertaintyMatrix() {
       })
       .attr("x", 0)
       .attr("y", function(d, i) {
-        return (i+3) * (gridSize + space);
+        return (i + 3) * (gridSize + space);
       })
       .style("text-anchor", "end")
-      .attr("transform", "translate(-6," + gridSize / 1.5 + ")");
+      .attr("transform", "translate(-6," + gridSize / 1.3 + ")");
 
-    var optsLabels = svg_matrix.selectAll(".optsLabel")
-      .data(opts)
-      .enter().append("g")
-      .attr("class", "optsLabel")
-      .attr("y", 0)
-      .style("text-anchor", "middle")
-      .attr("transform", "translate(" + gridSize / 2 + ", -6)")
-      .append("text")
-      .text(function(d) {
-        return d;
-      })
-      .attr("x", numOpts * gridSize)
-      .selectAll("text")
-        .style("text-anchor", "end")
-        .attr("transform", "rotate(-65)")
+    // var optsLabels = svg_matrix.selectAll(".optsLabel")
+    //   .data(opts)
+    //   .enter().append("text")
+    //   .attr("class", "optsLabel")
+    //   .attr("y", 0)
+    //   .style("text-anchor", "middle")
+    //   .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+    //   .text(function(d) {
+    //     return d;
+    //   })
+    //   .attr("x", numOpts * gridSize)
+    //   .selectAll("text")
+    //   .style("text-anchor", "end")
+    //   .attr("transform", "rotate(-65)")
 
     // var colName = opts.shift();
 
@@ -139,11 +168,8 @@ function UncertaintyMatrix() {
         value: data[optName]
       }
 
-      // console.log(colData)
       var max = d3.max(colData.value, d => +d)
       maxV = Math.max(maxV, max)
-      // console.log(maxV)
-      // debugger
 
       var colorScale = d3.scaleQuantile()
         .domain([0, buckets - 1, maxV])
@@ -151,7 +177,8 @@ function UncertaintyMatrix() {
 
       // console.log(colorScale)
 
-      addButton(numOpts)
+      // addButton(numOpts)
+
       setColumn(colData, colorScale, numOpts)
     })
 
@@ -166,46 +193,46 @@ function UncertaintyMatrix() {
     var opts = Object.keys(data)
     var numOpts = opts.length
 
-    optName = opts[numOpts-1]
+    optName = opts[numOpts - 1]
 
     var colData = {
-      name: optName,
+      name: [optName],
       value: data[optName]
     }
 
     // debugger
 
-    optsLabels = svg_matrix.selectAll(".optsLabel")
-      .data(numOpts)
-      .enter().append("g")
-      //.append("g")
-      .attr("class", "optsLabel")
-      .attr("y", 0)
-      .style("text-anchor", "middle")
-      .attr("transform", "translate(" + gridSize / 2 + ", -6)")
-      .append("text")
-      .text(function(d, i) {
-        console.log(d)
-        return d;
-      })
-      .attr("x", numOpts * gridSize)
-      .selectAll("text")
-        .style("text-anchor", "end")
-        .attr("transform", "rotate(-65)")
+    // optsLabels = svg_matrix.selectAll(".optsLabel")
+    //   .data(numOpts)
+    //   .enter().append("g")
+    //   //.append("g")
+    //   .attr("class", "optsLabel")
+    //   .attr("y", 0)
+    //   .style("text-anchor", "middle")
+    //   .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+    //   .append("text")
+    //   .text(function(d, i) {
+    //     console.log(d)
+    //     return d;
+    //   })
+    //   .attr("x", numOpts * gridSize)
+    //   .selectAll("text")
+    //   .style("text-anchor", "end")
+    //   .attr("transform", "rotate(-65)")
 
-      var max = d3.max(colData.value, d => +d)
-      maxV = Math.max(maxV, max)
-      // console.log(maxV)
-      // debugger
+    var max = d3.max(colData.value, d => +d)
+    maxV = Math.max(maxV, max)
+    // console.log(maxV)
+    // debugger
 
-      var colorScale = d3.scaleQuantile()
-        .domain([0, buckets - 1, maxV])
-        .range(colors);
+    var colorScale = d3.scaleQuantile()
+      .domain([0, buckets - 1, maxV])
+      .range(colors);
 
-      // console.log(colorScale)
+    // console.log(colorScale)
 
-      addButton(numOpts)
-      setColumn(colData, colorScale, numOpts)
+    // addButton(numOpts)
+    setColumn(colData, colorScale, numOpts)
 
   }
 
