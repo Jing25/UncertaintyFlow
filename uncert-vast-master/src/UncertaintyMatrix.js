@@ -12,10 +12,39 @@ function UncertaintyMatrix() {
 
   var gridSize = 20;
   var space = 2;
-  // var gridWidth = gridHeight
   var legendElementWidth = gridSize * 2;
 
-  function setColumn(data, color, numOpts) {
+  this.setData = function(d) {
+    dataset = d;
+  }
+
+  this.setView = function() {
+    w = $('#matrix-chart').width();
+  }
+
+  function legend(colorScale) {
+
+    var legend = svg_matrix..selectAll(".legend")
+      .data([0].concat(colorScale.quantiles()), (d) => d);
+
+    var legend_g = legend.enter().append("g")
+      .attr("class", "legend");
+
+    legend_g.append("rect")
+      .attr("x", (d, i) => legendElementWidth * i)
+      // .attr("y", height)
+      .attr("width", legendElementWidth)
+      .attr("height", gridSize / 2)
+      .style("fill", (d, i) => colors[i]);
+
+    legend_g.append("text")
+      .attr("class", "mono")
+      .text((d) => "≥ " + Math.round(d))
+      .attr("x", (d, i) => legendElementWidth * i)
+      .attr("y", gridSize);
+  }
+
+  function setColumn(data, colorScale, numOpts) {
     // console.log("data; ", data)
 
     var column = svg_matrix.selectAll(".matrix").append("g")
@@ -31,8 +60,8 @@ function UncertaintyMatrix() {
 
     tex.append("text")
       .attr("class", "optsLabel")
-      // .style("text-anchor", "end")
-      // .attr("y", 2)
+      // .style("text-anchor", "start")
+      // .attr("y", 0)
       // .attr("x", numOpts * gridSize + 4)
       // .style("text-anchor", "middle")
       .text((d) => d)
@@ -42,7 +71,7 @@ function UncertaintyMatrix() {
 
     //**** sort buttons ***** //
     var btnData = ["\uf15e", "G"]
-    //var buttons = column.selectAll(".col" + numOpts)
+
     var buttons = col
       .data(btnData)
       .enter()
@@ -50,15 +79,16 @@ function UncertaintyMatrix() {
 
     buttons.append("rect")
       .attr("x", 0)
-      .attr("y", (d, i) => i * gridSize)
+      .attr("y", (d, i) => i * (gridSize + 1))
       .attr("rx", 4)
       .attr("ry", 4)
       .attr("class", (d) => "btn" + numOpts)
       .attr("width", gridSize)
       .attr("height", gridSize)
-      .attr("transform", "translate(0, 4)")
+      .attr("transform", "translate(0, 6)")
       .style("stroke", "grey")
-      .style("fill", "grey");
+      .style("fill", "grey")
+      .style("cursor", "pointer")
 
     buttons.append("text")
       .attr("x", 0)
@@ -68,22 +98,25 @@ function UncertaintyMatrix() {
       .attr('font-size', '0.85em')
       .text((d) => d)
       .style("text-anchor", "end")
-      .attr("transform", "translate(15, 18)")
+      .attr("transform", "translate(15, 20)")
       .style("fill", "white")
+      .style("cursor", "pointer")
 
     //***** moving button ****//
-    col
-      .data([1])
-      .enter().append("rect")
+    // col
+    //   .data([1])
+    //   .enter().append("rect")
+    column.append("rect")
       .attr("x", -1)
       .attr("y", (d, i) => (i + 2) * gridSize)
       .attr("rx", 3)
       .attr("ry", 3)
       .attr("class", "mvbtns")
-      .attr("width", gridSize+2)
+      .attr("width", gridSize + 2)
       .attr("height", gridSize / 2.5)
-      .attr("transform", "translate(0, 10)")
+      .attr("transform", "translate(0, 12)")
       .style("fill", "rgb(55, 152, 222)")
+      .style("cursor", "move")
 
 
     //***** cards *****//
@@ -98,17 +131,9 @@ function UncertaintyMatrix() {
       .attr("class", "cards")
       .attr("width", gridSize)
       .attr("height", gridSize)
-      .style("fill", (d) => color(d));
+      .style("fill", (d) => colorScale(d));
 
 
-  }
-
-  this.setData = function(d) {
-    dataset = d;
-  }
-
-  this.setView = function() {
-    w = $('#matrix-chart').width();
   }
 
   // console.log(W)
@@ -126,10 +151,10 @@ function UncertaintyMatrix() {
     opts.shift()
     var numOpts = opts.length
 
-    h = (gridSize + space) * (numItems + 6);
+    h = (gridSize + space) * (numItems + 10);
 
     var margin = {
-        top: 100,
+        top: 150,
         right: 10,
         bottom: 100,
         left: 50
@@ -164,24 +189,6 @@ function UncertaintyMatrix() {
       .style("text-anchor", "end")
       .attr("transform", "translate(-6," + gridSize / 1.3 + ")");
 
-    // var optsLabels = svg_matrix.selectAll(".optsLabel")
-    //   .data(opts)
-    //   .enter().append("text")
-    //   .attr("class", "optsLabel")
-    //   .attr("y", 0)
-    //   .style("text-anchor", "middle")
-    //   .attr("transform", "translate(" + gridSize / 2 + ", -6)")
-    //   .text(function(d) {
-    //     return d;
-    //   })
-    //   .attr("x", numOpts * gridSize)
-    //   .selectAll("text")
-    //   .style("text-anchor", "end")
-    //   .attr("transform", "rotate(-65)")
-
-    // var colName = opts.shift();
-
-    // console.log(opts)
     opts.forEach(function(optName) {
 
       var colData = {
@@ -201,6 +208,7 @@ function UncertaintyMatrix() {
       // addButton(numOpts)
 
       setColumn(colData, colorScale, numOpts)
+      legend(colorScale)
     })
 
 
@@ -220,26 +228,6 @@ function UncertaintyMatrix() {
       name: [optName],
       value: data[optName]
     }
-
-    // debugger
-
-    // optsLabels = svg_matrix.selectAll(".optsLabel")
-    //   .data(numOpts)
-    //   .enter().append("g")
-    //   //.append("g")
-    //   .attr("class", "optsLabel")
-    //   .attr("y", 0)
-    //   .style("text-anchor", "middle")
-    //   .attr("transform", "translate(" + gridSize / 2 + ", -6)")
-    //   .append("text")
-    //   .text(function(d, i) {
-    //     console.log(d)
-    //     return d;
-    //   })
-    //   .attr("x", numOpts * gridSize)
-    //   .selectAll("text")
-    //   .style("text-anchor", "end")
-    //   .attr("transform", "rotate(-65)")
 
     var max = d3.max(colData.value, d => +d)
     maxV = Math.max(maxV, max)
