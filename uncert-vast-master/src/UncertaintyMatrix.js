@@ -7,12 +7,13 @@ function UncertaintyMatrix() {
   var colors = ["#ffffd9", "#edf8b1", "#c7e9b4", "#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#253494", "#081d58"]
   var svg_matrix;
   var maxV = 0;
+  var legend;
 
   // debugger
 
   var gridSize = 20;
   var space = 2;
-  var legendElementWidth = gridSize * 2;
+  var legendElementWidth = gridSize * 1.5;
 
   this.setData = function(d) {
     dataset = d;
@@ -22,13 +23,11 @@ function UncertaintyMatrix() {
     w = $('#matrix-chart').width();
   }
 
-  function legend(colorScale) {
+  function createLegend(colorScale) {
 
-    var legend = svg_matrix..selectAll(".legend")
-      .data([0].concat(colorScale.quantiles()), (d) => d);
-
-    var legend_g = legend.enter().append("g")
-      .attr("class", "legend");
+    var legend_g = legend.selectAll(".legend")
+      .data([0].concat(colorScale.quantiles()), (d) => d)
+      .enter();
 
     legend_g.append("rect")
       .attr("x", (d, i) => legendElementWidth * i)
@@ -39,9 +38,28 @@ function UncertaintyMatrix() {
 
     legend_g.append("text")
       .attr("class", "mono")
-      .text((d) => "≥ " + Math.round(d))
-      .attr("x", (d, i) => legendElementWidth * i)
+      .text((d) => d.toFixed(1))
+      .attr("x", (d, i) => legendElementWidth * (i + 1))
+      .attr("text-anchor", "end")
+      .attr('font-size', '0.75em')
       .attr("y", gridSize);
+  }
+
+  function updateLegend(colorScale) {
+    legend.selectAll(".mono").remove();
+
+    var legend_g = legend.selectAll(".legend")
+      .data([0].concat(colorScale.quantiles()), (d) => d)
+      .enter();
+
+    legend_g.append("text")
+      .attr("class", "mono")
+      .text((d) => d.toFixed(1))
+      .attr("x", (d, i) => legendElementWidth * (i + 1))
+      .attr("text-anchor", "end")
+      .attr('font-size', '0.75em')
+      .attr("y", gridSize);
+
   }
 
   function setColumn(data, colorScale, numOpts) {
@@ -154,7 +172,7 @@ function UncertaintyMatrix() {
     h = (gridSize + space) * (numItems + 10);
 
     var margin = {
-        top: 150,
+        top: 120,
         right: 10,
         bottom: 100,
         left: 50
@@ -203,12 +221,12 @@ function UncertaintyMatrix() {
         .domain([0, buckets - 1, maxV])
         .range(colors);
 
-      // console.log(colorScale)
-
-      // addButton(numOpts)
-
       setColumn(colData, colorScale, numOpts)
-      legend(colorScale)
+
+      legend = svg_matrix.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(10, 10)")
+      createLegend(colorScale)
     })
 
 
@@ -242,6 +260,7 @@ function UncertaintyMatrix() {
 
     // addButton(numOpts)
     setColumn(colData, colorScale, numOpts)
+    updateLegend(colorScale)
 
   }
 
