@@ -154,6 +154,22 @@ function UncertaintyMatrix() {
 
   }
 
+
+  var brush = d3.brush()
+    .on("start brush", brushed)
+    .on("end", brushended);
+
+  function brushed() {
+    var s = d3.event.selection;
+    console.log("s", s);
+  }
+
+  function brushended() {
+    if (!d3.event.selection) {
+      console.log("here");
+    }
+  }
+
   // console.log(W)
   this.create = function(v) {
     // dataset i.e. matrixData
@@ -184,12 +200,17 @@ function UncertaintyMatrix() {
       .attr("width", w)
       .attr("height", h);
 
-    svg_matrix.append("g")
+    var matrix = svg_matrix.append("g")
       .attr("class", "matrix")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var stations = svg_matrix.selectAll(".matrix").append("g")
       .attr("class", "stationlabel");
+
+    matrix.append("g")
+      .attr("class", "brush")
+      .attr("transform", "translate(0, " + (gridSize + space)*2.5 + ")")
+      .call(brush);
 
 
     stations.selectAll(".stationlabel")
@@ -225,7 +246,7 @@ function UncertaintyMatrix() {
 
       legend = svg_matrix.append("g")
         .attr("class", "legend")
-        .attr("transform", "translate(10, 10)")
+        .attr("transform", "translate(" + (width - gridSize * 1.5 * (colors.length - 1)) + ", 10)")
       createLegend(colorScale)
     })
 
