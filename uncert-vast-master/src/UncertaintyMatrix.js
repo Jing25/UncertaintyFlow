@@ -88,7 +88,7 @@ function UncertaintyMatrix() {
       .attr("transform", "rotate(-40)")
 
     //**** sort buttons ***** //
-    var btnData = ["\uf15e", "G"]
+    var btnData = ["\uf161", "G"]
 
     var buttons = col
       .data(btnData)
@@ -106,7 +106,7 @@ function UncertaintyMatrix() {
       .attr("transform", "translate(0, 6)")
       .style("stroke", "grey")
       .style("fill", "grey")
-      .style("cursor", "pointer")
+      // .style("cursor", "pointer")
 
     buttons.append("text")
       .attr("x", 0)

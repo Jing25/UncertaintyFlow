@@ -6,6 +6,10 @@ window.UV.views = {
   mtxdata: new MatrixData()
 }
 
+window.UV.data = {
+  
+}
+
 var myData;
 var myMapData;
 var donutData_G;
