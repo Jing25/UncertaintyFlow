@@ -8,6 +8,8 @@ function UncertaintyMatrix() {
   var svg_matrix;
   var maxV = 0;
   var legend;
+  var v = "Pop_uncert";
+  var optColumns = {}; // column
 
   // debugger
 
@@ -17,10 +19,27 @@ function UncertaintyMatrix() {
 
   this.setData = function(d) {
     dataset = d;
+    // console.log("dataset", dataset);
   }
 
   this.setView = function() {
     w = $('#matrix-chart').width();
+  }
+
+
+  var brush = d3.brush()
+    .on("start brush", brushed)
+    .on("end", brushended);
+
+  function brushed() {
+    var s = d3.event.selection;
+    console.log("s", s);
+  }
+
+  function brushended() {
+    if (!d3.event.selection) {
+      console.log("here");
+    }
   }
 
   function createLegend(colorScale) {
@@ -62,18 +81,27 @@ function UncertaintyMatrix() {
 
   }
 
-  function setColumn(data, colorScale, numOpts) {
+
+
+  function setColumn(data, colorScale) {
+
     // console.log("data; ", data)
+    var opts = Object.keys(data[0]);
+    var numOpts = opts.length - 1;
+    var opt = opts[numOpts];
+
+    // debugger
 
     var column = svg_matrix.selectAll(".matrix").append("g")
-      .attr("class", "col" + numOpts)
-      .attr("transform", "translate(" + numOpts * gridSize + ", 0)");
+      .attr("class", "c_" + opt)
+      .attr("transform", "translate(" + ((numOpts - 1) * gridSize * 1.5 + gridSize / 1.5) + ", 0)");
 
-    var col = column.selectAll("col" + numOpts);
+    var col = column.selectAll("abc");
+    optColumns[opt] = column;
 
     //var tex = column.selectAll(".col" + numOpts)
     var tex = col
-      .data([data.name])
+      .data([opt])
       .enter().append("g");
 
     tex.append("text")
@@ -106,7 +134,7 @@ function UncertaintyMatrix() {
       .attr("transform", "translate(0, 6)")
       .style("stroke", "grey")
       .style("fill", "grey")
-      // .style("cursor", "pointer")
+    // .style("cursor", "pointer")
 
     buttons.append("text")
       .attr("x", 0)
@@ -121,9 +149,6 @@ function UncertaintyMatrix() {
       .style("cursor", "pointer")
 
     //***** moving button ****//
-    // col
-    //   .data([1])
-    //   .enter().append("rect")
     column.append("rect")
       .attr("x", -1)
       .attr("y", (d, i) => (i + 2) * gridSize)
@@ -139,7 +164,7 @@ function UncertaintyMatrix() {
 
     //***** cards *****//
     col
-      .data(data.value)
+      .data(data)
       .enter()
       .append("rect")
       // .attr("x", (d) => numOpts * gridSize)
@@ -147,31 +172,32 @@ function UncertaintyMatrix() {
       .attr("rx", 4)
       .attr("ry", 4)
       .attr("class", "cards")
+      .attr("id", (d) => d["Id"])
       .attr("width", gridSize)
       .attr("height", gridSize)
-      .style("fill", (d) => colorScale(d));
-
+      .style("fill", (d) => colorScale(d[opt]));
 
   }
 
+  function updateCardsColor(data, colorScale) {
+    // var cards = svg_matrix.selectAll(".matrix")
+    var opts = Object.keys(data[0])
+    var numOpts = opts.length - 1
 
-  var brush = d3.brush()
-    .on("start brush", brushed)
-    .on("end", brushended);
+    for (var i = 1; i < numOpts; i++) {
+      opt = opts[i];
+      var cards = svg_matrix.select(".matrix").selectAll(".c_" + opt).selectAll(".cards");
+      // debugger
+      cards.style("fill", (d) => colorScale(d[opt]))
 
-  function brushed() {
-    var s = d3.event.selection;
-    console.log("s", s);
-  }
-
-  function brushended() {
-    if (!d3.event.selection) {
-      console.log("here");
     }
   }
 
+
+
+
   // console.log(W)
-  this.create = function(v) {
+  this.create = function(opt) {
     // dataset i.e. matrixData
     // v variable name i.e. "TTrip_uncert"
 
@@ -179,11 +205,7 @@ function UncertaintyMatrix() {
     if (w === 0) return;
 
     var data = dataset[v]
-    var items = data["Id"]
-    var numItems = items.length
-    var opts = Object.keys(data)
-    opts.shift()
-    var numOpts = opts.length
+    var numItems = data.length
 
     h = (gridSize + space) * (numItems + 10);
 
@@ -209,17 +231,17 @@ function UncertaintyMatrix() {
 
     matrix.append("g")
       .attr("class", "brush")
-      .attr("transform", "translate(0, " + (gridSize + space)*2.5 + ")")
+      .attr("transform", "translate(0, " + (gridSize + space) * 2.5 + ")")
       .call(brush);
 
 
     stations.selectAll(".stationlabel")
-      .data(items)
+      .data(data)
       .enter().append("text")
       .attr("class", "itemLabel")
       .text(function(d) {
-        var text = "Station " + d;
-        return d;
+        // var text = "Station " + d;
+        return d["Id"];
       })
       .attr("x", 0)
       .attr("y", function(d, i) {
@@ -228,64 +250,88 @@ function UncertaintyMatrix() {
       .style("text-anchor", "end")
       .attr("transform", "translate(-6," + gridSize / 1.3 + ")");
 
-    opts.forEach(function(optName) {
+    // debugger
 
-      var colData = {
-        name: optName,
-        value: data[optName]
-      }
+    var max = d3.max(data, d => +d[opt])
+    maxV = Math.max(maxV, max)
+    console.log("maxV", maxV);
 
-      var max = d3.max(colData.value, d => +d)
-      maxV = Math.max(maxV, max)
+    var colorScale = d3.scaleQuantile()
+      .domain([0, buckets - 1, maxV])
+      .range(colors);
 
-      var colorScale = d3.scaleQuantile()
-        .domain([0, buckets - 1, maxV])
-        .range(colors);
+    setColumn(data, colorScale)
 
-      setColumn(colData, colorScale, numOpts)
-
-      legend = svg_matrix.append("g")
-        .attr("class", "legend")
-        .attr("transform", "translate(" + (width - gridSize * 1.5 * (colors.length - 1)) + ", 10)")
-      createLegend(colorScale)
-    })
-
-
-
+    legend = svg_matrix.append("g")
+      .attr("class", "legend")
+      .attr("transform", "translate(" + (width - gridSize * 1.5 * (colors.length - 1)) + ", 10)")
+    createLegend(colorScale)
 
   }
 
-  this.addColumn = function(dataset, v) {
+  this.addColumn = function(datas) {
 
+    dataset = datas
     var data = dataset[v]
-    var opts = Object.keys(data)
-    var numOpts = opts.length
+    var opts = Object.keys(data[0])
+    var numOpts = opts.length - 1;
 
-    optName = opts[numOpts - 1]
+    opt = opts[numOpts]
 
-    var colData = {
-      name: [optName],
-      value: data[optName]
-    }
 
-    var max = d3.max(colData.value, d => +d)
+    var max = d3.max(data, d => +d[opt])
+    // debugger
     maxV = Math.max(maxV, max)
-    // console.log(maxV)
+    console.log("maxVadd", maxV)
     // debugger
 
     var colorScale = d3.scaleQuantile()
       .domain([0, buckets - 1, maxV])
       .range(colors);
 
-    // console.log(colorScale)
+    updateCardsColor(data, colorScale)
 
-    // addButton(numOpts)
-    setColumn(colData, colorScale, numOpts)
+    setColumn(data, colorScale)
     updateLegend(colorScale)
 
   }
 
-  this.highlight = function() {
+  this.highlight = function(toggle) {
+
+    // console.log("data", dataset);
+    var data = dataset[v]
+
+    var opts = Object.keys(data[0]);
+    var numOpts = opts.length - 1;
+    var matrix = svg_matrix.select(".matrix")
+
+    if (toggle == 1) {
+      for (var i = 1; i <= numOpts; i++) {
+
+        opt = opts[i]
+
+        optColumns[opt].selectAll(".highlight_rect")
+          .data(data)
+          .enter()
+          .append("rect")
+          // .attr("x", -1)
+          .attr("y", (d, i) => (i + 3) * (gridSize + space))
+          .attr("rx", 4)
+          .attr("ry", 4)
+          .attr("class", "highlight_rect")
+          .attr("id", (d) => d["Id"])
+          .attr("width", gridSize)
+          .attr("height", gridSize)
+          .style("stroke", function(d) {
+            return d[opt] > 5.0 ? "red" : "transparent"
+          })
+          .style("fill", "transparent");
+      }
+    } else {
+      matrix.selectAll(".highlight_rect").remove();
+    }
+
 
   }
+
 }

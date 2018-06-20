@@ -2,12 +2,11 @@ window.UV = {}
 
 window.UV.views = {
   matrix: new UncertaintyMatrix(),
-  donuts: new DonutCharts(),
-  mtxdata: new MatrixData()
+  donuts: new DonutCharts()
 }
 
 window.UV.data = {
-  
+  matData: new MatrixData()
 }
 
 var myData;
@@ -20,9 +19,6 @@ var historyOperation = [];
 var matrixData;
 var dropdown_names = [];
 
-window.UV.data = {
-
-}
 
 var classVar = "UndSer_Lvl"
 
@@ -50,7 +46,3 @@ var maxAll = [];
 
 //barCharts
 var barChartData = [];
-// var meanM = [];
-// var maxM = [];
-// var minM = [];
-// var nameM = [];

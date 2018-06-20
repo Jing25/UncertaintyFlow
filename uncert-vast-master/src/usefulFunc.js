@@ -148,20 +148,22 @@ function MatrixData() {
   //get data
   this.getMatrixData = function(opts, data) {
     var matrixData = {};
-    variables_uncert.forEach(function(v) {
-      var obj = {};
-      obj["Id"] = data[0].map(d => d["Id"]);
-      if (opts.length == data.length) {
-        opts.forEach(function(opt, i) {
-          obj[opt] = data[i].map(d => d[v])
-          //optData.push(obj)
-        })
-        matrixData[v] = obj
-        //matrixData.push(obj)
-      } else {
-        console.log("The length of history data and operation are DIFFERENT!")
-      }
-    })
+    // console.log("data", data);
+    // debugger
+    for (var i = 0; i < variables_uncert.length; i++) {
+      var v = variables_uncert[i];
+      matrixData[v] = [];
+
+      data.forEach(function(d) {
+        var obj = {};
+        obj["Id"] = d["Id"];
+        obj[opts] = d[v];
+
+        matrixData[v].push(obj)
+      })
+
+    }
+
     return matrixData
   }
 
@@ -170,14 +172,14 @@ function MatrixData() {
     // opt: operation name i.e. historyOperation
     // data: 475 x num(v) x num(opts) i.e. historyData
 
-    if (opts.length == data.length) {
-      var len = opts.length - 1
-      var opt = opts[len]
-      var dt = data[len]
-      Object.keys(matrixData).forEach(function(v) {
-        matrixData[v][opt] = dt.map(dd => dd[v])
-      })
-    }
+    // console.log("data", data);
+
+    variables_uncert.forEach(function(v) {
+
+      for (var i = 0; i < matrixData[v].length; i++) {
+        matrixData[v][i][opts] = data[i][v]
+      }
+    })
 
   }
 }

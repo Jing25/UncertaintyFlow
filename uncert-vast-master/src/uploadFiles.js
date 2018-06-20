@@ -41,15 +41,17 @@ function uploadFiles() {
     })
 
     // Matrix data
-    historyOperation.push("Initial");
+    // historyOperation.push("Initial");
 
-    //var matrixData = [];
-    matrixData = window.UV.views.mtxdata.getMatrixData(historyOperation, historyData);
-    //console.log(mtxdata.matrixData)
+    matrixData = window.UV.data.matData.getMatrixData("Initial", myData);
 
     donutData_G = donutData;
     historyDonutData.push(donutData);
     window.UV.views.donuts.create(donutData);
+
+    window.UV.views.matrix.setView();
+    window.UV.views.matrix.setData(matrixData)
+    window.UV.views.matrix.create("Initial");
 
     //flowTree
     updateTree(root);
@@ -90,9 +92,7 @@ function uploadFiles() {
     //       window.UV.views.matrix.create(matrixData, "Pop_uncert")
     //     }
     //   }});
-    window.UV.views.matrix.setView();
-    window.UV.views.matrix.setData(matrixData)
-    window.UV.views.matrix.create("Pop_uncert");
+
 
 
     $('#dropdown-var-matrix')

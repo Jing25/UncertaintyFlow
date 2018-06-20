@@ -76,10 +76,10 @@ function bufferUncert() {
 
   historyData.push(data);
   myMapData = data;
-  historyOperation.push("400m buffer")
-  window.UV.views.mtxdata.addOperation(historyOperation, historyData)
-  console.log(matrixData)
-  window.UV.views.matrix.addColumn(matrixData, "Pop_uncert");
+  // historyOperation.push("400m buffer")
+  window.UV.data.matData.addOperation("400m Buffer", data)
+  // console.log(matrixData)
+  window.UV.views.matrix.addColumn(matrixData);
 }
 
 //************ uncertainty for classification *******************************

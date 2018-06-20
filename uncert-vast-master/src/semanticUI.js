@@ -1,10 +1,10 @@
-$(document).ready(function(){
-    // $(window).resize(function(){
-      $("#matrix-chart").height($(".sidebar").height()-45);
-    // })
-    $(window).resize(function(){
-      $("#matrix-chart").height($(".sidebar").height()-45);
-    })
+$(document).ready(function() {
+  // $(window).resize(function(){
+  $("#matrix-chart").height($(".sidebar").height() - 45);
+  // })
+  $(window).resize(function() {
+    $("#matrix-chart").height($(".sidebar").height() - 45);
+  })
 });
 
 $('.ui.accordion')
@@ -33,4 +33,9 @@ $('#className')
 
 $('#highlight_P').click(function() {
   $('#highlight_P').toggleClass("blue");
+  var a = $(this).attr("data-value");
+  window.UV.views.matrix.highlight(a);
+  $(this).attr("data-value", ~a)
+  console.log($(this).attr("data-value"));
+
 })
