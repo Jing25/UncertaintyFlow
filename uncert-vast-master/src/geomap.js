@@ -128,15 +128,50 @@ function drawMap() {
 
 
 function myclick(e) {
-  // var icon = e.target.options.icon.options
-  //  debugger;
-  // if (icon.iconUrl == "image/map_pin_red.png") {
-  //   e.target.setIcon(mapIconUnselect)
-  //   this.options.myCustomId
-  // } else if (icon.iconUrl == "image/map_pin_blue.png") {
-  //   e.target.setIcon(mapIcon)
 
-  //}
+}
+
+function updateMap() {
+
+  if (markerPointsLayer) {
+    map.removeLayer(markerPointsLayer)
+  }
+  if (markerlayer) {
+    map.removeLayer(markerlayer)
+  }
+
+  // add mappoints
+  var heat;
+  var markers = [];
+  var circles = [];
+
+  myMapData.forEach(function(element, i) {
+    if (element.visible) {
+      markers.push(mapPoint(element.lat, element.lon, i))
+      if (g_var.length) {
+        circles.push(mapCircleIndiv(element, g_var))
+        // console.log("in g_var");
+      }
+    }
+  });
 
 
+
+  // debugger;
+  if (circles.length) {
+
+    heat = L.heatLayer(circles, {
+      radius: 20,
+      blur: 15,
+      maxZoom: 17
+    });
+
+    markerlayer = heat; //L.layerGroup(circles);
+    map.addLayer(markerlayer);
+    // console.log("in circles");
+  }
+  if (markers.length) {
+    markerPointsLayer = L.layerGroup(markers);
+    map.addLayer(markerPointsLayer);
+  }
 }

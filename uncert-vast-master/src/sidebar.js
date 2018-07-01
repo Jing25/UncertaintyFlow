@@ -526,43 +526,7 @@ function updateParameter() {
     element.visible = visible;
   });
 
-
-  if (markerPointsLayer) {
-    map.removeLayer(markerPointsLayer)
-  }
-  if (markerlayer) {
-    map.removeLayer(markerlayer)
-  }
-
-  // add mappoints
-  var heat;
-  var markers = [];
-  var circles = [];
-  myMapData.forEach(function(element, i) {
-    if (element.visible) {
-      markers.push(mapPoint(element.lat, element.lon, i))
-      if (g_var) {
-        circles.push(mapCircleIndiv(element, g_var))
-      }
-    }
-  });
-
-  heat = L.heatLayer(circles, {
-    radius: 20,
-    blur: 15,
-    maxZoom: 17
-    // myCustomId: i
-  });
-
-  // debugger;
-  if (circles.length) {
-    markerlayer = heat; //L.layerGroup(circles);
-    map.addLayer(markerlayer);
-  }
-  if (markers.length) {
-    markerPointsLayer = L.layerGroup(markers);
-    map.addLayer(markerPointsLayer);
-  }
+  updateMap();
 }
 
 function selectAll() {

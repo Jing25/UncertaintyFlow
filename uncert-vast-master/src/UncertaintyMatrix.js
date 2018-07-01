@@ -8,8 +8,14 @@ function UncertaintyMatrix() {
   var svg_matrix;
   var maxV = 0;
   var legend;
+  var stations;
   var v = "Pop_uncert";
   var optColumns = {}; // column
+  var hashMap = {};
+
+  //brush
+  var start = -1
+  var end = -1
 
   // debugger
 
@@ -31,14 +37,49 @@ function UncertaintyMatrix() {
     .on("start brush", brushed)
     .on("end", brushended);
 
+
+
   function brushed() {
-    var s = d3.event.selection;
-    console.log("s", s);
+    var b = d3.event.selection;
+    var data = dataset[v];
+
+    var delta = gridSize + space;
+
+    if (start == -1 && end == -1) {
+
+      myMapData.forEach(function(element) {
+        element.visible = false;
+        var id = element.Id
+        hashMap[id] = element
+      })
+    }
+
+    var s = Math.floor(b[0][1] / delta)
+    var e = Math.floor(b[1][1] / delta)
+    // console.log(data);
+
+    if (s !== start || e !== end) {
+      start = s;
+      end = e;
+      for (var i = start; i < end; i++) {
+        var id = data[i]["Id"]
+        // console.log(id);
+
+        hashMap[id].visible = true
+      }
+      updateMap();
+    }
+
   }
 
   function brushended() {
     if (!d3.event.selection) {
-      console.log("here");
+      start = -1;
+      end = -1
+      myMapData.forEach(function(element) {
+        element.visible = true;
+      })
+      updateMap();
     }
   }
 
@@ -81,6 +122,105 @@ function UncertaintyMatrix() {
 
   }
 
+  function sortByValue(btn) {
+    console.log(btn);
+
+    var data = dataset[v];
+    var opt = btn.id;
+    var sortdata = [];
+
+    if (btn.val == "a") {
+      data.sort((a, b) => +b[opt] - +a[opt]);
+      updateCards(data)
+    }
+    if (btn.val == "b") {
+
+    }
+    if (btn.val == "c") {
+      data.sort((a, b) => +a[opt] - +b[opt]);
+      updateCards(data)
+    }
+
+  }
+
+  function updateCards() {
+
+    var data = dataset[v]
+
+    var opts = Object.keys(data[0])
+    var numOpts = opts.length
+
+    var colorScale = d3.scaleQuantile()
+      .domain([0, buckets - 1, maxV])
+      .range(colors);
+
+    for (var i = 1; i < numOpts; i++) {
+      opt = opts[i];
+      var cards = optColumns[opt].selectAll(".cards")
+
+      cards
+        .data(data)
+        .style("fill", (d) => colorScale(d[opt]))
+
+    }
+
+    stations.selectAll(".itemLabel")
+      .data(data)
+      .text(function(d) {
+        return d["Id"];
+      })
+  }
+
+  function createStationLabel(data) {
+
+    var stationBtn = [{
+      data: "\uf161",
+      id: "Id",
+      val: "c"
+    }]
+
+    stations
+      .append("rect")
+      .attr("x", -gridSize / 1.5)
+      .attr("y", (gridSize - 8))
+      .attr("rx", 4)
+      .attr("ry", 4)
+      .attr("class", "btnstation")
+      .attr("width", gridSize)
+      .attr("height", gridSize)
+      .style("stroke", "grey")
+      .style("fill", "grey");
+
+    stations.selectAll(".buttonicon")
+      .data(stationBtn)
+      .enter().append("text")
+      .attr("x", 2)
+      .attr("y", gridSize + 7)
+      .attr('font-family', 'FontAwesome')
+      .attr("class", "buttonicon")
+      .attr('font-size', '0.85em')
+      .text((d) => d.data)
+      .style("text-anchor", "end")
+      // .attr("transform", "translate(15, 20)")
+      .style("fill", "white")
+      .style("cursor", "pointer")
+      .on("click", sortByValue)
+
+    stations.selectAll(".itemLabel")
+      .data(data)
+      .enter().append("text")
+      .attr("class", "itemLabel")
+      .text(function(d) {
+        return d["Id"];
+      })
+      .attr("x", 0)
+      .attr("y", function(d, i) {
+        return (i + 3) * (gridSize + space);
+      })
+      .style("text-anchor", "end")
+    // .attr("transform", "translate(-6," + gridSize / 1.3 + ")");
+  }
+
 
 
   function setColumn(data, colorScale) {
@@ -94,7 +234,7 @@ function UncertaintyMatrix() {
 
     var column = svg_matrix.selectAll(".matrix").append("g")
       .attr("class", "c_" + opt)
-      .attr("transform", "translate(" + ((numOpts - 1) * gridSize * 1.5 + gridSize / 1.5) + ", 0)");
+      .attr("transform", "translate(" + ((numOpts - 1) * gridSize * 1.5 + gridSize) + ", 0)");
 
     var col = column.selectAll("abc");
     optColumns[opt] = column;
@@ -106,17 +246,24 @@ function UncertaintyMatrix() {
 
     tex.append("text")
       .attr("class", "optsLabel")
-      // .style("text-anchor", "start")
-      // .attr("y", 0)
-      // .attr("x", numOpts * gridSize + 4)
-      // .style("text-anchor", "middle")
       .text((d) => d)
 
     tex.selectAll("text")
       .attr("transform", "rotate(-40)")
 
     //**** sort buttons ***** //
-    var btnData = ["\uf161", "G"]
+    // var btnData = ["\uf161", "G"]
+    var btnData = [{
+        data: "\uf161",
+        id: opt,
+        val: "a"
+      },
+      {
+        data: "G",
+        id: opt,
+        val: "b"
+      }
+    ]
 
     var buttons = col
       .data(btnData)
@@ -133,20 +280,21 @@ function UncertaintyMatrix() {
       .attr("height", gridSize)
       .attr("transform", "translate(0, 6)")
       .style("stroke", "grey")
-      .style("fill", "grey")
+      .style("fill", "grey");
     // .style("cursor", "pointer")
 
     buttons.append("text")
       .attr("x", 0)
-      .attr("y", (d, i) => i * gridSize)
+      .attr("y", (d, i) => i * gridSize + 1*i)
       .attr('font-family', 'FontAwesome')
       .attr("class", "buttonicon")
       .attr('font-size', '0.85em')
-      .text((d) => d)
+      .text((d) => d.data)
       .style("text-anchor", "end")
       .attr("transform", "translate(15, 20)")
       .style("fill", "white")
       .style("cursor", "pointer")
+      .on("click", sortByValue)
 
     //***** moving button ****//
     column.append("rect")
@@ -194,9 +342,6 @@ function UncertaintyMatrix() {
   }
 
 
-
-
-  // console.log(W)
   this.create = function(opt) {
     // dataset i.e. matrixData
     // v variable name i.e. "TTrip_uncert"
@@ -226,31 +371,16 @@ function UncertaintyMatrix() {
       .attr("class", "matrix")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var stations = svg_matrix.selectAll(".matrix").append("g")
-      .attr("class", "stationlabel");
+    stations = svg_matrix.selectAll(".matrix").append("g")
+      .attr("class", "stationlabel")
+      .attr("transform", "translate(-6," + gridSize / 1.3 + ")")
 
     matrix.append("g")
       .attr("class", "brush")
       .attr("transform", "translate(0, " + (gridSize + space) * 2.5 + ")")
       .call(brush);
 
-
-    stations.selectAll(".stationlabel")
-      .data(data)
-      .enter().append("text")
-      .attr("class", "itemLabel")
-      .text(function(d) {
-        // var text = "Station " + d;
-        return d["Id"];
-      })
-      .attr("x", 0)
-      .attr("y", function(d, i) {
-        return (i + 3) * (gridSize + space);
-      })
-      .style("text-anchor", "end")
-      .attr("transform", "translate(-6," + gridSize / 1.3 + ")");
-
-    // debugger
+    createStationLabel(data)
 
     var max = d3.max(data, d => +d[opt])
     maxV = Math.max(maxV, max)
@@ -271,8 +401,9 @@ function UncertaintyMatrix() {
 
   this.addColumn = function(datas) {
 
-    dataset = datas
+    // dataset = datas
     var data = dataset[v]
+    console.log(dataset);
     var opts = Object.keys(data[0])
     var numOpts = opts.length - 1;
 
@@ -331,7 +462,11 @@ function UncertaintyMatrix() {
       matrix.selectAll(".highlight_rect").remove();
     }
 
+  }
 
+  this.changeVariable = function(variable) {
+    v = variable;
+    updateCards();
   }
 
 }

@@ -172,12 +172,21 @@ function MatrixData() {
     // opt: operation name i.e. historyOperation
     // data: 475 x num(v) x num(opts) i.e. historyData
 
-    // console.log("data", data);
+    var hashdata = {};
+
+
+    data.forEach(function(d) {
+      var id = d.Id
+      hashdata[id] = d;
+    })
+
+    console.log(hashdata);
 
     variables_uncert.forEach(function(v) {
 
       for (var i = 0; i < matrixData[v].length; i++) {
-        matrixData[v][i][opts] = data[i][v]
+        var id = matrixData[v][i]["Id"]
+        matrixData[v][i][opts] = hashdata[id][v]
       }
     })
 

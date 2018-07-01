@@ -18,6 +18,7 @@ function uploadFiles() {
       element["visible"] = true;
     });
 
+
     // DonutCharts
     var donutData = [];
     variables_uncert.forEach(function(key) {
@@ -85,14 +86,6 @@ function uploadFiles() {
         }
       });
 
-    // matrix.create(matrixData, "Pop_uncert")
-    // $('.menu .item')
-    //   .tab({onFirstLoad: function(tp) {
-    //     if (tp == "second") {
-    //       window.UV.views.matrix.create(matrixData, "Pop_uncert")
-    //     }
-    //   }});
-
 
 
     $('#dropdown-var-matrix')
@@ -103,6 +96,7 @@ function uploadFiles() {
           if (text !== undefined) {
             //setVarSlider(1, myMapData, text)
             var v = text + "_uncert"
+            window.UV.views.matrix.changeVariable(v)
           }
 
         }
