@@ -1,9 +1,9 @@
 $(document).ready(function() {
-  // $(window).resize(function(){
-  $("#matrix-chart").height($(".sidebar").height() - 45);
-  // })
+  $("#matrix-chart").height($(".sidebar").height() - 60);
+  $("#dountCharts").height($(".sidebar").height()/2. - 75);
   $(window).resize(function() {
-    $("#matrix-chart").height($(".sidebar").height() - 45);
+    $("#matrix-chart").height($(".sidebar").height() - 60);
+    $("#dountCharts").height($(".sidebar").height()/2. - 75);
   })
 });
 

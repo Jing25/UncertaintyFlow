@@ -23,13 +23,14 @@ html, body {
 #panel-sidebar {
     height: 100%;
 }
+
 #matrix-chart {
   /* height: 600px; */
   width: 100%;
   overflow: auto;
 }
 #dountCharts {
-  height: 400px;
+  /* height: 400px; */
   overflow: scroll;
 }
 

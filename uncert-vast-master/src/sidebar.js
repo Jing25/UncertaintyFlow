@@ -185,15 +185,16 @@ function brushingFiltering() {
 
 //************ uncertainty for models *******************************
 function modelUncertainty() {
-  numModel++;
+  // numModel++;
+  window.UV.num.model++
   //*********** Adding node to the tree ************
   var newNodeData = {
-    "name": "Model" + numModel,
+    "name": "Model " + window.UV.num.model,
     "r": 13,
     "clicked": 0,
-    "mean": 2 + numModel,
-    "max": 5 + numModel,
-    "min": 8 + numModel,
+    "mean": 2 + window.UV.num.model,
+    "max": 5 + window.UV.num.model,
+    "min": 8 + window.UV.num.model,
     "type": "model",
     "children": []
   };
@@ -528,6 +529,8 @@ function updateParameter() {
 
   updateMap();
 }
+
+
 
 function selectAll() {
   selectIndexes = []

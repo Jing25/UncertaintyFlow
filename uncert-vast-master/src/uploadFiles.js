@@ -4,6 +4,7 @@ function uploadFiles() {
   var x = document.getElementById("fileupload");
   filename = "Data/" + x.files[0].name;
   $("#openFile").hide()
+
   d3.csv(filename, function(data) {
     //get data
     myData = data;

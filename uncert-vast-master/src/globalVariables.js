@@ -9,6 +9,10 @@ window.UV.data = {
   matData: new MatrixData()
 }
 
+window.UV.num = {
+  model: 0
+}
+
 var myData;
 var myMapData;
 var donutData_G;
