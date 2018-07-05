@@ -192,3 +192,35 @@ function MatrixData() {
 
   }
 }
+
+function classificationUncert() {
+
+  if (markerPointsLayer) {
+    map.removeLayer(markerPointsLayer)
+  }
+
+  let data = myMapData;
+  let markers = [];
+
+  for (var i = 0; i < data.length; i++) {
+    var lat = data[i].lat;
+    var lon = data[i].lon;
+    let radius = 50
+
+    if (data[i]["UndSer_Lvl"] == "Underserved") {
+      markers.push(mapPoint(lat, lon, i, '#fc8d62', radius))
+    }
+    else if (data[i]["UndSer_Lvl"] == "Moderately served") {
+      markers.push(mapPoint(lat, lon, i, '#377eb8', radius))
+    }
+    else {
+      markers.push(mapPoint(lat, lon, i, '#e41a1c', radius))
+    }
+  }
+
+  if (markers.length) {
+    markerPointsLayer = L.layerGroup(markers);
+    map.addLayer(markerPointsLayer);
+  }
+
+}

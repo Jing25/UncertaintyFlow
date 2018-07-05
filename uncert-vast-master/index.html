@@ -32,213 +32,227 @@
     <div class="row full-height">
       <nav class="col-md-3 d-none d-md-block sidebar pt-2 px-2">
 
-        <!-- Sidebar / Controls / Forms -->
-        <h4 class="ui horizontal divider header">Operations</h4>
+        <div class="content" id="panel-opts">
+          <!-- Sidebar / Controls / Forms -->
+          <h4 class="ui horizontal divider header">Operations</h4>
 
-        <!-- accordion Operation control buttons -->
-        <div class="ui fluid styled accordion">
+          <!-- accordion Operation control buttons -->
+          <div class="ui fluid styled accordion">
 
-          <!-- Circle buffer -->
-          <div class="active title">
-            <button class="fluid blue ui button"><i class="dropdown icon"></i>Data Aggregation</button>
-          </div>
-          <div class="active content">
-            <p>Create a circle buffer for each bike station, then calculate the aggregation.</p>
-            <p>Select circle radius: </p>
-            <!-- Dropdown Button (circle radius) -->
-            <div class="ui selection dropdown" id="buffer">
-              <input name="radius" type="hidden">
-              <i class="dropdown icon"></i>
-              <div class="default text">Radius</div>
-              <div class="menu">
-                <div class="item" data-value="400">400-m</div>
-              </div>
+            <!-- Circle buffer -->
+            <div class="active title">
+              <button class="fluid blue ui button"><i class="dropdown icon"></i>Data Aggregation</button>
             </div>
-
-            <div class="ui icon button" id="eyebutton" data-tooltip="Show buffer" data-inverted="" onclick="viewBuffer()">
-              <i class="eye icon"></i>
-            </div>
-            <button class="ui button" onclick="bufferUncert()">Aggregation</button>
-          </div>
-
-          <!-- Classification control panel-->
-          <div class="title">
-            <button class="fluid blue ui button"><i class="dropdown icon"></i>Classification</button>
-          </div>
-
-          <div class="content">
-            <p>Classify stations based on the parameters.</p>
-            <button class="ui fluid button" onclick="classifyButton()"></i>Classification</button>
-          </div>
-
-          <!-- Brushing/Filtering -->
-          <div class="title">
-            <button class="fluid blue ui button"><i class="dropdown icon"></i>Brushing / Filtering</button>
-          </div>
-          <div class="content">
-            <p>Brush and filter the stations by uncertainty or classes</p>
-            <h5 class="ui horizontal divider header">Uncertainty Range</h5>
-            <!-- <p>Uncertainty Range: </p> -->
-            <div class="ui middle alligned grid">
-              <div class="seven wide column">
-                <div class="slider" id="slider-uncert"></div>
-              </div>
-              <div class="nine wide column">
-                <!-- <div id="slider-step-value"></div> -->
-                <div class="ui small labeled input">
-                  <div class="ui label">
-                    Value:
-                  </div>
-                  <input style="width:80%" placeholder="value" type="text" id="slider-uncert-value">
+            <div class="active content">
+              <p>Create a circle buffer for each bike station, then calculate the aggregation.</p>
+              <p>Select circle radius: </p>
+              <!-- Dropdown Button (circle radius) -->
+              <div class="ui selection dropdown" id="buffer">
+                <input name="radius" type="hidden">
+                <i class="dropdown icon"></i>
+                <div class="default text">Radius</div>
+                <div class="menu">
+                  <div class="item" data-value="400">400-m</div>
                 </div>
               </div>
+
+              <div class="ui icon button" id="eyebutton" data-tooltip="Show buffer" data-inverted="" onclick="viewBuffer()">
+                <i class="eye icon"></i>
+              </div>
+              <button class="ui button" onclick="bufferUncert()">Aggregation</button>
             </div>
-            <h5 class="ui horizontal divider header">Variable Range</h5>
-            <div id="var-sliders">
-              <div id="var-slider1">
-                <div class="ui middle alligned grid">
-                  <div class="sixteen wide column">
-                    <div class="ui selection dropdown" id="dropdown-var1">
-                      <div class="text">Variables</div>
-                      <i class="dropdown icon"></i>
-                      <div class="menu">
-                        <div class="item" data-value="0">NONE</div>
+
+            <!-- Classification control panel-->
+            <div class="title">
+              <button class="fluid blue ui button"><i class="dropdown icon"></i>Classification</button>
+            </div>
+
+            <div class="content">
+              <p>Classify stations based on the parameters.</p>
+              <button class="ui button" onclick="classifyButton()"></i>Classification</button>
+              <div class="ui icon button" id="classbutton" value=0 data-tooltip="Show classes" data-inverted="">
+                <i class="bullseye icon"></i>
+              </div>
+              <div class="ui icon button" id="c_uncertbutton" data-tooltip="Show uncertain stations" data-inverted="">
+                <i class="eye icon"></i>
+              </div>
+            </div>
+
+            <!-- Brushing/Filtering -->
+            <div class="title">
+              <button class="fluid blue ui button"><i class="dropdown icon"></i>Brushing / Filtering</button>
+            </div>
+            <div class="content">
+              <p>Brush and filter the stations by uncertainty or classes</p>
+              <h5 class="ui horizontal divider header">Uncertainty Range</h5>
+              <!-- <p>Uncertainty Range: </p> -->
+              <div class="ui middle alligned grid">
+                <div class="seven wide column">
+                  <div class="slider" id="slider-uncert"></div>
+                </div>
+                <div class="nine wide column">
+                  <!-- <div id="slider-step-value"></div> -->
+                  <div class="ui small labeled input">
+                    <div class="ui label">
+                      Value:
+                    </div>
+                    <input style="width:80%" placeholder="value" type="text" id="slider-uncert-value">
+                  </div>
+                </div>
+              </div>
+              <h5 class="ui horizontal divider header">Variable Range</h5>
+              <div id="var-sliders">
+                <div id="var-slider1">
+                  <div class="ui middle alligned grid">
+                    <div class="sixteen wide column">
+                      <div class="ui selection dropdown" id="dropdown-var1">
+                        <div class="text">Variables</div>
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                          <div class="item" data-value="0">NONE</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="seven wide column">
+                      <div class="slider" id="slider-var1"></div>
+                    </div>
+                    <div class="nine wide column">
+                      <!-- <div id="slider-step-value"></div> -->
+                      <div class="ui small labeled input">
+                        <div class="ui label">
+                          Value:
+                        </div>
+                        <input style="width:30%" placeholder="value" type="text" id="slider-var-left1">
+                        <input class="ui disabled input" style="width:30%" placeholder="value" type="text" id="slider-var-right1">
                       </div>
                     </div>
                   </div>
-                  <div class="seven wide column">
-                    <div class="slider" id="slider-var1"></div>
+                </div>
+              </div>
+
+              <div class="ui middle alligned grid">
+                <div class="sixteen wide column">
+                  <div class="ui right floated icon buttons">
+                    <button class="ui button" onclick="addVarSlider();"><i class="plus icon"></i></button>
+                    <button class="ui button" onclick="removeVarSlider();"><i class="minus icon"></i></button>
                   </div>
-                  <div class="nine wide column">
-                    <!-- <div id="slider-step-value"></div> -->
-                    <div class="ui small labeled input">
-                      <div class="ui label">
-                        Value:
+                </div>
+              </div>
+
+              <h5 class="ui horizontal divider header">Controls</h5>
+              <div class="ui grid">
+                <div class="six wide column">
+                  <p>Filter Stations by Classes: </p>
+                </div>
+                <div class="ten wide column">
+                  <div class="ui floating labeled icon dropdown button" id="dropdown-class">
+                    <i class="filter icon"></i>
+                    <span class="text">Filter by Classes</span>
+                    <div class="menu">
+                      <div class="header">
+                        <i class="tags icon"></i> Filter by Classes
                       </div>
-                      <input style="width:30%" placeholder="value" type="text" id="slider-var-left1">
-                      <input class="ui disabled input" style="width:30%" placeholder="value" type="text" id="slider-var-right1">
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div class="ui middle alligned grid">
-              <div class="sixteen wide column">
-                <div class="ui right floated icon buttons">
-                  <button class="ui button" onclick="addVarSlider();"><i class="plus icon"></i></button>
-                  <button class="ui button" onclick="removeVarSlider();"><i class="minus icon"></i></button>
+                <div class="sixteen wide column">
+                  <button class="ui button" onclick="selectAll()">Select All</button>
+                  <button class="ui button" onclick="deleteAll()">Delete</button>
+                  <button class="ui button" onclick="redoDelete()">Undo</button>
+                  <button class="ui right floated button" onclick="resetSlider()">Reset Sliders</button>
                 </div>
+                <div class="sixteen wide column">
+                  <button class="ui fluid button" onclick="brushingFiltering()"></i>Calculate Uncertainty</button>
+                </div>
+
               </div>
+
             </div>
 
-            <h5 class="ui horizontal divider header">Controls</h5>
-            <div class="ui grid">
-              <div class="six wide column">
-                <p>Filter Stations by Classes: </p>
-              </div>
-              <div class="ten wide column">
-                <div class="ui floating labeled icon dropdown button" id="dropdown-class">
-                  <i class="filter icon"></i>
-                  <span class="text">Filter by Classes</span>
-                  <div class="menu">
-                    <div class="header">
-                      <i class="tags icon"></i> Filter by Classes
-                    </div>
+            <!-- Model -->
+            <div class="title">
+              <button class="fluid blue ui button"><i class="dropdown icon"></i>Model</button>
+            </div>
+            <div class="content">
+              <h5 class="ui horizontal divider header">Parameter Inputing</h5>
+              <div class="ui grid">
+                <div class="seven wide column">
+                  <p>Input Parameters (Seperate by Comma):</p>
+                </div>
+                <div class="nine wide column">
+                  <div class="ui input" style="width:100%">
+                    <input placeholder="a, b, c, ..." type="text" id="parameters">
                   </div>
                 </div>
               </div>
-              <div class="sixteen wide column">
-                <button class="ui button" onclick="selectAll()">Select All</button>
-                <button class="ui button" onclick="deleteAll()">Delete</button>
-                <button class="ui button" onclick="redoDelete()">Undo</button>
-                <button class="ui right floated button" onclick="resetSlider()">Reset Sliders</button>
-              </div>
-              <div class="sixteen wide column">
-                <button class="ui fluid button" onclick="brushingFiltering()"></i>Calculate Uncertainty</button>
-              </div>
+              <!-- <div class="ui container segment" id="var-buttons"> -->
+              <h5 class="ui horizontal divider header">Variable Choosing</h5>
+              <p>Choosing Variables in Order: </p>
 
+              <div class="ui five column doubling grid container" id="var-buttons"></div>
+              <h5 class="ui horizontal divider header">Parameter Inputing</h5>
+              <button class="fluid ui disabled button" id="model" onclick="modelUncertainty()">Model</button>
             </div>
-
-          </div>
-
-          <!-- Model -->
-          <div class="title">
-            <button class="fluid blue ui button"><i class="dropdown icon"></i>Model</button>
-          </div>
-          <div class="content">
-            <h5 class="ui horizontal divider header">Parameter Inputing</h5>
-            <div class="ui grid">
-              <div class="seven wide column">
-                <p>Input Parameters (Seperate by Comma):</p>
-              </div>
-              <div class="nine wide column">
-                <div class="ui input" style="width:100%">
-                  <input placeholder="a, b, c, ..." type="text" id="parameters">
-                </div>
-              </div>
-            </div>
-            <!-- <div class="ui container segment" id="var-buttons"> -->
-            <h5 class="ui horizontal divider header">Variable Choosing</h5>
-            <p>Choosing Variables in Order: </p>
-
-            <div class="ui five column doubling grid container" id="var-buttons"></div>
-            <h5 class="ui horizontal divider header">Parameter Inputing</h5>
-            <button class="fluid ui disabled button" id="model" onclick="modelUncertainty()">Model</button>
           </div>
         </div>
+
+
         <!-- </div> -->
 
+        <div class="centent" id="panel-donuts">
+          <!-- Variables Uncertainty Visualization-->
+          <h4 class="ui horizontal divider header">Variables</h4>
 
-        <!-- Variables Uncertainty Visualization-->
-        <h4 class="ui horizontal divider header">Variables</h4>
+          <!-- Variables  -->
+          <div class="ui top attached tabular menu">
+            <a class="item active" data-tab="first">First</a>
+            <a class="item" data-tab="second">Second</a>
+            <a class="item" data-tab="third">Third</a>
+          </div>
+          <div class="ui bottom attached tab segment active" data-tab="first">
+            <div class="ui fluid card">
+              <div class="content">
+                <!-- <div class="header">Project Timeline</div> -->
+                <!-- <div class="ui input focus">
+                  <input placeholder="Search..." type="text">
+                </div> -->
+                <div class="ui right floated icon buttons">
+                  <button class="ui button"><i class="filter icon"></i></button>
+                  <button class="ui button" onclick="sortDown()"><i class="sort amount down icon"></i></button>
+                  <button class="ui button" onclick="sortUp()"><i class="sort amount up icon"></i></button>
+                </div>
 
-        <!-- Variables  -->
-        <div class="ui top attached tabular menu">
-          <a class="item active" data-tab="first">First</a>
-          <a class="item" data-tab="second">Second</a>
-          <a class="item" data-tab="third">Third</a>
-        </div>
-        <div class="ui bottom attached tab segment active" data-tab="first">
-          <div class="ui fluid card">
-            <div class="content">
-              <!-- <div class="header">Project Timeline</div> -->
-              <!-- <div class="ui input focus">
-                <input placeholder="Search..." type="text">
-              </div> -->
-              <div class="ui right floated icon buttons">
-                <button class="ui button"><i class="filter icon"></i></button>
-                <button class="ui button" onclick="sortDown()"><i class="sort amount down icon"></i></button>
-                <button class="ui button" onclick="sortUp()"><i class="sort amount up icon"></i></button>
               </div>
 
-            </div>
-
-            <div class="content" id="dountCharts">
-              <h4 class="ui sub header">Uncertainty</h4>
-              <!-- open files -->
-              <div class="ui center aligned" id="openFile">
-                <input type="file" id="fileupload" style="display:none" onchange="uploadFiles()" />
-                <button class="circular massive ui icon button" id="OpenFileUpload"><i class="folder open icon"></i></button>
+              <div class="content" id="dountCharts">
+                <h4 class="ui sub header">Uncertainty</h4>
+                <!-- open files -->
+                <div class="ui center aligned" id="openFile">
+                  <input type="file" id="fileupload" style="display:none" onchange="uploadFiles()" />
+                  <button class="circular massive ui icon button" id="OpenFileUpload"><i class="folder open icon"></i></button>
+                </div>
+                <!-- <div id="parameters"></div> -->
+                <div id="charts"></div>
               </div>
-              <!-- <div id="parameters"></div> -->
-              <div id="charts"></div>
-            </div>
-            <div class="content" style="display:none" id="barCharts">
-              <h4 class="ui sub header">Model comparison</h4>
-              <div id="barCharts-js"></div>
-            </div>
-            <div class="extra content">
-              <button class="ui button">Join Project</button>
+              <div class="content" style="display:none" id="barCharts">
+                <h4 class="ui sub header">Model comparison</h4>
+                <div id="barCharts-js"></div>
+              </div>
+              <div class="extra content">
+                <button class="ui button">Join Project</button>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="ui bottom attached tab segment" data-tab="second">
+          <div class="ui bottom attached tab segment" data-tab="second">
+          </div>
+
+          <div class="ui bottom attached tab segment" data-tab="third">
+            Third
+          </div>
         </div>
 
-        <div class="ui bottom attached tab segment" data-tab="third">
-          Third
-        </div>
+
+
 
 
       </nav>

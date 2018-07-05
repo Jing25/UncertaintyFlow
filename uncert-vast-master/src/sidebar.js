@@ -84,6 +84,9 @@ function bufferUncert() {
 
 //************ uncertainty for classification *******************************
 function classifyButton() {
+  $("#classbutton").toggleClass("active")
+
+  classificationUncert()
   //********* Adding node to the tree ********
   var newNodeData = {
     "name": "classification",
@@ -134,8 +137,11 @@ function classifyButton() {
         }
       ],
       onChange: function(value, text, $selectedItem) {
-        // filterByClass(value)
-        updateParameter();
+
+        if (value) {
+          updateParameter();
+        }
+
       }
     });
   //***** end dropdown class filtering ***
@@ -519,7 +525,6 @@ function updateParameter() {
 
     if ($('#dropdown-class').dropdown("get value")) {
       if (element[classVar] !== $('#dropdown-class').dropdown("get value")) {
-        console.log("here")
         visible = false;
       }
     }

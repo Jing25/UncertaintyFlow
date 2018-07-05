@@ -104,8 +104,6 @@ function uploadFiles() {
       });
     $('#dropdown-var-matrix').dropdown('set selected', "Pop")
 
-
-
     addVarButton()
 
     // end load file

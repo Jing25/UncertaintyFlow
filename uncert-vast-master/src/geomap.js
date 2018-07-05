@@ -10,21 +10,6 @@ var mapIconUnselect = L.icon({
 
 drawMap();
 
-// function mapCircle(data) {
-//   // data = myData;
-//   for (var i = 0; i < data.length; i++) {
-//     var radii = +(data[i].pop_uncer) + +(data[i].uncertain01);
-//     // console.log(radii)
-// marker = new L.circle([data[i].lat, data[i].lon], {
-//     color: 'blue',
-//     fillColor: "blue",
-//     fillOpacity: 1,
-//     radius: radii * 10
-//   })
-//   .on("click", myclick)
-//   .addTo(map);
-//   }
-
 function mapCircle(data, radius) {
   var markers = [];
   var radius = radius.map( (d)=> d + "_uncert")
@@ -68,14 +53,14 @@ function mapCircle(data, radius) {
 }
 
 
-function mapPoint(lat, lon, index) {
+function mapPoint(lat, lon, index, color = "black", radius = 12) {
   // var marker = L.marker([lat, lon], {
   //     icon: mapIcon,
   //     myCustomId: index
   //   })
-    var marker = new L.circle([lat, lon], 12, {
-      color: 'black',
-      fillColor: 'black',
+    var marker = new L.circle([lat, lon], radius, {
+      color: color,
+      fillColor: color,
       fillOpacity: 1,
       weight: 1,
       myCustomId: index
@@ -84,6 +69,7 @@ function mapPoint(lat, lon, index) {
     // .addTo(map);
     return marker
 }
+
 
 // var marker = new L.circle([lat, lon], +bufferSize, {
 //   color: 'blue',

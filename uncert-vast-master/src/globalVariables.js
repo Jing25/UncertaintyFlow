@@ -10,6 +10,7 @@ window.UV.data = {
 }
 
 window.UV.num = {
+  brushing: 0,
   model: 0
 }
 

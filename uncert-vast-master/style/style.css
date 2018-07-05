@@ -20,6 +20,14 @@ html, body {
     height: 38%;
 }
 
+/* #panel-opts {
+  height: 35%;
+} */
+
+#panel-donuts {
+  margin-top: 4%
+}
+
 #panel-sidebar {
     height: 100%;
 }

@@ -1,9 +1,11 @@
 $(document).ready(function() {
   $("#matrix-chart").height($(".sidebar").height() - 60);
-  $("#dountCharts").height($(".sidebar").height()/2. - 75);
+  $("#dountCharts").height($(".sidebar").height()/2. - 80);
+  // $("#dountCharts").height($(".sidebar").height() - $("#panel-opts").height() - 280);
   $(window).resize(function() {
     $("#matrix-chart").height($(".sidebar").height() - 60);
-    $("#dountCharts").height($(".sidebar").height()/2. - 75);
+    $("#dountCharts").height($(".sidebar").height()/2. - 80);
+    // $("#dountCharts").height($(".sidebar").height() - $("#panel-opts").height() - 80);
   })
 });
 
@@ -37,5 +39,10 @@ $('#highlight_P').click(function() {
   window.UV.views.matrix.highlight(a);
   $(this).attr("data-value", ~a)
   console.log($(this).attr("data-value"));
+
+})
+
+$('#classbutton').click(function() {
+  $("#classbutton").toggleClass("active");
 
 })
