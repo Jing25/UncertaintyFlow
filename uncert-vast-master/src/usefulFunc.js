@@ -180,8 +180,6 @@ function MatrixData() {
       hashdata[id] = d;
     })
 
-    console.log(hashdata);
-
     variables_uncert.forEach(function(v) {
 
       for (var i = 0; i < matrixData[v].length; i++) {
@@ -203,24 +201,66 @@ function classificationUncert() {
   let markers = [];
 
   for (var i = 0; i < data.length; i++) {
+
     var lat = data[i].lat;
     var lon = data[i].lon;
     let radius = 50
 
     if (data[i]["UndSer_Lvl"] == "Underserved") {
       markers.push(mapPoint(lat, lon, i, '#fc8d62', radius))
-    }
-    else if (data[i]["UndSer_Lvl"] == "Moderately served") {
+    } else if (data[i]["UndSer_Lvl"] == "Moderately served") {
       markers.push(mapPoint(lat, lon, i, '#377eb8', radius))
-    }
-    else {
+    } else {
       markers.push(mapPoint(lat, lon, i, '#e41a1c', radius))
     }
+
   }
 
   if (markers.length) {
     markerPointsLayer = L.layerGroup(markers);
     map.addLayer(markerPointsLayer);
   }
+
+  let mdata = JSON.parse(JSON.stringify(myData));
+
+  myData.forEach(function(d) {
+    let diff = d.Pop - 6000;
+    variables_uncert.forEach(function(v) {
+      if (diff < 500 && diff > 0) {
+        d[v] = diff/100;
+      }
+      else {
+        d[v] = 0;
+      }
+    })
+
+  })
+  window.UV.data.matData.addOperation("Classification", myData)
+  window.UV.views.matrix.addColumn(matrixData);
+  historyData.push(JSON.parse(JSON.stringify(myData)));
+  console.log("mdata: ", mdata);
+  myData = JSON.parse(JSON.stringify(mdata));
+
+}
+
+function brushingUncert() {
+
+  let mdata = JSON.parse(JSON.stringify(myData));
+
+  console.log("mdata: ", mdata);
+  myMapData.forEach(function(d, i) {
+    variables_uncert.forEach(function(v) {
+      if (d.visible == false) {
+        myData[i][v] = 0;
+      }
+    })
+  })
+
+  window.UV.data.matData.addOperation("Filtering_" + window.UV.num.filtering, myData)
+  console.log("myData: ", myData);
+  window.UV.views.matrix.addColumn(matrixData);
+  console.log("matrixData: ", matrixData);
+  historyData.push(JSON.parse(JSON.stringify(myData)));
+  myData = mdata;
 
 }

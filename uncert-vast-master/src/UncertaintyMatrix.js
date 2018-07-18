@@ -76,10 +76,11 @@ function UncertaintyMatrix() {
     if (!d3.event.selection) {
       start = -1;
       end = -1
-      myMapData.forEach(function(element) {
-        element.visible = true;
-      })
-      updateMap();
+      // myMapData.forEach(function(element) {
+      //   element.visible = true;
+      // })
+      updateParameter()
+
     }
   }
 

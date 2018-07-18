@@ -11,6 +11,7 @@ window.UV.data = {
 
 window.UV.num = {
   brushing: 0,
+  filtering: 0,
   model: 0
 }
 

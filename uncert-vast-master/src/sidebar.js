@@ -70,11 +70,11 @@ function bufferUncert() {
     })
   })
   // donutData_G = donutData;
-  historyDonutData.push(donutData);
+  historyDonutData.push(JSON.parse(JSON.stringify(donutData)));
   window.UV.views.donuts.update(donutData);
   donutData_G = donutData;
 
-  historyData.push(data);
+  historyData.push(JSON.parse(JSON.stringify(data)));
   myMapData = data;
   // historyOperation.push("400m buffer")
   window.UV.data.matData.addOperation("400m Buffer", data)
@@ -89,8 +89,8 @@ function classifyButton() {
   classificationUncert()
   //********* Adding node to the tree ********
   var newNodeData = {
-    "name": "classification",
-    "r": 13,
+    "name": "Classification",
+    "r": 8,
     "clicked": 0,
     "type": "normal",
     "children": []
@@ -152,23 +152,35 @@ function brushingFiltering() {
 
   //*********** Adding node to the tree ************
   var newNodeData;
-  if ($('#dropdown-class').dropdown("get value")) {
-    newNodeData = {
-      "name": "Filtering",
-      "r": 13,
-      "clicked": 0,
-      "type": "normal",
-      "children": []
-    };
-  } else {
-    newNodeData = {
-      "name": "Brushing",
-      "r": 13,
-      "clicked": 0,
-      "type": "normal",
-      "children": []
-    };
-  }
+
+  window.UV.num.filtering++
+  newNodeData = {
+    "name": "Filtering_" + window.UV.num.filtering,
+    "r": 10,
+    "clicked": 0,
+    "type": "normal",
+    "children": []
+  };
+
+  // if ($('#dropdown-class').dropdown("get value")) {
+  //   window.UV.num.filtering++
+  //   newNodeData = {
+  //     "name": "Filtering" + window.UV.num.filtering,
+  //     "r": 13,
+  //     "clicked": 0,
+  //     "type": "normal",
+  //     "children": []
+  //   };
+  // } else {
+  //   window.UV.num.brushing++
+  //   newNodeData = {
+  //     "name": "Brushing" + window.UV.num.brushing,
+  //     "r": 13,
+  //     "clicked": 0,
+  //     "type": "normal",
+  //     "children": []
+  //   };
+  // }
   // create newNode with d3.hierarchy
   var newNode = d3.hierarchy(newNodeData);
   newNode.depth = selectedTreeNode.depth + 1;
@@ -187,6 +199,7 @@ function brushingFiltering() {
   // Update tree
   updateTree(selectedTreeNode);
   //********** End adding node to the tree **********
+  brushingUncert()
 }
 
 //************ uncertainty for models *******************************

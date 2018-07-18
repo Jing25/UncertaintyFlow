@@ -44,5 +44,6 @@ $('#highlight_P').click(function() {
 
 $('#classbutton').click(function() {
   $("#classbutton").toggleClass("active");
+  updateParameter()
 
 })

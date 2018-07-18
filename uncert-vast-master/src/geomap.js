@@ -12,39 +12,39 @@ drawMap();
 
 function mapCircle(data, radius) {
   var markers = [];
-  var radius = radius.map( (d)=> d + "_uncert")
+  var radius = radius.map((d) => d + "_uncert")
   for (var i = 0; i < data.length; i++) {
     var lat = data[i].lat;
     var lon = data[i].lon;
     var radii = 0;
-    radius.forEach( function(r) {
+    radius.forEach(function(r) {
       radii = radii + +data[i][r]
     })
     markers.push([lat, lon, radii])
   }
-    // var radii = +data[i][radius];
-    // console.log("radius", radii)
-    // mapCircle(lat, lon, radii);
-    var heat = L.heatLayer(markers, {
-      // color: 'blue',
-      // weight: 1,
-      // fillColor: "blue",
-      // fillOpacity: 1,
-      radius: 20,
-      blur: 15,
-      maxZoom: 17
-      // myCustomId: i
-    })
-    // .on("click", myclick)
-    // .addTo(map);
-    // marker.setAtrribute("myId", i)
-    // markers.push(marker)
+  // var radii = +data[i][radius];
+  // console.log("radius", radii)
+  // mapCircle(lat, lon, radii);
+  var heat = L.heatLayer(markers, {
+    // color: 'blue',
+    // weight: 1,
+    // fillColor: "blue",
+    // fillOpacity: 1,
+    radius: 20,
+    blur: 15,
+    maxZoom: 17
+    // myCustomId: i
+  })
+  // .on("click", myclick)
+  // .addTo(map);
+  // marker.setAtrribute("myId", i)
+  // markers.push(marker)
   // console.log("markers", markers)
   markerlayer = heat //L.layerGroup(heat);
   //L.control.layers(markerPointsLayer, heat).addTo(map);
   map.addLayer(markerlayer);
 
-  points = markers.map( d => d.slice(0,2))
+  points = markers.map(d => d.slice(0, 2))
   // var marker = new L.circle(points, 10, {
   //   color: 'blue',
   //   weight: 1,
@@ -58,7 +58,7 @@ function mapPoint(lat, lon, index, color = "black", radius = 12) {
   //     icon: mapIcon,
   //     myCustomId: index
   //   })
-    var marker = new L.circle([lat, lon], radius, {
+  var marker = new L.circle([lat, lon], radius, {
       color: color,
       fillColor: color,
       fillOpacity: 1,
@@ -66,8 +66,8 @@ function mapPoint(lat, lon, index, color = "black", radius = 12) {
       myCustomId: index
     })
     .on("click", myclick)
-    // .addTo(map);
-    return marker
+  // .addTo(map);
+  return marker
 }
 
 
@@ -77,11 +77,11 @@ function mapPoint(lat, lon, index, color = "black", radius = 12) {
 // })
 
 function mapCircleIndiv(data, radius) {
-  var radius = radius.map( (d)=> d + "_uncert")
+  var radius = radius.map((d) => d + "_uncert")
   var lat = data.lat;
   var lon = data.lon;
   var radii = 0;
-  radius.forEach( function(r) {
+  radius.forEach(function(r) {
     radii = radii + +data[r]
   })
   // debugger;
@@ -133,7 +133,22 @@ function updateMap() {
 
   myMapData.forEach(function(element, i) {
     if (element.visible) {
-      markers.push(mapPoint(element.lat, element.lon, i))
+      if ($("#classbutton").hasClass("active")) {
+
+        let radius = 50;
+
+        if (element["UndSer_Lvl"] == "Underserved") {
+
+          markers.push(mapPoint(element.lat, element.lon, i, '#fc8d62', radius))
+        } else if (element["UndSer_Lvl"] == "Moderately served") {
+          markers.push(mapPoint(element.lat, element.lon, i, '#377eb8', radius))
+        } else {
+          markers.push(mapPoint(element.lat, element.lon, i, '#e41a1c', radius))
+        }
+      } else {
+        markers.push(mapPoint(element.lat, element.lon, i))
+      }
+
       if (g_var.length) {
         circles.push(mapCircleIndiv(element, g_var))
         // console.log("in g_var");
