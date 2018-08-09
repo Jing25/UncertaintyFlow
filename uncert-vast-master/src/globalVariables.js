@@ -12,6 +12,7 @@ window.UV.data = {
 window.UV.num = {
   brushing: 0,
   filtering: 0,
+  classifying: 0,
   model: 0
 }
 
@@ -28,14 +29,15 @@ var dropdown_names = [];
 
 var classVar = "UndSer_Lvl"
 
-var variables = ["TTrip", "Capacity", "Transit", "Hospital", "IntPoints", "Crash", "BNDes",
-  "Pop", "PecWhi", "MedAge", "PecV", "Income", "TWork"
+var variables = ["TTrip", "Transit", "Hospital", "IntPoints", "BNDes",
+  "Pop", "PecWhi", "MedAge", "PecV", "Income"
 ]
 var variables_uncert = variables.map( (d)=> d + "_uncert" );
 
 var eyebuttonClick = 1;
 var markerlayer;
 var markerPointsLayer;
+var markerPieLayer;
 
 
 var objTree = {

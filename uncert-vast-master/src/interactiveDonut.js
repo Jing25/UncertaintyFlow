@@ -33,23 +33,26 @@ function DonutCharts() {
       if (!(d.clicked)) {
         d.clicked = 1;
         d3.select(this).style("fill", "red")
-        if (markerlayer) {
-          map.removeLayer(markerlayer);
-        }
+        // if (markerlayer) {
+        //   map.removeLayer(markerlayer);
+        // }
         g_var.push(d.type)
-
-        mapCircle(myMapData, g_var)
-        setUncertSlider(myMapData, g_var)
+        //
+        // mapCircle(myData, g_var)
+        setUncertSlider(myData, g_var)
+        updateParameter()
 
       } else {
         d3.select(this).style("fill", "black");
         d.clicked = 0
-        if (markerlayer) {
-          map.removeLayer(markerlayer);
-        }
+        // if (markerlayer) {
+        //   map.removeLayer(markerlayer);
+        // }
+        //
         removeItemInArray(g_var, d.type);
-        mapCircle(myMapData, g_var);
-        setUncertSlider(myMapData, g_var)
+        // mapCircle(myData, g_var);
+        setUncertSlider(myData, g_var)
+        updateParameter()
       }
 
     });

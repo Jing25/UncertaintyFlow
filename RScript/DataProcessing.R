@@ -1,8 +1,8 @@
 rm(list = ls())
 #lab
-setwd("~/Desktop/UncertaintyFlow/UncertaintyFlow/RScript")
+#setwd("~/Desktop/UncertaintyFlow/UncertaintyFlow/RScript")
 #laptp
-#setwd("~/Desktop/UncertaintyFlow/RScript")
+setwd("~/Desktop/UncertaintyFlow/RScript")
 
 
 loc <- read.table("../Data/Station_location.txt")
@@ -62,6 +62,8 @@ df_data$pop_uncer <- scale(data$Pop) - min(scale(data$Pop))
 
 
 write.csv(df_data, file = "../uncert-vast-master/Data/Mydata_02.csv", row.names = FALSE, quote = FALSE)
+
+
 
 
 

@@ -47,7 +47,7 @@ function UncertaintyMatrix() {
 
     if (start == -1 && end == -1) {
 
-      myMapData.forEach(function(element) {
+      myData.forEach(function(element) {
         element.visible = false;
         var id = element.Id
         hashMap[id] = element
@@ -124,7 +124,7 @@ function UncertaintyMatrix() {
   }
 
   function sortByValue(btn) {
-    console.log(btn);
+    //console.log(btn);
 
     var data = dataset[v];
     var opt = btn.id;
@@ -136,6 +136,13 @@ function UncertaintyMatrix() {
     }
     if (btn.val == "b") {
 
+      data.sort((a, b) => {
+        let b_v = b[opt + "_uncert"][0].val + b[opt + "_uncert"][1].val
+        let a_v = a[opt + "_uncert"][0].val + a[opt + "_uncert"][1].val
+
+        return b_v - a_v
+      })
+      updateCards(data)
     }
     if (btn.val == "c") {
       data.sort((a, b) => +a[opt] - +b[opt]);
@@ -148,12 +155,14 @@ function UncertaintyMatrix() {
 
     var data = dataset[v]
 
-    var opts = Object.keys(data[0])
+    var opts = Object.keys(data[0]).filter(d => !d.includes("_uncert"))
     var numOpts = opts.length
 
     var colorScale = d3.scaleQuantile()
       .domain([0, buckets - 1, maxV])
       .range(colors);
+
+    svg_matrix.selectAll(".arc").remove()
 
     for (var i = 1; i < numOpts; i++) {
       opt = opts[i];
@@ -162,6 +171,8 @@ function UncertaintyMatrix() {
       cards
         .data(data)
         .style("fill", (d) => colorScale(d[opt]))
+
+      createPie(opt, data, optColumns[opt])
 
     }
 
@@ -223,11 +234,10 @@ function UncertaintyMatrix() {
   }
 
 
-
   function setColumn(data, colorScale) {
 
     // console.log("data; ", data)
-    var opts = Object.keys(data[0]);
+    var opts = Object.keys(data[0]).filter(d => !d.includes("_uncert"));
     var numOpts = opts.length - 1;
     var opt = opts[numOpts];
 
@@ -237,7 +247,7 @@ function UncertaintyMatrix() {
       .attr("class", "c_" + opt)
       .attr("transform", "translate(" + ((numOpts - 1) * gridSize * 1.5 + gridSize) + ", 0)");
 
-    var col = column.selectAll("abc");
+    var col = column.selectAll("rectButtons");
     optColumns[opt] = column;
 
     //var tex = column.selectAll(".col" + numOpts)
@@ -286,7 +296,7 @@ function UncertaintyMatrix() {
 
     buttons.append("text")
       .attr("x", 0)
-      .attr("y", (d, i) => i * gridSize + 1*i)
+      .attr("y", (d, i) => i * gridSize + 1 * i)
       .attr('font-family', 'FontAwesome')
       .attr("class", "buttonicon")
       .attr('font-size', '0.85em')
@@ -324,13 +334,51 @@ function UncertaintyMatrix() {
       .attr("id", (d) => d["Id"])
       .attr("width", gridSize)
       .attr("height", gridSize)
+      // .style("visibility", "visible")
       .style("fill", (d) => colorScale(d[opt]));
 
+    createPie(opt, data, column)
+
+  }
+
+  function createPie(opt, data, column) {
+
+    let key = opt + "_uncert"
+
+    if (key in data[0]) {
+
+      var color = ["black", "#FF7F50", "red", "blue"]
+
+      let radius = 10
+      var pie = d3.pie()
+        .sort(null)
+        .value((d) => d.val);
+
+      var path = d3.arc()
+        .outerRadius(radius)
+        .innerRadius(0);
+
+      var arc = column.selectAll(".arc")
+
+      data.forEach(function(datum, i) {
+        arc
+          .data(pie(datum[key]))
+          .enter()
+          .append("g")
+          .attr("class", "arc")
+          .attr("transform", "translate(10," + (10 + (i + 3) * (gridSize + space)) + ")")
+          .style("visibility", "hidden")
+          .append("path")
+          .attr("d", path)
+          .attr("fill", (d) => color[d.data.num])
+        // .style("visibility", "visible")
+      })
+    }
   }
 
   function updateCardsColor(data, colorScale) {
     // var cards = svg_matrix.selectAll(".matrix")
-    var opts = Object.keys(data[0])
+    var opts = Object.keys(data[0]).filter(d => !d.includes("_uncert"))
     var numOpts = opts.length - 1
 
     for (var i = 1; i < numOpts; i++) {
@@ -385,7 +433,7 @@ function UncertaintyMatrix() {
 
     var max = d3.max(data, d => +d[opt])
     maxV = Math.max(maxV, max)
-    console.log("maxV", maxV);
+    //console.log("maxV", maxV);
 
     var colorScale = d3.scaleQuantile()
       .domain([0, buckets - 1, maxV])
@@ -398,23 +446,26 @@ function UncertaintyMatrix() {
       .attr("transform", "translate(" + (width - gridSize * 1.5 * (colors.length - 1)) + ", 10)")
     createLegend(colorScale)
 
+    // setPieChartColumn()
+
   }
 
   this.addColumn = function(datas) {
 
     // dataset = datas
     var data = dataset[v]
-    console.log(dataset);
-    var opts = Object.keys(data[0])
+    //console.log(dataset);
+    var opts = Object.keys(data[0]).filter(d => !d.includes("_uncert"))
     var numOpts = opts.length - 1;
 
     opt = opts[numOpts]
+    // debugger;
 
 
     var max = d3.max(data, d => +d[opt])
     // debugger
     maxV = Math.max(maxV, max)
-    console.log("maxVadd", maxV)
+    //console.log("maxVadd", maxV)
     // debugger
 
     var colorScale = d3.scaleQuantile()
@@ -430,38 +481,44 @@ function UncertaintyMatrix() {
 
   this.highlight = function(toggle) {
 
-    // console.log("data", dataset);
-    var data = dataset[v]
-
-    var opts = Object.keys(data[0]);
-    var numOpts = opts.length - 1;
-    var matrix = svg_matrix.select(".matrix")
-
     if (toggle == 1) {
-      for (var i = 1; i <= numOpts; i++) {
-
-        opt = opts[i]
-
-        optColumns[opt].selectAll(".highlight_rect")
-          .data(data)
-          .enter()
-          .append("rect")
-          // .attr("x", -1)
-          .attr("y", (d, i) => (i + 3) * (gridSize + space))
-          .attr("rx", 4)
-          .attr("ry", 4)
-          .attr("class", "highlight_rect")
-          .attr("id", (d) => d["Id"])
-          .attr("width", gridSize)
-          .attr("height", gridSize)
-          .style("stroke", function(d) {
-            return d[opt] > 5.0 ? "red" : "transparent"
-          })
-          .style("fill", "transparent");
-      }
+      svg_matrix.selectAll(".arc").style("visibility", "visible")
     } else {
-      matrix.selectAll(".highlight_rect").remove();
+      svg_matrix.selectAll(".arc").style("visibility", "hidden")
     }
+
+    // // console.log("data", dataset);
+    // var data = dataset[v]
+    //
+    // var opts = Object.keys(data[0]);
+    // var numOpts = opts.length - 1;
+    // var matrix = svg_matrix.select(".matrix")
+    //
+    // if (toggle == 1) {
+    //   for (var i = 1; i <= numOpts; i++) {
+    //
+    //     opt = opts[i]
+    //
+    //     optColumns[opt].selectAll(".highlight_rect")
+    //       .data(data)
+    //       .enter()
+    //       .append("rect")
+    //       // .attr("x", -1)
+    //       .attr("y", (d, i) => (i + 3) * (gridSize + space))
+    //       .attr("rx", 4)
+    //       .attr("ry", 4)
+    //       .attr("class", "highlight_rect")
+    //       .attr("id", (d) => d["Id"])
+    //       .attr("width", gridSize)
+    //       .attr("height", gridSize)
+    //       .style("stroke", function(d) {
+    //         return d[opt] > 5.0 ? "red" : "transparent"
+    //       })
+    //       .style("fill", "transparent");
+    //   }
+    // } else {
+    //   matrix.selectAll(".highlight_rect").remove();
+    // }
 
   }
 

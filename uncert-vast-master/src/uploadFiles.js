@@ -1,4 +1,3 @@
-
 //Initialization
 function uploadFiles() {
   var x = document.getElementById("fileupload");
@@ -8,12 +7,14 @@ function uploadFiles() {
   d3.csv(filename, function(data) {
     //get data
     myData = data;
-    myMapData = JSON.parse(JSON.stringify(myData));
-    historyData.push(JSON.parse(JSON.stringify(myData)));
+    //console.log(data);
+    myMapData = JSON.parse(JSON.stringify(data));
 
     // add visibility attribute
     myData.forEach(function(element) {
       element["visible"] = true;
+      element["filtered"] = false;
+      element["TTrip_uncert"] = 0;
     });
     myMapData.forEach(function(element) {
       element["visible"] = true;
@@ -22,8 +23,18 @@ function uploadFiles() {
 
     // DonutCharts
     var donutData = [];
+
+    variables.forEach(function(key) {
+      let random = key + "_randomness"
+
+      myData.map((d) => {
+        d[key + "_uncert"] = +d[random]
+      })
+    })
+
     variables_uncert.forEach(function(key) {
-      var maxV = findMax(myData, key)
+
+      var maxV = findMax(data, key)
       var name = key.split("_")[0]
       donutData.push({
         data: [{
@@ -45,10 +56,10 @@ function uploadFiles() {
     // Matrix data
     // historyOperation.push("Initial");
 
-    matrixData = window.UV.data.matData.getMatrixData("Initial", myData);
-
-    donutData_G = donutData;
-    historyDonutData.push(donutData);
+    matrixData = window.UV.data.matData.getMatrixData("Initial", data);
+    donutData_G = donutData
+    historyDonutData.push(JSON.parse(JSON.stringify(donutData)));
+    historyData.push(JSON.parse(JSON.stringify(myData)));
     window.UV.views.donuts.create(donutData);
 
     window.UV.views.matrix.setView();
@@ -105,6 +116,20 @@ function uploadFiles() {
     $('#dropdown-var-matrix').dropdown('set selected', "Pop")
 
     addVarButton()
+
+    $('#dropdown-uncertainty-value')
+      .dropdown({
+        values: [{
+            name: 'Value',
+            value: 'value'
+          },
+          {
+            name: 'Uncertainty',
+            value: 'uncertainty',
+            selected: true
+          }
+        ]
+      });
 
     // end load file
   })

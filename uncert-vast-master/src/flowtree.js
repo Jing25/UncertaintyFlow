@@ -194,15 +194,17 @@ function updateTree(source) {
           $("#barCharts").hide()
           selectedTreeNode = d;
           myData = JSON.parse(JSON.stringify(historyData[i]));
-          myMapData = JSON.parse(JSON.stringify(myData));
+          console.log(myData);
+          //myMapData = JSON.parse(JSON.stringify(myData));
           if (historyDonutData[i]) {
-            var donutData = JSON.parse(JSON.stringify(historyDonutData[i]));
+            donutData_G = JSON.parse(JSON.stringify(historyDonutData[i]));
           }
           else {
-            var donutData = JSON.parse(JSON.stringify(historyDonutData[1]));
+            donutData_G = JSON.parse(JSON.stringify(historyDonutData[0]));
           }
 
-          window.UV.views.donuts.update(donutData)
+          window.UV.views.donuts.update(donutData_G)
+          updateParameter()
         }
 
       } else {

@@ -118,7 +118,7 @@ function addVarButton() {
 function varChoosing(index) {
   var btn = $("#button" + index);
   var tex = $("#text" + index);
-  var parameters = getModelParameters();
+  // var parameters = getModelParameters();
 
   if (btn.hasClass("active")) {
     btn.removeClass("active")
@@ -129,11 +129,11 @@ function varChoosing(index) {
     btn.addClass("active")
     tex.text("x" + btnActNum)
   }
-  if (btnActNum == parameters.length) {
-    $('#model').removeClass("disabled")
-  } else {
-    $('#model').addClass('disabled')
-  }
+  // if (btnActNum == parameters.length) {
+  //   $('#model').removeClass("disabled")
+  // } else {
+  //   $('#model').addClass('disabled')
+  // }
 }
 
 function getModelParameters() {
@@ -185,7 +185,14 @@ function MatrixData() {
       for (var i = 0; i < matrixData[v].length; i++) {
         var id = matrixData[v][i]["Id"]
         matrixData[v][i][opts] = hashdata[id][v]
+
+        let key = opts + "_uncert"
+        if (key in data[0]) {
+          // console.log("hashdata", hashdata);
+          matrixData[v][i][key] = hashdata[id][key]
+        }
       }
+
     })
 
   }
@@ -197,23 +204,28 @@ function classificationUncert() {
     map.removeLayer(markerPointsLayer)
   }
 
-  let data = myMapData;
   let markers = [];
 
-  for (var i = 0; i < data.length; i++) {
+  let uncert = 0;
 
-    var lat = data[i].lat;
-    var lon = data[i].lon;
-    let radius = 50
+  let income = +$("#income").val()
+  let pecWhi = +$("#pecWhi").val()
 
-    if (data[i]["UndSer_Lvl"] == "Underserved") {
-      markers.push(mapPoint(lat, lon, i, '#fc8d62', radius))
-    } else if (data[i]["UndSer_Lvl"] == "Moderately served") {
-      markers.push(mapPoint(lat, lon, i, '#377eb8', radius))
-    } else {
-      markers.push(mapPoint(lat, lon, i, '#e41a1c', radius))
+  for (var i = 0; i < myData.length; i++) {
+
+    var lat = myData[i].lat;
+    var lon = myData[i].lon;
+    let radius = 30
+    if (myData[i].visible) {
+      if (+myData[i]["Income"] < income || +myData[i]["PecWhi"] < pecWhi) {
+        myData[i]["UndSer_Lvl"] = "Underserved"
+        markers.push(mapPoint(lat, lon, i, 'red', radius))
+      } else {
+        myData[i]["UndSer_Lvl"] = "Other"
+        markers.push(mapPoint(lat, lon, i, 'blue', radius))
+      }
+
     }
-
   }
 
   if (markers.length) {
@@ -221,46 +233,139 @@ function classificationUncert() {
     map.addLayer(markerPointsLayer);
   }
 
-  let mdata = JSON.parse(JSON.stringify(myData));
-
   myData.forEach(function(d) {
-    let diff = d.Pop - 6000;
-    variables_uncert.forEach(function(v) {
-      if (diff < 500 && diff > 0) {
-        d[v] = diff/100;
-      }
-      else {
-        d[v] = 0;
-      }
-    })
+
+    let income_left = +d["Income"] - +d["Income_range"]
+    let income_right = +d["Income"] + +d["Income_range"]
+    let pecWhi_left = +d["PecWhi"] - +d["PecWhi_range"]
+    let pecWhi_right = +d["PecWhi"] + +d["PecWhi_range"]
+
+    if (income_left < income && income_right > income) {
+      d["Classification_" + window.UV.num.classifying + "_uncert"] = [{
+        num: 2,
+        val: income - income_left
+      }, {
+        num: 3,
+        val: income_right - income
+      }]
+
+      uncert = uncert + (income_right - income) / (income - income_left)
+
+    } else if (pecWhi_left < pecWhi && pecWhi_right > pecWhi) {
+      d["Classification_" + window.UV.num.classifying + "_uncert"] = [{
+        num: 2,
+        val: pecWhi - pecWhi_left
+      }, {
+        num: 3,
+        val: pecWhi_right - pecWhi
+      }]
+
+      uncert = uncert + (pecWhi_right - pecWhi) / (pecWhi - pecWhi_left)
+
+    } else {
+      d["Classification_" + window.UV.num.classifying + "_uncert"] = [{
+        num: 2,
+        val: 0
+      }, {
+        num: 3,
+        val: 0
+      }]
+    }
 
   })
-  window.UV.data.matData.addOperation("Classification", myData)
+  window.UV.data.matData.addOperation("Classification_" + window.UV.num.classifying, myData)
   window.UV.views.matrix.addColumn(matrixData);
-  historyData.push(JSON.parse(JSON.stringify(myData)));
-  console.log("mdata: ", mdata);
-  myData = JSON.parse(JSON.stringify(mdata));
+
+  return uncert
 
 }
 
 function brushingUncert() {
 
-  let mdata = JSON.parse(JSON.stringify(myData));
+  // let mdata = JSON.parse(JSON.stringify(myData));
+  let uncert = 0
+  let myPieCharts = [];
 
-  console.log("mdata: ", mdata);
-  myMapData.forEach(function(d, i) {
+  myData.forEach(function(d, i) {
+
     variables_uncert.forEach(function(v) {
       if (d.visible == false) {
         myData[i][v] = 0;
+        myData[i]["filtered"] = true;
       }
     })
+
+
+    if ($('#dropdown-var1').dropdown("get text") != "Variables") {
+      let left = +$("#slider-var-left1").val()
+      let right = +$("#slider-var-right1").val()
+      let v = $('#dropdown-var1').dropdown("get text")
+      let range = v + "_range";
+      let x_left = +d[v] - +d[range]
+      let x_right = +d[v] + +d[range]
+
+      if (x_left < left && x_right > left) {
+        d["Filtering_" + window.UV.num.filtering + "_uncert"] = [{
+          num: 0,
+          val: left - x_left
+        }, {
+          num: 1,
+          val: x_right - left
+        }]
+
+        myPieCharts.push(L.minichart([d.lat, d.lon], {
+          data: [left - x_left, x_right - left],
+          width: 10,
+          type: "pie"
+        }));
+        uncert = uncert + Math.abs(((x_right - left) - (left - x_left)) / ((x_right - left) + (left - x_left)))
+
+      } else if (x_left < right && x_right > right) {
+        d["Filtering_" + window.UV.num.filtering + "_uncert"] = [{
+          num: 0,
+          val: x_right - right
+        }, {
+          num: 1,
+          val: right - x_left
+        }]
+
+        myPieCharts.push(L.minichart([d.lat, d.lon], {
+          data: [right - x_left, x_right - right],
+          width: 10,
+          type: "pie"
+        }));
+
+        uncert = uncert + Math.abs(((x_right - right) - (right - x_left)) / ((x_right - right) + (right - x_left)))
+
+      } else {
+        d["Filtering_" + window.UV.num.filtering + "_uncert"] = [{
+          num: 0,
+          val: 0
+        }, {
+          num: 1,
+          val: 0
+        }]
+
+      }
+    }
+
+
+
   })
 
+  if (markerPieLayer) {
+    map.removeLayer(markerPieLayer)
+  }
+  markerPieLayer = L.layerGroup(myPieCharts);
+  // console.log(myPieCharts);
+
   window.UV.data.matData.addOperation("Filtering_" + window.UV.num.filtering, myData)
-  console.log("myData: ", myData);
+  // console.log("myData: ", myData);
   window.UV.views.matrix.addColumn(matrixData);
-  console.log("matrixData: ", matrixData);
-  historyData.push(JSON.parse(JSON.stringify(myData)));
-  myData = mdata;
+  // console.log("matrixData: ", matrixData);
+  // historyData.push(JSON.parse(JSON.stringify(myData)));
+  // myData = mdata;
+
+  return uncert;
 
 }

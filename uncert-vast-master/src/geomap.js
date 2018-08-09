@@ -12,29 +12,62 @@ drawMap();
 
 function mapCircle(data, radius) {
   var markers = [];
-  var radius = radius.map((d) => d + "_uncert")
+  var heat;
+  // var radius = radius.map((d) => d + "_uncert")
   for (var i = 0; i < data.length; i++) {
     var lat = data[i].lat;
     var lon = data[i].lon;
     var radii = 0;
     radius.forEach(function(r) {
-      radii = radii + +data[i][r]
+      let dropdown_uncertain = $("#dropdown-uncertainty-value").dropdown("get value");
+      // console.log(dropdown_uncertain);
+      if (dropdown_uncertain == "uncertainty") {
+        let uncert = r + "_uncert"
+        radii = radii + +data[i][uncert]
+        heat = L.heatLayer(markers, {
+          // color: 'blue',
+          // weight: 1,
+          // fillColor: "blue",
+          // fillOpacity: 1,
+          radius: 18,
+          blur: 15,
+          maxZoom: 18
+          // myCustomId: i
+        })
+      }
+      else {
+        console.log(r);
+        radii = radii + +data[i][r]
+        heat = L.heatLayer(markers, {
+          // color: 'blue',
+          // weight: 1,
+          // fillColor: "blue",
+          // fillOpacity: 1,
+          radius: 16,
+          blur: 15,
+          maxZoom: 30
+          // myCustomId: i
+        })
+      }
+      // let uncert = r + "_uncert"
+      // radii = radii + +data[i][uncert]
     })
     markers.push([lat, lon, radii])
   }
+  // console.log("radii", markers);
   // var radii = +data[i][radius];
   // console.log("radius", radii)
   // mapCircle(lat, lon, radii);
-  var heat = L.heatLayer(markers, {
-    // color: 'blue',
-    // weight: 1,
-    // fillColor: "blue",
-    // fillOpacity: 1,
-    radius: 20,
-    blur: 15,
-    maxZoom: 17
-    // myCustomId: i
-  })
+  // var heat = L.heatLayer(markers, {
+  //   // color: 'blue',
+  //   // weight: 1,
+  //   // fillColor: "blue",
+  //   // fillOpacity: 1,
+  //   radius: 18,
+  //   blur: 15,
+  //   maxZoom: 18
+  //   // myCustomId: i
+  // })
   // .on("click", myclick)
   // .addTo(map);
   // marker.setAtrribute("myId", i)
@@ -44,7 +77,7 @@ function mapCircle(data, radius) {
   //L.control.layers(markerPointsLayer, heat).addTo(map);
   map.addLayer(markerlayer);
 
-  points = markers.map(d => d.slice(0, 2))
+  // points = markers.map(d => d.slice(0, 2))
   // var marker = new L.circle(points, 10, {
   //   color: 'blue',
   //   weight: 1,
@@ -77,7 +110,13 @@ function mapPoint(lat, lon, index, color = "black", radius = 12) {
 // })
 
 function mapCircleIndiv(data, radius) {
-  var radius = radius.map((d) => d + "_uncert")
+  let dropdown_uncertain = $("#dropdown-uncertainty-value").dropdown("get value");
+  // console.log(dropdown_uncertain);
+
+  if (dropdown_uncertain == "uncertainty") {
+    radius = radius.map((d) => d + "_uncert")
+  }
+
   var lat = data.lat;
   var lon = data.lon;
   var radii = 0;
@@ -131,29 +170,31 @@ function updateMap() {
   var markers = [];
   var circles = [];
 
-  myMapData.forEach(function(element, i) {
+  myData.forEach(function(element, i) {
     if (element.visible) {
       if ($("#classbutton").hasClass("active")) {
 
-        let radius = 50;
+        let radius = 30;
 
         if (element["UndSer_Lvl"] == "Underserved") {
-
-          markers.push(mapPoint(element.lat, element.lon, i, '#fc8d62', radius))
-        } else if (element["UndSer_Lvl"] == "Moderately served") {
-          markers.push(mapPoint(element.lat, element.lon, i, '#377eb8', radius))
+          markers.push(mapPoint(element.lat, element.lon, i, 'red', radius))
         } else {
-          markers.push(mapPoint(element.lat, element.lon, i, '#e41a1c', radius))
+          markers.push(mapPoint(element.lat, element.lon, i, 'blue', radius))
         }
       } else {
+        let radius = 30;
         markers.push(mapPoint(element.lat, element.lon, i))
       }
+      // console.log("here");
 
       if (g_var.length) {
         circles.push(mapCircleIndiv(element, g_var))
         // console.log("in g_var");
       }
     }
+    // else {
+    //   markers.push(mapPoint(element.lat, element.lon, i, "rgba(167, 159, 163, 0.83)"))
+    // }
   });
 
 
